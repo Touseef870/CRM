@@ -16,11 +16,11 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
-const statusMap = {
-  pending: { label: 'Pending', color: 'warning' },
-  delivered: { label: 'Delivered', color: 'success' },
+const statusMap: { [key: string]: { label: string; color: 'default' | 'primary' | 'secondary' | 'error' } } = {
+  pending: { label: 'Pending', color: 'primary' },
+  delivered: { label: 'Delivered', color: 'secondary' },
   refunded: { label: 'Refunded', color: 'error' },
-} as const;
+};
 
 export interface Order {
   id: string;

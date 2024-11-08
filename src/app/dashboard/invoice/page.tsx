@@ -26,15 +26,12 @@ function Page() {
         { id: 'ORD-005', customer: { name: 'Adam Denisov' }, amount: 16.76, status: 'pending', createdAt: dayjs().subtract(10, 'minutes').toDate() },
     ];
 
-    // State to hold the filter criteria
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    // Handle filter changes from the InvoiceFilter component
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    // Filter the invoices based on the search term
     const filteredInvoices = UserInvoice.filter((invoice) => {
         return (
             invoice.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,10 +59,8 @@ function Page() {
                     </Button>
                 </div>
             </Stack>
-            {/* Pass filter change handler to InvoiceFilter */}
             <InvoiceFilter onChange={handleSearchChange} />
 
-            {/* Pass the filtered invoices */}
             <Invoice
                 orders={filteredInvoices}
                 sx={{ height: '100%' }}
