@@ -22,13 +22,14 @@ const statusMap: { [key: string]: { label: string; color: 'default' | 'primary' 
   refunded: { label: 'Refunded', color: 'error' },
 };
 
-export interface Order {
+interface Order {
   id: string;
   customer: { name: string };
   amount: number;
-  status: 'pending' | 'delivered' | 'refunded';
+  status: string;
   createdAt: Date;
 }
+
 
 export interface LatestOrdersProps {
   orders?: Order[];
