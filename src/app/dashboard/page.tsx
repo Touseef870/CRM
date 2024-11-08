@@ -39,9 +39,9 @@ export default function Page(): React.JSX.Element {
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
+      {/* <Grid lg={4} md={6} xs={12}>
         <Traffic chartSeries={[63, 10, 27]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-      </Grid>
+      </Grid> */}
       <Grid lg={4} md={6} xs={12}>
         <LatestEmploy
           employ={[
@@ -89,7 +89,7 @@ export default function Page(): React.JSX.Element {
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={8} md={12} xs={12}>
+      <Grid >
         <LatestInvoice
           orders={[
             {
