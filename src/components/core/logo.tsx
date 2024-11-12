@@ -6,8 +6,8 @@ import { useColorScheme } from '@mui/material/styles';
 
 import { NoSsr } from '@/components/core/no-ssr';
 
-const HEIGHT = 60;
-const WIDTH = 60;
+const HEIGHT = 120; // Increased default height
+const WIDTH = 120;  // Increased default width
 
 type Color = 'dark' | 'light';
 
@@ -22,9 +22,9 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH }:
   let url: string;
 
   if (emblem) {
-    url = color === 'light' ? '/assets/vehware.png' : '/assets/logo-emblem--dark.svg';
+    url = color === 'light' ? '/assets/vehware.png' : '/assets/vehware.png';
   } else {
-    url = color === 'light' ? '/assets/vehware.png' : '/assets/logo--dark.svg';
+    url = color === 'light' ? '/assets/vehware.png' : '/assets/vehware.png';
   }
 
   return <Box alt="logo" component="img" height={height} src={url} width={width} />;
