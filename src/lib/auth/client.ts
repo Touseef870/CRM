@@ -62,7 +62,7 @@ class AuthClient {
     }
 
     const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+    localStorage.setItem('custom-auth-token', token);            
 
     return {};
   }

@@ -23,23 +23,10 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
       }}
     >
       <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}>
-        {/* Removed the logo section completely if not needed */}
-        <Box sx={{ p: 2 }}>
-          <Box
-            component={RouterLink}
-            href={paths.home}
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </Box>
 
         <Box sx={{ alignItems: 'center', display: 'flex', flex: '1 1 auto', justifyContent: 'center', p: 3 }}>
-          <Box sx={{ maxWidth: { xs: '100%', sm: '450px' }, width: '100%' }}>
-            {children}
-          </Box>
+          <Box sx={{ maxWidth: '450px', width: '100%' }}>{children}</Box>
+
         </Box>
       </Box>
 
@@ -54,8 +41,9 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
         }}
       >
         <Stack spacing={3}>
-          <Stack spacing={1}>
-            <Typography color="inherit" sx={{ fontSize: '24px', lineHeight: '100px', textAlign: 'center' }} variant="h1">
+          {/* <Stack spacing={1}>
+            <Typography color="inherit" sx={{ fontSize: '24px', lineHeight: '32px', textAlign: 'center' }} variant="h1">
+
               Welcome to{' '}
               <Box component="span" sx={{ color: 'primary.main' }}>
                 Dashboard
@@ -64,7 +52,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
             <Typography align="center" variant="subtitle1">
               A professional CRM that comes with ready-to-use.ready-to-use.
             </Typography>
-          </Stack>
+          </Stack> */}
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box
               component="img"
