@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';  // Ensure axios is imported
+import React, { useState } from 'react';
+import axios from 'axios';
 import RouterLink from 'next/link';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -16,13 +16,7 @@ import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlas
 export function SignInForm(): React.JSX.Element {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('AdminloginData');
-    if (token) {
-      window.location.href = '/dashboard';
-    }
-  }, []);
+  const [error, setError] = useState<{ email?: string; password?: string }>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,8 +24,12 @@ export function SignInForm(): React.JSX.Element {
       ...prevData,
       [name]: value,
     }));
+    // Reset error for the field being modified
+    setError((prevError) => ({
+      ...prevError,
+      [name]: '',
+    }));
   };
-  
 
   const saveToLocalStorage = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
@@ -39,19 +37,43 @@ export function SignInForm(): React.JSX.Element {
 
   const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
+    const { email, password } = loginData;
+
+    // Basic client-side validation
+    if (!email) {
+      setError((prevError) => ({ ...prevError, email: 'Email is required' }));
+      return;
+    }
+    if (!password) {
+      setError((prevError) => ({ ...prevError, password: 'Password is required' }));
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signin', loginData, {
+      const response = await axios.post('https://vehware-dashboard.vercel.app/api/auth/signin', loginData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (response.status === 200) {
         saveToLocalStorage('AdminloginData', response.data.data);
-        window.location.href = '/dashboard'; 
+        window.location.href = '/dashboard'; // Redirect after saving to local storage
       }
-    } catch (error) {
-      console.error('Error during login:', error);
+    } catch (error: any) {
+      // Improved error handling
+      if (error.response?.data?.message === 'Invalid email or password') {
+        setError({
+          email: 'Invalid email',
+          password: 'Incorrect password',
+        });
+      } else {
+        setError({
+          email: 'email is incorrect. Please try again later.',
+          password: 'password is incorrect. Please try again later.',
+        });
+        console.error('Error during login:', error);
+      }
     }
   };
 
@@ -62,8 +84,7 @@ export function SignInForm(): React.JSX.Element {
       </Typography>
       <form onSubmit={handleSignIn}>
         <Stack spacing={2}>
-          {/* Email input */}
-          <FormControl fullWidth>
+          <FormControl fullWidth error={Boolean(error.email)}>
             <InputLabel>Email address</InputLabel>
             <OutlinedInput
               name="email"
@@ -72,10 +93,13 @@ export function SignInForm(): React.JSX.Element {
               label="Email address"
               type="email"
             />
+            {error.email && (
+              <Typography variant="body2" color="error">
+                {error.email}
+              </Typography>
+            )}
           </FormControl>
-
-          {/* Password input */}
-          <FormControl fullWidth>
+          <FormControl fullWidth error={Boolean(error.password)}>
             <InputLabel>Password</InputLabel>
             <OutlinedInput
               name="password"
@@ -99,16 +123,17 @@ export function SignInForm(): React.JSX.Element {
               label="Password"
               type={showPassword ? 'text' : 'password'}
             />
+            {error.password && (
+              <Typography variant="body2" color="error">
+                {error.password}
+              </Typography>
+            )}
           </FormControl>
-
-          {/* Forgot password link */}
           <div>
             <Link component={RouterLink} href="/reset-password" variant="subtitle2">
               Forgot password?
             </Link>
           </div>
-
-          {/* Sign-in button */}
           <Button type="submit" variant="contained" fullWidth sx={{ marginTop: 2 }}>
             Sign in
           </Button>
@@ -117,7 +142,3 @@ export function SignInForm(): React.JSX.Element {
     </Stack>
   );
 }
-
-
-// email: admin@gmail.com
-// password: Admin11@#

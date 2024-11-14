@@ -55,9 +55,9 @@ export function SideNav(): React.JSX.Element {
           {/* <Logo color="light" height={32} width={122} /> */}
           <Typography
             component="span"
-            sx={{ color: 'White', fontSize: '2rem', fontWeight: 500, lineHeight: '28px', textDecoration: 'none' }}
+            sx={{ color: 'White', fontSize: '2rem', fontWeight: 500,fontFamily: 'cursive', lineHeight: '28px', textDecoration: 'none' }}
           >
-            Veh-ware
+            Vehware
           </Typography>
 
         </Box>
