@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import Swal from 'sweetalert2';
 
 export function SignInForm(): React.JSX.Element {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -40,14 +41,20 @@ export function SignInForm(): React.JSX.Element {
     const { email, password } = loginData;
 
     // Basic client-side validation
-    if (!email) {
-      setError((prevError) => ({ ...prevError, email: 'Email is required' }));
+    if (!email || !password || password.length < 6) {
+      setError((prevError) => ({
+        ...prevError,
+        email: !email ? 'Email is required' : '', 
+        password: !password
+          ? 'Password is required'
+          : password.length < 6
+          ? 'Password must be at least 6 characters'
+          : '',
+      }));
       return;
     }
-    if (!password) {
-      setError((prevError) => ({ ...prevError, password: 'Password is required' }));
-      return;
-    }
+    
+    
 
     try {
       const response = await axios.post('https://vehware-dashboard.vercel.app/api/auth/signin', loginData, {
@@ -58,8 +65,19 @@ export function SignInForm(): React.JSX.Element {
 
       if (response.status === 200) {
         saveToLocalStorage('AdminloginData', response.data.data);
-        window.location.href = '/dashboard'; // Redirect after saving to local storage
+        Swal.fire({
+          title: "Successfully Created!",
+          text: "Thank You",
+          icon: "success",
+        }).then((result) => {
+          // Check if the user clicked 'OK'
+          if (result.isConfirmed) {
+            // Redirect after clicking 'OK'
+            window.location.href = '/dashboard'; 
+          }
+        });
       }
+      
     } catch (error: any) {
       // Improved error handling
       if (error.response?.data?.message === 'Invalid email or password') {
@@ -129,11 +147,11 @@ export function SignInForm(): React.JSX.Element {
               </Typography>
             )}
           </FormControl>
-          <div>
+          {/* <div>
             <Link component={RouterLink} href="/reset-password" variant="subtitle2">
               Forgot password?
             </Link>
-          </div>
+          </div> */}
           <Button type="submit" variant="contained" fullWidth sx={{ marginTop: 2 }}>
             Sign in
           </Button>
