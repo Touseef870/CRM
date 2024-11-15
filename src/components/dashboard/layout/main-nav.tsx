@@ -42,9 +42,21 @@ export function MainNav(): React.JSX.Element {
           </Stack>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
             {/* Button to open Sign-In Form */}
-            <Link href="/AddUsers" color="primary"  >
+
+            <Link
+              href="/AddUsers"
+              color="white"
+              sx={{
+                backgroundColor: 'blue', // Blue background
+                padding: '8px 16px', // Optional: Adds padding to the link
+                borderRadius: '4px', // Optional: Adds rounded corners
+                fontWeight: 'bold', // Optional: Makes the text bold
+                textDecoration: 'none', // Optional: Removes underline from the link
+              }}
+            >
               Add user
             </Link>
+
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
