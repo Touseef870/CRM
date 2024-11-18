@@ -90,7 +90,7 @@ export default function Employee(): React.JSX.Element {
             <CustomersTable
                 count={employ.length}
                 page={page}
-                rows={paginatedEmployees} // Only show paginated results
+                rows={paginatedEmployees} 
                 rowsPerPage={rowsPerPage}
             />
 
