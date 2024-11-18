@@ -41,27 +41,27 @@ export function SignInForm(): React.JSX.Element {
     const { email, password } = loginData;
 
     // Basic client-side validation
-    if (!email || !password || password.length < 6) {
-      setError((prevError) => ({
-        ...prevError,
-        email: !email ? 'Email is required' : '', 
-        password: !password
-          ? 'Password is required'
-          : password.length < 6
-          ? 'Password must be at least 6 characters'
-          : '',
-      }));
+    if (!email) {
+      setError((prevError) => ({ ...prevError, email: 'Email is required' }));
+      return;
+    }
+    if (!password) {
+      setError((prevError) => ({ ...prevError, password: 'Password is required' }));
       return;
     }
     
     
 
     try {
-      const response = await axios.post('https://vehware-dashboard.vercel.app/api/auth/signin', loginData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.post(
+        'https://vehware-dashboard.vercel.app/api/auth/signin',
+        loginData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (response.status === 200) {
         saveToLocalStorage('AdminloginData', response.data.data);
@@ -79,16 +79,18 @@ export function SignInForm(): React.JSX.Element {
       }
       
     } catch (error: any) {
-      // Improved error handling
+      // Handle error from API response
       if (error.response?.data?.message === 'Invalid email or password') {
+        // If both email and password are incorrect, show errors for both fields
         setError({
-          email: 'Invalid email',
-          password: 'Incorrect password',
+          email: 'Invalid email or password', // Show general error for both fields
+          password: 'Invalid email or password',
         });
       } else {
+        // If any other error occurs, display a general error for both fields
         setError({
-          email: 'email is incorrect. Please try again later.',
-          password: 'password is incorrect. Please try again later.',
+          email: 'An error occurred. Please try again later.',
+          password: 'An error occurred. Please try again later.',
         });
         console.error('Error during login:', error);
       }
@@ -117,6 +119,7 @@ export function SignInForm(): React.JSX.Element {
               </Typography>
             )}
           </FormControl>
+
           <FormControl fullWidth error={Boolean(error.password)}>
             <InputLabel>Password</InputLabel>
             <OutlinedInput
@@ -147,11 +150,11 @@ export function SignInForm(): React.JSX.Element {
               </Typography>
             )}
           </FormControl>
-          {/* <div>
+          <div>
             <Link component={RouterLink} href="/reset-password" variant="subtitle2">
               Forgot password?
             </Link>
-          </div> */}
+          </div>
           <Button type="submit" variant="contained" fullWidth sx={{ marginTop: 2 }}>
             Sign in
           </Button>
