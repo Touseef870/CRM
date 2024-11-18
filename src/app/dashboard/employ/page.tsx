@@ -1,14 +1,13 @@
 import React from 'react'
-import Employ from './employ'
+import Employee from './employee';
 import type { Metadata } from 'next';
 
-
-export const metadata = { title: `Employ | Dashboard ` } satisfies Metadata;
+export const metadata = { title: `Employee | Dashboard ` } satisfies Metadata;
 
 function page() {
   return (
     <>
-    <Employ />
+      <Employee />
     </>
   )
 }
