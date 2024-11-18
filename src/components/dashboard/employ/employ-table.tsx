@@ -11,12 +11,12 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
+import Link from 'next/link';
 
 function noop(): void {
   // do nothing
@@ -85,39 +85,41 @@ export function CustomersTable({
               const isSelected = selected?.has(row.id);
 
               return (
-                <TableRow hover key={row.id} selected={isSelected}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={isSelected}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          selectOne(row.id);
-                        } else {
-                          deselectOne(row.id);
-                        }
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
-                  </TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
-                </TableRow>
+                <Link href={`/dashboard/EmployeeDetails/${row.id}`} key={row.id} passHref legacyBehavior>
+                  <TableRow hover key={row.id} selected={isSelected}>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isSelected}
+                        onChange={(event) => {
+                          if (event.target.checked) {
+                            selectOne(row.id);
+                          } else {
+                            deselectOne(row.id);
+                          }
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
+                        <Avatar src={row.avatar} />
+                        <Typography variant="subtitle2">{row.name}</Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      {row.address.city}, {row.address.state}, {row.address.country}
+                    </TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
+                  </TableRow>
+                </Link>
               );
             })}
           </TableBody>
         </Table>
       </Box>
       <Divider />
-      
+
     </Card>
   );
 }

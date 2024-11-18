@@ -55,7 +55,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           width: 260,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 260,
+            width: 280,
             background: '#000', // Dark blue background
             color: '#ffffff', // White text
             padding: '16px',
@@ -72,10 +72,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       >
         <h2 className="text-2xl font-semibold text-white mb-6">Create Account</h2>
         <List sx={{ width: '100%' }}>
-          {[
-            { text: 'Create Sub-Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
+          {[{ text: 'Create Sub-Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
             { text: 'Create Employee', icon: <PersonAdd />, slug: 'create-employee' },
-            { text: 'Create Client', icon: <PersonSearch />, slug: 'craete-client' },
+            { text: 'Create Client', icon: <PersonSearch />, slug: 'create-client' }, // Fixed typo here
           ].map((item, index) => (
             <ListItem
               key={index}
