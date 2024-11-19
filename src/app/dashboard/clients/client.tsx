@@ -5,9 +5,9 @@ import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
-import { CustomersFilters } from '@/components/dashboard/employ/employ-filters';
-import { CustomersTable } from '@/components/dashboard/employ/employ-table';
-import type { Customer } from '@/components/dashboard/employ/employ-table';
+import { CustomersFilters } from '@/components/dashboard/client/client-filters';
+import { CustomersTable } from '@/components/dashboard/client/client-table';
+import type { Customer } from '@/components/dashboard/client/client-table';
 import { CircularProgress, TablePagination } from '@mui/material';
 import { Box } from '@mui/system';
 
@@ -25,13 +25,13 @@ export default function Employee(): React.JSX.Element {
                 setLoading(true);
                 setError(null);
                 const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-                const response = await axios.get("https://api-vehware-crm.vercel.app/api/credentials/employees", {
+                const response = await axios.get("https://api-vehware-crm.vercel.app/api/credentials/clients", {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
                     },
                 })
-                setEmploy(response.data.data.employees);
+                setEmploy(response.data.data.clients);
             } catch (err) {
                 setError('Failed to fetch customers.');
                 console.error(err);
@@ -93,7 +93,7 @@ export default function Employee(): React.JSX.Element {
         <Stack spacing={3}>
             <Stack direction="row" spacing={3}>
                 <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-                    <Typography variant="h4">Employ</Typography>
+                    <Typography variant="h4">Client</Typography>
                 </Stack>
             </Stack>
             <CustomersFilters onChange={(e) => handleFilterEmploy(e.target.value)} />

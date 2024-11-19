@@ -4,6 +4,7 @@ import React from 'react';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 // Interface for the form data
 interface FormData {
@@ -29,7 +30,7 @@ const UserForm: React.FC = () => {
 
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
         // send data to api using of axios
-        const res = axios.post('https://crm-api-backend.vercel.app/api/auth/signup', data, {
+        const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
@@ -37,8 +38,20 @@ const UserForm: React.FC = () => {
         })
         .then((res)=>{
             console.log(res.data)
+            Swal.fire({
+                title: "Success",
+                text: "Sub-Admin added successfully",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
         }).catch((e)=>{
             console.log(e)
+            Swal.fire({
+                title: "Error",
+                text: e.response.data.error,
+                icon: "error",
+                confirmButtonText: "OK",
+            })
         })
 
     };

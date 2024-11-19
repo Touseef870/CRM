@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
@@ -23,12 +23,17 @@ export interface UserPopoverProps {
   open: boolean;
 }
 
-export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { checkSession } = useUser();
+interface User {
+  name: string;
+  email: string;
+}
 
+export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
+  const [user, setUser] = useState<User | null>(null);
+  const { checkSession } = useUser();
   const router = useRouter();
 
-  const handleSignOut = React.useCallback(async (): Promise<void> => {
+  const handleSignOut = useCallback(async (): Promise<void> => {
     try {
       const { error } = await authClient.signOut();
 
@@ -40,13 +45,22 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       // Refresh the auth state
       await checkSession?.();
 
-      // UserProvider, for this case, will not refresh the router and we need to do it manually
+      // Refresh the router manually to reflect changes
       router.refresh();
-      // After refresh, AuthGuard will handle the redirect
     } catch (err) {
       logger.error('Sign out error', err);
     }
   }, [checkSession, router]);
+
+  useEffect(() => {
+    const fetchUser = () => {
+      const data = localStorage.getItem('AdminloginData');
+      if (data) {
+        setUser(JSON.parse(data));
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <Popover
@@ -56,14 +70,17 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       open={open}
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
-      <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Sofia Rivers</Typography>
+      <Box sx={{ p: '16px 20px' }}>
+        <Typography variant="subtitle1">{user?.name || 'Guest'}</Typography>
         <Typography color="text.secondary" variant="body2">
-          sofia.rivers@devias.io
+          {user?.email || 'No email available'}
         </Typography>
       </Box>
       <Divider />
-      <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>
+      <MenuList
+        disablePadding
+        sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}
+      >
         <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
           <ListItemIcon>
             <GearSixIcon fontSize="var(--icon-fontSize-md)" />

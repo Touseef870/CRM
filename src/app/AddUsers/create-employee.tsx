@@ -5,6 +5,7 @@ import { Container } from "@mui/system";
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import axios from "axios";
+import Swal from "sweetalert2";
 // Validation rules
 const validationRules = {
     email: {
@@ -100,7 +101,7 @@ const AddEmployeeForm = () => {
             console.log(data);
             const adminLoginData: string | null = localStorage.getItem('AdminloginData');
             // send data to api using of axios
-            const res = axios.post('https://crm-api-backend.vercel.app/api/auth/signup', data, {
+            const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
@@ -108,8 +109,20 @@ const AddEmployeeForm = () => {
             })
                 .then((res) => {
                     console.log(res.data)
+                    Swal.fire({
+                        title: "Success",
+                        text: "Employee added successfully",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                    });
                 }).catch((e) => {
                     console.log(e.response.data)
+                    Swal.fire({
+                        title: "Error",
+                        text: e.response.data.error,
+                        icon: "error",
+                        confirmButtonText: "OK",
+                    })
                 })
 
             reset();

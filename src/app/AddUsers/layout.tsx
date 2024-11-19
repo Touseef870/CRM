@@ -1,34 +1,52 @@
-'use client';
+'use client'
 
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { Dashboard, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
+import { Dashboard, Home, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMediaQuery, useTheme } from '@mui/material';
 
-// Define a prop type for children, which is a ReactNode
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const [open, setOpen] = useState(false); // State to control Drawer visibility
+  const [open, setOpen] = useState(false);
+  const [userType, setUserType] = useState<string | null>(null);
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg')); // Detect if screen is small
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
 
   const toggleDrawer = () => {
-    setOpen(!open); // Toggle Drawer visibility
+    setOpen(!open);
   };
 
   const handleListItemClick = () => {
     if (isSmallScreen) {
-      setOpen(false); // Close the drawer when a list item is clicked on small screens
+      setOpen(false);
     }
   };
 
+  useEffect(() => {
+    const adminData = JSON.parse(localStorage.getItem('AdminloginData') || '{}');
+    setUserType(adminData?.type || null);
+  }, []);
+
+  const menuItems = [
+    { text: 'Home', icon: <Home />, href: '/dashboard' }, // "Home" now links to the dashboard
+    { text: 'Create Sub-Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
+    { text: 'Create Employee', icon: <PersonAdd />, slug: 'create-employee' },
+    { text: 'Create Client', icon: <PersonSearch />, slug: 'create-client' },
+  ];
+
+  const filteredMenuItems =
+    userType === 'admin'
+      ? menuItems
+      : userType === 'employee'
+        ? menuItems.filter(item => item.slug === 'create-client')
+        : [];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Mobile Toggle Button */}
       {isSmallScreen && (
         <IconButton
           sx={{
@@ -38,9 +56,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             zIndex: 1000,
             color: '#fff',
             padding: '1rem',
-            backgroundColor: '#000', // Dark blue background
+            backgroundColor: '#000',
             '&:hover': {
-              backgroundColor: '#141414', // Dark blue background on hover
+              backgroundColor: '#141414',
             },
           }}
           onClick={toggleDrawer}
@@ -49,37 +67,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </IconButton>
       )}
 
-      {/* Sidebar with MUI Drawer */}
       <Drawer
         sx={{
           width: 260,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: 280,
-            background: '#000', // Dark blue background
-            color: '#ffffff', // White text
+            background: '#000',
+            color: '#ffffff',
             padding: '16px',
             boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
           },
         }}
-        variant={isSmallScreen ? 'temporary' : 'permanent'} // Make the drawer temporary on small screens
+        variant={isSmallScreen ? 'temporary' : 'permanent'}
         anchor="left"
         open={open}
-        onClose={toggleDrawer} // Close the drawer when clicked outside (for mobile)
+        onClose={toggleDrawer}
         ModalProps={{
-          keepMounted: true, // Better performance on mobile
+          keepMounted: true,
         }}
       >
         <h2 className="text-2xl font-semibold text-white mb-6">Create Account</h2>
         <List sx={{ width: '100%' }}>
-          {[{ text: 'Create Sub-Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
-            { text: 'Create Employee', icon: <PersonAdd />, slug: 'create-employee' },
-            { text: 'Create Client', icon: <PersonSearch />, slug: 'create-client' }, // Fixed typo here
-          ].map((item, index) => (
+          {filteredMenuItems.map((item, index) => (
             <ListItem
               key={index}
               component={Link}
-              href={`?slug=${item.slug}`} // Add slug as query parameter
+              href={item.href || `?slug=${item.slug}`} // Use href for Home and slug for others
               sx={{
                 '&:hover': {
                   transform: 'scale(1.03)',
@@ -92,7 +106,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 padding: '12px 16px',
                 boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
               }}
-              onClick={handleListItemClick} // Close the drawer on item click (on small screens)
+              onClick={handleListItemClick}
             >
               <ListItemIcon sx={{ color: '#0335fc' }}>
                 {item.icon}
@@ -102,7 +116,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 primaryTypographyProps={{
                   fontSize: '1rem',
                   fontWeight: 500,
-                  color: '#000', // Black text
+                  color: '#000',
                 }}
               />
             </ListItem>
@@ -110,7 +124,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </List>
       </Drawer>
 
-      {/* Main Content */}
       <div className="flex-1 p-6">
         <div className="bg-white p-6 shadow-lg rounded-lg">
           {children}
