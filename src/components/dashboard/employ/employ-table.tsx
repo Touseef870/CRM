@@ -23,13 +23,13 @@ function noop(): void {
 }
 
 export interface Customer {
-  id: string;
+  _id: string;
   avatar: string;
   name: string;
   email: string;
-  address: { city: string; state: string; country: string; street: string };
   phone: string;
-  createdAt: Date;
+  location: string;
+  salary: string;
 }
 
 interface CustomersTableProps {
@@ -46,7 +46,7 @@ export function CustomersTable({
   rowsPerPage = 0,
 }: CustomersTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((customer) => customer._id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -54,7 +54,9 @@ export function CustomersTable({
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
 
+  console.log("rows-->", rows)
   return (
+    // <div></div>
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: '800px' }}>
@@ -77,24 +79,24 @@ export function CustomersTable({
               <TableCell>Email</TableCell>
               <TableCell>Location</TableCell>
               <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
+              <TableCell>Salary</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => {
-              const isSelected = selected?.has(row.id);
+              const isSelected = selected?.has(row._id);
 
               return (
-                <Link href={`/dashboard/EmployeeDetails/${row.id}`} key={row.id} passHref legacyBehavior>
-                  <TableRow hover key={row.id} selected={isSelected}>
+                <Link href={`/dashboard/employ/${row._id}`} key={row._id} passHref legacyBehavior>
+                  <TableRow hover key={row._id} selected={isSelected} sx={{ cursor: 'pointer' }}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            selectOne(row.id);
+                            selectOne(row._id);
                           } else {
-                            deselectOne(row.id);
+                            deselectOne(row._id);
                           }
                         }}
                       />
@@ -107,13 +109,14 @@ export function CustomersTable({
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
-                      {row.address.city}, {row.address.state}, {row.address.country}
+                      {"Pakistan"}
                     </TableCell>
                     <TableCell>{row.phone}</TableCell>
-                    <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
+                    <TableCell>{row.salary}</TableCell>
                   </TableRow>
                 </Link>
               );
+
             })}
           </TableBody>
         </Table>

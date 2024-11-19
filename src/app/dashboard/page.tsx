@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { config } from '@/config';
 import { Budget } from '@/components/dashboard/overview/budget';
 import { LatestInvoice } from '@/components/dashboard/overview/latest-invoice';
+
 import { LatestEmploy } from '@/components/dashboard/overview/latest-employ';
 import { Sales } from '@/components/dashboard/overview/sales';
 import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
@@ -16,6 +17,9 @@ import { Traffic } from '@/components/dashboard/overview/traffic';
 export const metadata = { title: `Veh-ware | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
+
+
+
   return (
     <Grid container spacing={3}>
       <Grid lg={3} sm={6} xs={12}>
