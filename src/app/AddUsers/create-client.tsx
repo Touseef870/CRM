@@ -63,11 +63,7 @@ const ClientForm: React.FC = () => {
     });
 
     const onSubmit = (data: IFormInputs) => {
-        console.log(data);
-        // You can handle the form data here (e.g., submit to an API)
-
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-        // send data to api using of axios
         const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/create-client', data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -81,6 +77,7 @@ const ClientForm: React.FC = () => {
                     icon: "success",
                     confirmButtonText: "OK",
                 });
+                reset();  // Reset form after submission
             }).catch((e) => {
                 console.log(e.response.data)
                 Swal.fire({
@@ -89,7 +86,6 @@ const ClientForm: React.FC = () => {
                     confirmButtonText: "OK",
                 });
             })
-        reset();  // Reset form after submission
     };
 
     return (

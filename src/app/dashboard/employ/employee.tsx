@@ -25,6 +25,7 @@ export default function Employee(): React.JSX.Element {
                 setLoading(true);
                 setError(null);
                 const adminLoginData: string | null = localStorage.getItem('AdminloginData');
+                console.log(adminLoginData);
                 const response = await axios.get("https://api-vehware-crm.vercel.app/api/credentials/employees", {
                     headers: {
                         'Content-Type': 'application/json',

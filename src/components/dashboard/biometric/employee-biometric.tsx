@@ -1,69 +1,73 @@
-"use client"
+'use client'
 
-import { useState } from 'react';
-import EmployeeBiometricUpload from './EmployeeBiometricUpload';
+import React from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box } from '@mui/material';
 
-type EmployeeData = {
-  EmployeeID: string;
-  Name: string;
-  Attendance: string;
-  Timestamp: string;
-};
+interface EmployeeData {
+  employeeName: string;
+  managerName: string;
+  ratePerHour: string;
+  month: string;
+  weekData: {
+    date: string;
+    totalHours: string;
+    day: string;
+    timeIn1: string;
+    timeOut1: string;
+    timeIn2: string;
+    timeOut2: string;
+  }[]; // This is an array of objects representing each week's data
+}
 
-const EmployeeBiometric = () => {
-  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
-  const [uploadStatus, setUploadStatus] = useState<string>(''); // For upload status message
+interface EmployeeBiometricProps {
+  employeeData: EmployeeData | null;
+}
 
-  // Handle file upload success and update employee data
-  const handleFileUpload = (data: EmployeeData[]) => {
-    if (data.length === 0) {
-      setUploadStatus('No data found in the file!');
-    } else {
-      setEmployeeData(data);
-      setUploadStatus('Upload Successful');
-    }
-  };
+const EmployeeBiometric: React.FC<EmployeeBiometricProps> = ({ employeeData }) => {
+  if (!employeeData) {
+    return <div>Loading...</div>; // Show a loading message if data isn't available yet
+  }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Upload Employee Biometric Data</h1>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h4">{employeeData.employeeName}</Typography>
+      <Typography variant="h6">Manager: {employeeData.managerName}</Typography>
+      <Typography variant="body1">Rate per Hour: {employeeData.ratePerHour}</Typography>
+      <Typography variant="body1">Month: {employeeData.month}</Typography>
 
-      {/* File upload component */}
-      <EmployeeBiometricUpload onFileUpload={handleFileUpload} />
-
-      {/* Display upload status */}
-      {uploadStatus && (
-        <p className={`mt-4 text-lg ${uploadStatus.includes('Successful') ? 'text-green-500' : 'text-red-500'}`}>
-          {uploadStatus}
-        </p>
-      )}
-
-      <h2 className="mt-8 text-xl font-semibold">Employee Data</h2>
-      {employeeData.length === 0 ? (
-        <p>No employee data available to display.</p>
-      ) : (
-        <table className="table-auto w-full mt-4">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Employee ID</th>
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Attendance</th>
-              <th className="border px-4 py-2">Timestamp</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employeeData.map((row, index) => (
-              <tr key={index}>
-                <td className="border px-4 py-2">{row.EmployeeID}</td>
-                <td className="border px-4 py-2">{row.Name}</td>
-                <td className="border px-4 py-2">{row.Attendance}</td>
-                <td className="border px-4 py-2">{row.Timestamp}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+      {/* Display Weekly Breakdown */}
+      {employeeData.weekData.map((week, index) => (
+        <div key={index}>
+          <Typography variant="h6">{`Week ${index + 1} Breakdown`}</Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Day</TableCell>
+                  <TableCell>Time In 1</TableCell>
+                  <TableCell>Time Out 1</TableCell>
+                  <TableCell>Time In 2</TableCell>
+                  <TableCell>Time Out 2</TableCell>
+                  <TableCell>Total Hours</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{week.date}</TableCell>
+                  <TableCell>{week.day}</TableCell>
+                  <TableCell>{week.timeIn1}</TableCell>
+                  <TableCell>{week.timeOut1}</TableCell>
+                  <TableCell>{week.timeIn2}</TableCell>
+                  <TableCell>{week.timeOut2}</TableCell>
+                  <TableCell>{week.totalHours}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      ))}
+    </Box>
   );
 };
 
