@@ -4,7 +4,6 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -62,19 +61,7 @@ export function CustomersTable({
         <Table sx={{ minWidth: '800px' }}>
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedAll}
-                  indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
-                />
-              </TableCell>
+             
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Location</TableCell>
@@ -89,18 +76,7 @@ export function CustomersTable({
               return (
                 <Link href={`/dashboard/employ/${row._id}`} key={row._id} passHref legacyBehavior>
                   <TableRow hover key={row._id} selected={isSelected} sx={{ cursor: 'pointer' }}>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            selectOne(row._id);
-                          } else {
-                            deselectOne(row._id);
-                          }
-                        }}
-                      />
-                    </TableCell>
+                   
                     <TableCell>
                       <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
                         <Avatar src={row.avatar} />

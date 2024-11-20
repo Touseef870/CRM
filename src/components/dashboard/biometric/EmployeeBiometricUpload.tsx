@@ -1,68 +1,76 @@
-"use client";
+'use client'
 
-import { useState } from 'react';
-import * as XLSX from 'xlsx'; // Importing xlsx library to handle Excel file reading
+import React, { useState } from 'react';
+import * as XLSX from 'xlsx'; // Ensure you have this installed (npm install xlsx)
+import { Button, TextField, Typography, Box, Grid } from '@mui/material';
 
-type EmployeeData = {
-  EmployeeID: string;
-  Name: string;
-  Attendance: string;
-  Timestamp: string;
-};
+interface EmployeeData {
+  employeeName: string;
+  managerName: string;
+  ratePerHour: string;
+  month: string;
+  weekData: {
+    date: string;
+    totalHours: string;
+    day: string;
+    timeIn1: string;
+    timeOut1: string;
+    timeIn2: string;
+    timeOut2: string;
+  }[];
+}
 
-const EmployeeBiometricUpload = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [jsonData, setJsonData] = useState<EmployeeData[] | null>(null);
+interface FileUploadProps {
+  onFileUpload: (data: EmployeeData) => void;
+}
 
-  // Handle file input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-      const selectedFile = e.target.files[0];
-      if (selectedFile) {
-        readFileAsJson(selectedFile);
-      }
+const FileUploadComponent: React.FC<FileUploadProps> = ({ onFileUpload }) => {
+  const [fileName, setFileName] = useState<string>('');
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name); // Set file name
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          const data = e.target.result as ArrayBuffer;
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0]; // Assume the first sheet
+          const sheet = workbook.Sheets[sheetName];
+          const json: any[] = XLSX.utils.sheet_to_json(sheet);
+
+          // Mapping the Excel data to EmployeeData structure
+          const parsedData: EmployeeData = {
+            employeeName: json[0]?.EmployeeName ?? '',
+            managerName: json[0]?.ManagerName ?? '',
+            ratePerHour: json[0]?.RatePerHour ?? '',
+            month: json[0]?.Month ?? '',
+            weekData: json.map((week) => ({
+              date: week['Week Starting'],
+              totalHours: week['Hours Worked'],
+              day: week['Day'] ?? '',
+              timeIn1: week['Time In 1'] ?? '',
+              timeOut1: week['Time Out 1'] ?? '',
+              timeIn2: week['Time In 2'] ?? '',
+              timeOut2: week['Time Out 2'] ?? ''
+            })),
+          };
+
+          onFileUpload(parsedData); // Pass the parsed data to parent component
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
   };
 
-  // Function to read file and convert to JSON
-  const readFileAsJson = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      if (e.target?.result) {
-        const data = e.target.result as string;
-
-        // Use xlsx to read the file content
-        const workbook = XLSX.read(data, { type: 'binary' });
-        const sheetName = workbook.SheetNames[0]; // Assume we are reading the first sheet
-        const sheet = workbook.Sheets[sheetName];
-
-        // Convert sheet to JSON
-        const json: EmployeeData[] = XLSX.utils.sheet_to_json(sheet);
-        setJsonData(json);
-      }
-    };
-    reader.readAsBinaryString(file);
-  };
-
   return (
-    <div className="my-4">
-      <input
-        type="file"
-        accept=".xlsx, .xls"
-        onChange={handleFileChange}
-        className="mb-4"
-      />
-      
-      {/* Show the selected file's data in JSON format */}
-      {jsonData && (
-        <div className="mt-4">
-          <h3 className="text-xl font-semibold mb-2">Parsed Data (JSON):</h3>
-          <pre>{JSON.stringify(jsonData, null, 2)}</pre>
-        </div>
-      )}
+    <div>
+      <input type="file" accept=".xlsx" onChange={handleFileUpload} />
+      {fileName && <Typography variant="body1">File: {fileName}</Typography>}
     </div>
   );
 };
 
-export default EmployeeBiometricUpload;
+export default FileUploadComponent;
