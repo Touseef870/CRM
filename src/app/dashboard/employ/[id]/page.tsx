@@ -14,9 +14,11 @@ import {
     CircularProgress,
     Button,
     Snackbar,
-    Alert
+    Alert,
+    IconButton // Add IconButton import here
 } from "@mui/material";
 import { blueGrey, indigo, grey, teal } from "@mui/material/colors";
+import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 
 // Define Employee interface
 interface Employee {
@@ -161,6 +163,21 @@ export default function EmployeeDetails() {
                     </Typography>
                 </Grid>
 
+                {/* Delete Button */}
+                <Grid item xs={12}>
+                    <IconButton
+                        onClick={handleDelete}
+                        sx={{
+                            color: teal[700],
+                            "&:hover": {
+                                backgroundColor: teal[50],
+                            },
+                        }}
+                    >
+                        <DeleteIcon fontSize="large" />
+                    </IconButton>
+                </Grid>
+
                 <Grid item xs={12} sm={4} md={3}>
                     <Card
                         sx={{
@@ -261,25 +278,19 @@ export default function EmployeeDetails() {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        onClick={handleDelete}
-                    >
-                        Delete Employee
-                    </Button>
-                </Grid>
-            </Grid>
+                {deleteError && (
+                    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+                        {deleteError}
+                    </Typography>
+                )}
 
-            <Snackbar open={!!success} autoHideDuration={4000}>
-                <Alert severity="success">{success}</Alert>
-            </Snackbar>
-            <Snackbar open={!!deleteError} autoHideDuration={4000}>
-                <Alert severity="error">{deleteError}</Alert>
-            </Snackbar>
+                <Snackbar open={Boolean(success)} autoHideDuration={4000}>
+                    <Alert severity="success">{success}</Alert>
+                </Snackbar>
+                <Snackbar open={Boolean(deleteError)} autoHideDuration={4000}>
+                    <Alert severity="error">{deleteError}</Alert>
+                </Snackbar>
+            </Grid>
         </Box>
     );
 }
