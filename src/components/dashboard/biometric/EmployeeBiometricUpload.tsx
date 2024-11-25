@@ -8,6 +8,16 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 
+
+// Define the interface for a single formatted row
+interface FormattedData {
+  userId: string | number; // Assuming userId is either string or number
+  userType: string; // Assuming userType is a string
+  date: string; // Formatted date string
+  checkInTime: number; // Decimal value for check-in time
+  checkOutTime: number; // Decimal value for check-out time
+}
+
 interface UploadAndDisplayProps {
   onFileUpload: (data: any) => void; // Define the prop to send data back to parent
 }
@@ -60,8 +70,8 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
   };
 
   const handleSendData = async () => {
-    const formattedData = jsonData.map((row) => {
-      const checkInDecimal = row[2]; // Get the decimal value for check-in time
+    const formattedData: FormattedData[] = jsonData.map((row) => {
+            const checkInDecimal = row[2]; // Get the decimal value for check-in time
       const checkOutDecimal = row[3]; // Get the decimal value for check-out time
 
       // Log the decimal values to see what data is being passed
@@ -81,9 +91,20 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
       };
     });
 
-    console.log("jsonData---->", jsonData);
+    console.log("formattedData---->", formattedData);
 
-    const dataToSend = { attendanceObject: formattedData };
+
+
+     // Prepare data to send to the API
+  const dataToSend = {
+    date: formattedData[0].date , // Extract dates as an array
+    dailyRecords: formattedData.map((item) => {
+      // Send the rest of the data excluding the 'date'
+      const { date, ...rest } = item;
+      return rest;
+    }),
+  };
+
 
     // Use axios to send data to backend
     await axios
