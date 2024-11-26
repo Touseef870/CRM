@@ -1,13 +1,21 @@
 'use client'
 
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { Dashboard, Home, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
+import { ArrowBack, Dashboard, Home, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useMediaQuery, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+}
+
+interface MenuItem {
+  text: string;
+  icon: React.ReactNode;
+  slug: string;
+  href?: string;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
@@ -31,9 +39,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setUserType(adminData?.type || null);
   }, []);
 
-  const menuItems = [
-    { text: 'Home', icon: <Home />, href: '/dashboard' }, // "Home" now links to the dashboard
-    { text: 'Create Sub-Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
+  const menuItems: MenuItem[] = [
+    { text: 'Create Sub Admin', icon: <Dashboard />, slug: 'create-sub-admin' },
     { text: 'Create Employee', icon: <PersonAdd />, slug: 'create-employee' },
     { text: 'Create Client', icon: <PersonSearch />, slug: 'create-client' },
   ];
@@ -46,90 +53,146 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         : [];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div>
+    {/* Menu Icon for Mobile View */}
+    {isSmallScreen && (
+      <IconButton
+        sx={{
+          position: 'absolute',
+          top: 16,
+          left: 16,
+          zIndex: 1000,
+          color: '#fff',
+          padding: '1rem',
+          backgroundColor: 'transparent',
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+        }}
+        onClick={toggleDrawer}
+      >
+        <MenuIcon sx={{ color: '#fff', fontSize: '2rem' }} />
+      </IconButton>
+    )}
+
+    {/* Drawer Component */}
+    <Drawer
+      sx={{
+        width: 300,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: 350,
+          background: '#000',
+          color: '#ffffff',
+          padding: '16px',
+          boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
+        },
+      }}
+      variant={isSmallScreen ? 'temporary' : 'permanent'}
+      anchor="left"
+      open={open}
+      onClose={toggleDrawer}
+      ModalProps={{
+        keepMounted: true,
+      }}
+    >
+      {/* Close Icon for Mobile View */}
       {isSmallScreen && (
         <IconButton
           sx={{
-            position: 'relative',
-            top: 16,
-            left: 16,
-            zIndex: 1000,
+            position: 'absolute',
+            top: 26,
+            right: 22,
             color: '#fff',
-            padding: '1rem',
-            backgroundColor: '#000',
-            '&:hover': {
-              backgroundColor: '#141414',
-            },
+            zIndex: 1200,
           }}
           onClick={toggleDrawer}
         >
-          <MenuIcon sx={{ color: '#fff', fontSize: '2rem' }} />
+          <CloseIcon sx={{ fontSize: '2rem' }} />
         </IconButton>
       )}
 
-      <Drawer
-        sx={{
-          width: 260,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 280,
-            background: '#000',
-            color: '#ffffff',
-            padding: '16px',
-            boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
-          },
-        }}
-        variant={isSmallScreen ? 'temporary' : 'permanent'}
-        anchor="left"
-        open={open}
-        onClose={toggleDrawer}
-        ModalProps={{
-          keepMounted: true,
+      {/* Header with Back Arrow */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          marginBottom: '20px',
         }}
       >
-        <h2 className="text-2xl font-semibold text-white mb-6">Create Account</h2>
-        <List sx={{ width: '100%' }}>
-          {filteredMenuItems.map((item, index) => (
-            <ListItem
-              key={index}
-              component={Link}
-              href={item.href || `?slug=${item.slug}`} // Use href for Home and slug for others
-              sx={{
-                '&:hover': {
-                  transform: 'scale(1.03)',
-                  cursor: 'pointer',
-                },
-                transition: 'all 0.3s ease',
-                borderRadius: 2,
-                backgroundColor: '#fff',
-                mb: 2,
-                padding: '12px 16px',
-                boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
-              }}
-              onClick={handleListItemClick}
-            >
-              <ListItemIcon sx={{ color: '#0335fc' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontSize: '1rem',
-                  fontWeight: 500,
-                  color: '#000',
-                }}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-
-      <div className="flex-1 p-6">
-        <div className="bg-white p-6 shadow-lg rounded-lg">
-          {children}
-        </div>
+        <Link href="/dashboard">
+          <ArrowBack
+            sx={{
+              color: '#fff',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              marginTop: '5px',
+              '&:hover': {
+                color: '#0335fc',
+              },
+            }}
+          />
+        </Link>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: '700' }}>Create Account</h2>
       </div>
+
+      {/* Menu List */}
+      <List
+        sx={{
+          width: { xs: '80%', sm: '70%', md: '90%' },
+          margin: '0 auto',
+        }}
+      >
+        {filteredMenuItems.map((item, index) => (
+          <ListItem
+            key={index}
+            component={Link}
+            href={item.href || `?slug=${item.slug}`}
+            sx={{
+              '&:hover': {
+                transform: 'scale(1.03)',
+                cursor: 'pointer',
+              },
+              transition: 'all 0.3s ease',
+              borderRadius: 2,
+              backgroundColor: '#fff',
+              mb: 2,
+              padding: '16px 20px',
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onClick={toggleDrawer}
+          >
+            <ListItemIcon
+              sx={{
+                color: '#0335fc',
+                minWidth: '40px',
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={item.text}
+              primaryTypographyProps={{
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#000',
+              }}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Drawer>
+
+    {/* Main Content */}
+    <div className="flex-1 p-6">
+      <div>{children}</div>
     </div>
+  </div>
+  
   );
 };
 

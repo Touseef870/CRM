@@ -63,7 +63,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = Math.floor(totalMinutes % 60);
     const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 || 12; // Convert 24-hour format to 12-hour
+    const formattedHours = hours % 12 || 12;
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
@@ -71,109 +71,118 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
 
   const handleSendData = async () => {
     const formattedData: FormattedData[] = jsonData.map((row) => {
-            const checkInDecimal = row[2]; // Get the decimal value for check-in time
-      const checkOutDecimal = row[3]; // Get the decimal value for check-out time
+      const checkInDecimal = row[2];
+      const checkOutDecimal = row[3];
 
-      // Log the decimal values to see what data is being passed
-      console.log("Check-in decimal:", checkInDecimal);
-      console.log("Check-out decimal:", checkOutDecimal);
-
-      // Ensure the values are valid decimals before calling formatTime
       const checkInTime = checkInDecimal;
       const checkOutTime = checkOutDecimal;
 
       return {
-        userId: row[0], // Assuming 1st column is userId
-        userType: row[1], // Assuming 2nd column is userType
-        date: formatExcelDate(row[4]), // Format the date
+        userId: row[0],
+        userType: row[1],
+        date: formatExcelDate(row[4]),
         checkInTime: checkInTime,
         checkOutTime: checkOutTime,
       };
     });
 
-    console.log("formattedData---->", formattedData);
+    const dataToSend = {
+      date: formattedData[0].date,
+      dailyRecords: formattedData.map((item) => {
+        const { date, ...rest } = item;
+        return rest;
+      }),
+    };
 
 
-
-     // Prepare data to send to the API
-  const dataToSend = {
-    date: formattedData[0].date , // Extract dates as an array
-    dailyRecords: formattedData.map((item) => {
-      // Send the rest of the data excluding the 'date'
-      const { date, ...rest } = item;
-      return rest;
-    }),
-  };
-
-
-    // Use axios to send data to backend
     await axios
       .post("https://api-vehware-crm.vercel.app/api/attendance/add", dataToSend)
-      .then((response) => {
-        console.log("Data sent successfully:", response.data);
-        Swal.fire("Success", "Data sent successfully!", "success"); // Success SweetAlert
+      .then(async (response) => {
+        // Check if there are any failed records
+        const { unsaved, totalFailed } = await response.data.data;
+        console.log(unsaved, totalFailed)
+
+        if (totalFailed > 0) {
+          // Concatenate all error messages into a single string
+          const errorMessages = unsaved
+            .map(
+              (error: { userId: string; reason: string }) =>
+                `Failed to save attendance for userId ${error.userId}. Reason: ${error.reason}`
+            )
+
+
+          // Display all errors in one Swal pop-up
+          Swal.fire({
+            title: "Error",
+            text: errorMessages,
+            icon: "error",
+            showConfirmButton: true,
+          });
+        } else {
+          // All data is saved successfully
+          console.log("Data sent successfully:", response.data.data);
+          Swal.fire("Success", "All data sent successfully!", "success");
+        }
       })
       .catch((error) => {
         console.error("Error sending data:", error);
-        Swal.fire("Error", "Failed to send data. Please try again.", "error"); // Error SweetAlert
-
+        Swal.fire("Error", "Failed to send data. Please try again.", "error");
       });
 
-    console.log("Formatted Data to Send: ", JSON.stringify(dataToSend, null, 2));
   };
 
 
   return (
     <Box sx={{ p: 3, position: "relative" }}>
-    <Typography variant="h4" gutterBottom>
-      Upload Excel File
-    </Typography>
-    <Button variant="contained" component="label" sx={{ mb: 2 }}>
-      Upload File
-      <input
-        type="file"
-        accept=".xlsx, .xls"
-        hidden
-        onChange={handleFileUpload}
-      />
-    </Button>
+      <Typography variant="h4" gutterBottom>
+        Upload Excel File
+      </Typography>
+      <Button variant="contained" component="label" sx={{ mb: 2 }}>
+        Upload File
+        <input
+          type="file"
+          accept=".xlsx, .xls"
+          hidden
+          onChange={handleFileUpload}
+        />
+      </Button>
 
-    {jsonData.length > 0 && (
-      <>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSendData}
-          sx={{ position: "absolute", top: 16, right: 16 }}
-        >
-          Send Data
-        </Button>
+      {jsonData.length > 0 && (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSendData}
+            sx={{ position: "absolute", top: 16, right: 16 }}
+          >
+            Send Data
+          </Button>
 
-        <Grid container spacing={3}>
-          {jsonData.map((row, rowIndex) => (
-            <Grid item xs={12} sm={6} md={4} key={rowIndex}>
-              <Card>
-                <CardContent>
-                  {headers.map((header, colIndex) => (
-                    <Typography key={colIndex}>
-                      <strong>{header}:</strong>
-                      {header === "Date"
-                        ? formatExcelDate(row[colIndex])
-                        : header === "Check In Time" ||
-                          header === "Check Out Time"
-                        ? formatTime(row[colIndex])
-                        : row[colIndex] || "N/A"}
-                    </Typography>
-                  ))}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </>
-    )}
-  </Box>
-);
+          <Grid container spacing={3}>
+            {jsonData.map((row, rowIndex) => (
+              <Grid item xs={12} sm={6} md={4} key={rowIndex}>
+                <Card>
+                  <CardContent>
+                    {headers.map((header, colIndex) => (
+                      <Typography key={colIndex}>
+                        <strong>{header}:</strong>
+                        {header === "Date"
+                          ? formatExcelDate(row[colIndex])
+                          : header === "Check In Time" ||
+                            header === "Check Out Time"
+                            ? formatTime(row[colIndex])
+                            : row[colIndex] || "N/A"}
+                      </Typography>
+                    ))}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
+    </Box>
+  );
 };
 
 export default UploadAndDisplay;

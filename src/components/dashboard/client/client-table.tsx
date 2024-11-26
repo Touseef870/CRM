@@ -54,7 +54,6 @@ export function CustomersTable({
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
 
-  console.log("rows-->", rows)
   return (
     // <div></div>
     <Card>

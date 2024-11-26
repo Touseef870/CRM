@@ -69,7 +69,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
       <Divider />
       <List>
         {employData.map((employee, index) => (
-          <ListItem divider={index < employData.length - 1} key={employee.id}>
+          <ListItem divider={index < employData.length - 1} key={index}>
             <ListItemAvatar>
               {employee.image ? (
                 <Box
