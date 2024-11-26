@@ -23,17 +23,14 @@ function DashboardPage() {
       row[3] = formatTime(row[3]);
     });
     setEmployeeData(data); // Store the employee data from file upload
-    console.log("employeeData===>", data);
   };
 
   useEffect(() => {
-    console.log("employeeData===>", employeeData);
   }, [employeeData]);
 
   return (
     <React.Fragment>
       <UploadAndDisplay onFileUpload={handleFileUpload} />
-      {/* {employeeData && <EmployeeBiometric employeeData={employeeData} />} */}
     </React.Fragment>
   );
 

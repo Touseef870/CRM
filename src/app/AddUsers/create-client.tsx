@@ -89,25 +89,23 @@ const ClientForm: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 8 } }}>
+        <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 4 } }}>
             <Typography
                 variant="h4"
                 sx={{
                     fontWeight: 'bold',
-                    fontSize: { xs: '1.8rem', sm: '2.5rem' }, // Adjust font size based on screen size
-                    color: 'primary.main',
+                    fontSize: { xs: '1.8rem', sm: '3rem' }, // Adjust font size based on screen size
                     textAlign: 'center',
                     letterSpacing: '0.5px',
                     lineHeight: 1.2,
                     paddingBottom: 2,
-                    fontFamily: 'cursive',
-                    mb: 3,
+                    mb: 2,
                 }}
             >
                 Add Client
             </Typography>
 
-            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%',  display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <Controller
                     name="email"
                     control={control}

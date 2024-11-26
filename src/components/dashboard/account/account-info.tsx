@@ -31,13 +31,11 @@ export function AccountInfo(): React.JSX.Element {
     if (typeof window !== "undefined") {
       // Now it is safe to use localStorage in the browser
       const storedData = localStorage.getItem("AdminloginData");
-      console.log("Data", storedData)
       if (storedData) {
         setLoginData(JSON.parse(storedData)); // Parse and store the data
       }
     }
   }, []);
-  console.log(loginData)
   const { name, email, cnic, avatar } = loginData || {};
 
   return (

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Viewport } from 'next';
 
-import '@/styles/global.css';
+import '../styles/global.css';
 
 import { UserProvider } from '@/contexts/user-context';
 import { LocalizationProvider } from '@/components/core/localization-provider';
