@@ -52,45 +52,46 @@ export default function Page() {
 
   return (
     <Box
-    sx={{
-      height: '100vh',
-      position: 'relative', // Set the container as relative for layering
-   // Keep the background from overflowing
-    }}
-  >
-    {/* Blurred Background Image */}
-    <Box
       sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: 'url(https://img.freepik.com/premium-photo/question-mark-sticky-note-with-business-objects_220873-10267.jpg)', // Replace with your image URL
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        filter: 'blur(2px)', // Blur the background
-        zIndex: 1, // Layer it below the form
-      }}
-    />
-  
-    {/* Form Container */}
-    <Box
-      sx={{
-        position: 'relative',
-        zIndex: 8, // Ensure it sits above the background
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%', // Full height for alignment
-        overflow: 'auto', // Enable scrolling if content exceeds viewport
-        padding: '10px', // Add padding for better spacing
+        height: '100vh',
+        position: 'relative', // Set the container as relative for layering
+        // Keep the background from overflowing
       }}
     >
-      {renderForm()} {/* Render the form as it is */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: 'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)', // Replace with your image URL
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(0px)', // Blur the background
+          zIndex: 1, // Layer it below the form
+          opacity: 0.5, // Set the opacity of the background image (0.0 to 1.0)
+        }}
+      />
+
+
+      {/* Form Container */}
+      <Box
+        sx={{
+          position: 'relative',
+          zIndex: 8, // Ensure it sits above the background
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%', // Full height for alignment
+          overflow: 'auto', // Enable scrolling if content exceeds viewport
+          padding: '10px', // Add padding for better spacing
+        }}
+      >
+        {renderForm()} {/* Render the form as it is */}
+      </Box>
     </Box>
-  </Box>
-  
+
   );
-  
+
 }

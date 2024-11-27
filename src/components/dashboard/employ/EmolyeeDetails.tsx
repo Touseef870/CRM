@@ -19,6 +19,8 @@ import {
 } from "@mui/material";
 import { blueGrey, indigo, grey, teal } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
+import Swal from "sweetalert2";
+
 
 // Define Employee interface
 interface Employee {
@@ -105,15 +107,37 @@ export default function EmployeeDetails() {
                 }
             );
 
+            setLoading(false); // Stop loading indicator
             setSuccess("Employee deleted successfully.");
+            Swal.fire("Deleted!", "Employee deleted successfully.", "success");
             setTimeout(() => {
                 router.push("/dashboard/employ"); // Redirect to the employee list page
             }, 2000);
         } catch (err) {
+            setLoading(false); // Stop loading indicator
             setDeleteError(err instanceof Error ? err.message : "Failed to delete employee.");
+            Swal.fire("Error", err instanceof Error ? err.message : "Failed to delete employee.", "error");
         }
     };
 
+    const handleDeleteConfirmation = () => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to delete this employee? This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                handleDelete(); // Call the delete function if confirmed
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Cancelled", "Your employee is safe.", "info");
+            }
+        });
+    };
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -166,7 +190,7 @@ export default function EmployeeDetails() {
                 {/* Delete Button */}
                 <Grid item xs={12}>
                     <IconButton
-                        onClick={handleDelete}
+                        onClick={handleDeleteConfirmation}
                         sx={{
                             color: teal[700],
                             "&:hover": {

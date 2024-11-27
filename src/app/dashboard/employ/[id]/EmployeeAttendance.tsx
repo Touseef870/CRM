@@ -42,6 +42,8 @@ const AttendanceTable: React.FC = () => {
   const [editedCheckIn, setEditedCheckIn] = useState<string>(""); // Check-in time in modal
   const [editedCheckOut, setEditedCheckOut] = useState<string>(""); // Check-out time in modal
 
+  const getData = localStorage.getItem("AdminloginData");
+  let token = JSON.parse(getData!).token
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
@@ -50,6 +52,7 @@ const AttendanceTable: React.FC = () => {
           {
             headers: {
               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`
             },
           }
         );
@@ -96,7 +99,8 @@ const AttendanceTable: React.FC = () => {
         {
           headers: {
             "Content-Type": "application/json",
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 

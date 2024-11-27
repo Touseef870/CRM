@@ -14,7 +14,6 @@ import { CaretUpDown as CaretUpDownIcon } from '@phosphor-icons/react/dist/ssr/C
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
-import { Logo } from '@/components/core/logo';
 
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
@@ -50,18 +49,18 @@ export function SideNav(): React.JSX.Element {
         '&::-webkit-scrollbar': { display: 'none' },
       }}
     >
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-          {/* <Logo color="light" height={32} width={122} /> */}
-          <Typography
-            component="span"
-            sx={{ color: 'White', fontSize: '2rem', fontWeight: 500,fontFamily: 'cursive', lineHeight: '28px', textDecoration: 'none' }}
-          >
-            Vehware
-          </Typography>
-
+      <Stack spacing={8} sx={{ p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex', ml: 0 }}>
+          {/* Replacing "Vehware" text with logo image */}
+          <img
+            src="/assets/vehwarelogo.png" // Adjust the logo file name and path as needed
+            alt="Vehware Logo"
+            style={{ height: '72px', width: 'auto', maxWidth: '100px', objectFit: 'contain' }} // Increased width
+          />
         </Box>
       </Stack>
+
+
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
         {renderNavItems({ pathname, items: navItems })}
