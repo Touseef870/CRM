@@ -1,10 +1,12 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { IconButton, InputAdornment } from '@mui/material';
 
 // Interface for the form data
 interface FormData {
@@ -21,40 +23,56 @@ interface FormData {
 }
 
 const UserForm: React.FC = () => {
-    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
         mode: 'onBlur',
     });
 
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
     const onSubmit = (data: FormData) => {
         console.log(data); // Log the form data
-
+    
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-        // send data to api using of axios
-        const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
+    
+        data.type = "sub-admin";
+    
+        // Send data to API using axios
+        axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
             },
         })
-        .then((res)=>{
-            console.log(res.data)
+        .then((res) => {
+            console.log(res.data);
             Swal.fire({
                 title: "Success",
                 text: "Sub-Admin added successfully",
                 icon: "success",
                 confirmButtonText: "OK",
+            }).then(() => {
+                // Reset the form after the Swal confirmation
+                reset();
             });
-        }).catch((e)=>{
-            console.log(e)
+        })
+        .catch((e) => {
+            console.log(e);
             Swal.fire({
                 title: "Error",
-                text: e.response.data.error,
+                text: e.response?.data?.error || "An error occurred",
                 icon: "error",
                 confirmButtonText: "OK",
-            })
-        })
-
+            }).then(() => {
+                // Reset the form in case of error as well
+                reset();
+            });
+        });
     };
+    
 
     return (
         <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 8 } }}>
@@ -122,27 +140,49 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
-
                     {/* Password Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="password"
                             control={control}
                             rules={{
-                                required: 'Password is required',
-                                minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                                required: "Password is required",
+                                minLength: {
+                                    value: 8,
+                                    message: "Password must be at least 8 characters long",
+                                },
+                                pattern: {
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                                    message:
+                                        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                                },
                             }}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    label="Password"
-                                    fullWidth
-                                    variant="outlined"
-                                    type="password"
-                                    error={!!errors.password}
-                                    helperText={errors.password?.message}
-                                />
-                            )}
+                            render={({ field }) => {
+                                const [showPassword, setShowPassword] = React.useState(false);
+
+                                const handleTogglePassword = () => setShowPassword((prev) => !prev);
+
+                                return (
+                                    <TextField
+                                        {...field}
+                                        label="Password"
+                                        fullWidth
+                                        variant="outlined"
+                                        type={showPassword ? "text" : "password"} // Toggle between text and password
+                                        error={!!errors.password}
+                                        helperText={errors.password?.message}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton onClick={handleTogglePassword} edge="end">
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                );
+                            }}
                         />
                     </Grid>
 
@@ -259,11 +299,11 @@ const UserForm: React.FC = () => {
                         <Controller
                             name="type"
                             control={control}
+                            defaultValue="sub-admin" // Default value set to "sub-admin"
                             render={({ field }) => (
                                 <FormControl fullWidth>
                                     <InputLabel>Type</InputLabel>
-                                    <Select {...field} label="Type">
-                                        <MenuItem value="admin">Admin</MenuItem>
+                                    <Select {...field} label="Type" disabled> {/* Dropdown disabled */}
                                         <MenuItem value="sub-admin">Sub Admin</MenuItem>
                                     </Select>
                                 </FormControl>

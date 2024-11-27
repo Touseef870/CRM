@@ -59,19 +59,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <IconButton
         sx={{
           position: 'absolute',
-          top: 16,
+          top: 6,
           left: 16,
           zIndex: 1000,
           color: '#fff',
           padding: '1rem',
-          backgroundColor: 'transparent',
+          backgroundColor: 'black',
           '&:hover': {
-            backgroundColor: 'transparent',
+            backgroundColor: 'black',
           },
         }}
         onClick={toggleDrawer}
       >
-        <MenuIcon sx={{ color: '#fff', fontSize: '2rem' }} />
+        <MenuIcon sx={{ color: 'white', fontSize: '1rem' }} />
       </IconButton>
     )}
 

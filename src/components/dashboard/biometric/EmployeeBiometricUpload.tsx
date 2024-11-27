@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from "react";
@@ -6,8 +5,6 @@ import * as XLSX from "xlsx";
 import { Box, Button, Typography, Grid, Card, CardContent } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
-
-
 
 // Define the interface for a single formatted row
 interface FormattedData {
@@ -25,6 +22,8 @@ interface UploadAndDisplayProps {
 const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => {
   const [jsonData, setJsonData] = useState<any[]>([]); // Store parsed data
   const [headers, setHeaders] = useState<string[]>([]); // Store column headers
+  const getData = localStorage.getItem("AdminloginData");
+  let token = JSON.parse(getData!).token;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -56,13 +55,13 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
   const formatTime = (decimal: number) => {
     if (isNaN(decimal) || decimal < 0) {
       // Return a default value or handle invalid data
-      return 'Invalid Time';
+      return "Invalid Time";
     }
 
     const totalMinutes = decimal * 1440; // 1440 minutes in a day
     const hours = Math.floor(totalMinutes / 60);
     const minutes = Math.floor(totalMinutes % 60);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const ampm = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12;
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
@@ -94,43 +93,49 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
       }),
     };
 
-
-    await axios
-      .post("https://api-vehware-crm.vercel.app/api/attendance/add", dataToSend)
-      .then(async (response) => {
-        // Check if there are any failed records
-        const { unsaved, totalFailed } = await response.data.data;
-        console.log(unsaved, totalFailed)
-
-        if (totalFailed > 0) {
-          // Concatenate all error messages into a single string
-          const errorMessages = unsaved
-            .map(
-              (error: { userId: string; reason: string }) =>
-                `Failed to save attendance for userId ${error.userId}. Reason: ${error.reason}`
-            )
-
-
-          // Display all errors in one Swal pop-up
-          Swal.fire({
-            title: "Error",
-            text: errorMessages,
-            icon: "error",
-            showConfirmButton: true,
-          });
-        } else {
-          // All data is saved successfully
-          console.log("Data sent successfully:", response.data.data);
-          Swal.fire("Success", "All data sent successfully!", "success");
+    try {
+      const response = await axios.post(
+        "https://api-vehware-crm.vercel.app/api/attendance/add",
+        dataToSend,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error sending data:", error);
-        Swal.fire("Error", "Failed to send data. Please try again.", "error");
-      });
+      );
 
+      // Extract response data
+      const { unsaved, totalFailed } = response.data.data;
+
+      if (totalFailed > 0) {
+        // Concatenate all error messages into a single string
+        const errorMessages = unsaved
+          .map(
+            (error: any) =>
+              `Failed to save attendance for userId ${error.userId}. Reason: ${error.reason}`
+          )
+          .join("\n"); // Join all error messages into one string separated by newlines
+
+        // Display all errors in one Swal pop-up
+        Swal.fire({
+          title: "Error",
+          text: errorMessages,
+          icon: "error",
+          showConfirmButton: true,
+        });
+      } else {
+        // All data is saved successfully
+        console.log("Data sent successfully:", response.data.data);
+        Swal.fire("Success", "All data sent successfully!", "success");
+      }
+    } catch (error) {
+      console.error("Error sending data:", error);
+
+      // Display generic error message
+      Swal.fire("Error", "Failed to send data. Please try again.", "error");
+    }
   };
-
 
   return (
     <Box sx={{ p: 3, position: "relative" }}>
@@ -165,13 +170,13 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
                   <CardContent>
                     {headers.map((header, colIndex) => (
                       <Typography key={colIndex}>
-                        <strong>{header}:</strong>
+                        <strong>{header}:</strong>{" "}
                         {header === "Date"
                           ? formatExcelDate(row[colIndex])
                           : header === "Check In Time" ||
                             header === "Check Out Time"
-                            ? formatTime(row[colIndex])
-                            : row[colIndex] || "N/A"}
+                          ? formatTime(row[colIndex])
+                          : row[colIndex] || "N/A"}
                       </Typography>
                     ))}
                   </CardContent>
