@@ -43,9 +43,7 @@ to save more time and design efforts :)
 - Start the server: `npm run dev` or `yarn dev`
 - Open browser: `http://localhost:3000`
 
-## File Structure
 
-Within the download you'll find the following directories and files:
 
 ```
 ┌── .editorconfig
