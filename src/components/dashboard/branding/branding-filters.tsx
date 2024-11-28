@@ -23,7 +23,7 @@ export function CompaniesFilters({ onChange }: BrandsFiltersProps): React.JSX.El
             <MagnifyingGlassIcon fontSize="var(--icon-fontSize-md)" />
           </InputAdornment>
         }
-        sx={{ maxWidth: '500px' }}
+        sx={{ maxWidth: '300px' }}
       />
     </Card>
   );
