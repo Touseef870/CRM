@@ -23,7 +23,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
   const [jsonData, setJsonData] = useState<any[]>([]); // Store parsed data
   const [headers, setHeaders] = useState<string[]>([]); // Store column headers
   const getData = localStorage.getItem("AdminloginData");
-  let token = JSON.parse(getData!).token;
+  const token = JSON.parse(getData!).token;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -80,8 +80,8 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         userId: row[0],
         userType: row[1],
         date: formatExcelDate(row[4]),
-        checkInTime: checkInTime,
-        checkOutTime: checkOutTime,
+        checkInTime,
+        checkOutTime,
       };
     });
   

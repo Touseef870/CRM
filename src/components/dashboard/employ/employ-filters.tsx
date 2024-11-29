@@ -31,8 +31,7 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
   }, [inputValue, onResetData]);
 
   return (
-    <>
-      <OutlinedInput
+    <OutlinedInput
         value={inputValue}  // Bind the value to the state
         onChange={handleChange}  // Update the state when the input changes
         fullWidth
@@ -56,6 +55,5 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
           },
         }}
       />
-    </>
   );
 }

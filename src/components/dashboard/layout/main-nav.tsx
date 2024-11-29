@@ -36,7 +36,7 @@ export function MainNav(): React.JSX.Element {
         >
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
             <IconButton
-              onClick={() => setOpenNav(true)}
+              onClick={() => { setOpenNav(true); }}
               sx={{ display: { lg: 'none' } }}
             >
               <ListIcon />
@@ -99,7 +99,7 @@ export function MainNav(): React.JSX.Element {
 
       <UserPopover anchorEl={userPopover.anchorRef.current} onClose={userPopover.handleClose} open={userPopover.open} />
       <MobileNav
-        onClose={() => setOpenNav(false)}
+        onClose={() => { setOpenNav(false); }}
         open={openNav}
       />
     </React.Fragment>

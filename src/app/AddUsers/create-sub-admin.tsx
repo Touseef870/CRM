@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useState } from 'react';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography } from '@mui/material';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography , IconButton, InputAdornment } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { IconButton, InputAdornment } from '@mui/material';
+
 
 // Interface for the form data
 interface FormData {
@@ -109,7 +109,7 @@ const UserForm: React.FC = () => {
                                     label="Name"
                                     fullWidth
                                     variant="outlined"
-                                    error={!!errors.name}
+                                    error={Boolean(errors.name)}
                                     helperText={errors.name?.message}
                                 />
                             )}
@@ -134,7 +134,7 @@ const UserForm: React.FC = () => {
                                     label="Email"
                                     fullWidth
                                     variant="outlined"
-                                    error={!!errors.email}
+                                    error={Boolean(errors.email)}
                                     helperText={errors.email?.message}
                                 />
                             )}
@@ -160,7 +160,7 @@ const UserForm: React.FC = () => {
                             render={({ field }) => {
                                 const [showPassword, setShowPassword] = React.useState(false);
 
-                                const handleTogglePassword = () => setShowPassword((prev) => !prev);
+                                const handleTogglePassword = () => { setShowPassword((prev) => !prev); };
 
                                 return (
                                     <TextField
@@ -169,7 +169,7 @@ const UserForm: React.FC = () => {
                                         fullWidth
                                         variant="outlined"
                                         type={showPassword ? "text" : "password"} // Toggle between text and password
-                                        error={!!errors.password}
+                                        error={Boolean(errors.password)}
                                         helperText={errors.password?.message}
                                         InputProps={{
                                             endAdornment: (
@@ -193,14 +193,14 @@ const UserForm: React.FC = () => {
                             control={control}
                             rules={{ required: 'Gender is required' }}
                             render={({ field }) => (
-                                <FormControl fullWidth error={!!errors.gender}>
+                                <FormControl fullWidth error={Boolean(errors.gender)}>
                                     <InputLabel>Gender</InputLabel>
                                     <Select {...field} label="Gender">
                                         <MenuItem value="male">Male</MenuItem>
                                         <MenuItem value="female">Female</MenuItem>
                                         <MenuItem value="custom">Custom</MenuItem>
                                     </Select>
-                                    {errors.gender && <FormHelperText>{errors.gender?.message}</FormHelperText>}
+                                    {errors.gender ? <FormHelperText>{errors.gender?.message}</FormHelperText> : null}
                                 </FormControl>
                             )}
                         />
@@ -223,7 +223,7 @@ const UserForm: React.FC = () => {
                                     fullWidth
                                     variant="outlined"
                                     type="number"
-                                    error={!!errors.cnic}
+                                    error={Boolean(errors.cnic)}
                                     helperText={errors.cnic?.message}
                                 />
                             )}
@@ -246,7 +246,7 @@ const UserForm: React.FC = () => {
                                     fullWidth
                                     variant="outlined"
                                     type="number"
-                                    error={!!errors.phone}
+                                    error={Boolean(errors.phone)}
                                     helperText={errors.phone?.message}
                                 />
                             )}
@@ -266,7 +266,7 @@ const UserForm: React.FC = () => {
                                     fullWidth
                                     variant="outlined"
                                     type="number"
-                                    error={!!errors.salary}
+                                    error={Boolean(errors.salary)}
                                     helperText={errors.salary?.message}
                                 />
                             )}
@@ -286,7 +286,7 @@ const UserForm: React.FC = () => {
                                     fullWidth
                                     variant="outlined"
                                     type="date"
-                                    error={!!errors.dob}
+                                    error={Boolean(errors.dob)}
                                     helperText={errors.dob?.message}
                                     InputLabelProps={{ shrink: true }}
                                 />

@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -17,7 +18,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import { blueGrey, grey, teal } from "@mui/material/colors";
-import { useRouter } from "next/navigation";
 
 // Define Employee interface
 interface Employee {
@@ -36,7 +36,9 @@ interface Employee {
 }
 
 export default function EmployeeDetails() {
-  const { id } = useParams<{ id: string }>(); // Explicit typing for useParams
+  const params = useParams();
+  const id = params?.id; // Handle the case where `id` may be null
+
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter(); // To redirect after deletion
@@ -44,6 +46,12 @@ export default function EmployeeDetails() {
   const [deleteError, setDeleteError] = useState<string | null>(null); // For delete errors
 
   useEffect(() => {
+    if (!id) {
+      setError("Employee ID is missing.");
+      setLoading(false);
+      return;
+    }
+
     const fetchEmployee = async () => {
       try {
         const adminLoginData = localStorage.getItem("AdminloginData");
@@ -76,9 +84,7 @@ export default function EmployeeDetails() {
       }
     };
 
-    if (id) {
-      fetchEmployee();
-    }
+    fetchEmployee();
   }, [id]);
 
   const handleDelete = async () => {
@@ -115,6 +121,9 @@ export default function EmployeeDetails() {
     }
   };
 
+  if (loading) {
+    return <CircularProgress />;
+  }
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -280,11 +289,9 @@ export default function EmployeeDetails() {
           </Card>
         </Grid>
       </Grid>
-      {deleteError && (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+      {deleteError ? <Typography variant="body2" color="error" sx={{ mt: 2 }}>
           {deleteError}
-        </Typography>
-      )}
+        </Typography> : null}
     </Box>
   );
 }

@@ -16,7 +16,7 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
-const statusMap: { [key: string]: { label: string; color: 'default' | 'primary' | 'secondary' | 'error' } } = {
+const statusMap: Record<string, { label: string; color: 'default' | 'primary' | 'secondary' | 'error' }> = {
   pending: { label: 'Pending', color: 'primary' },
   delivered: { label: 'Delivered', color: 'secondary' },
   refunded: { label: 'Refunded', color: 'error' },
@@ -71,7 +71,7 @@ export function LatestInvoice({ orders = [], sx }: LatestOrdersProps): React.JSX
       </Box>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Link href={'/dashboard/invoice'}>
+        <Link href="/dashboard/invoice">
           <Button
             color="inherit"
             endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}

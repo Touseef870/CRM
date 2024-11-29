@@ -96,8 +96,8 @@ export default function Employee(): React.JSX.Element {
         </Stack>
       </Stack>
       <CustomersFilters
-        onChange={(e) => handleFilterEmploy(e.target.value)}
-        onResetData={() => setEmploy(originalEmployees)} // Reset data when input is cleared
+        onChange={(e) => { handleFilterEmploy(e.target.value); }}
+        onResetData={() => { setEmploy(originalEmployees); }} // Reset data when input is cleared
       />
       <CustomersTable
         count={employ.length}

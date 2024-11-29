@@ -1,10 +1,10 @@
 'use client'
 
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton , useMediaQuery, useTheme } from '@mui/material';
 import { ArrowBack, Dashboard, Home, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useMediaQuery, useTheme } from '@mui/material';
+
 import CloseIcon from '@mui/icons-material/Close';
 
 interface DashboardLayoutProps {
@@ -55,8 +55,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div>
     {/* Menu Icon for Mobile View */}
-    {isSmallScreen && (
-      <IconButton
+    {isSmallScreen ? <IconButton
         sx={{
           position: 'absolute',
           top: 6,
@@ -72,8 +71,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         onClick={toggleDrawer}
       >
         <MenuIcon sx={{ color: 'white', fontSize: '1rem' }} />
-      </IconButton>
-    )}
+      </IconButton> : null}
 
     {/* Drawer Component */}
     <Drawer
@@ -97,8 +95,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       }}
     >
       {/* Close Icon for Mobile View */}
-      {isSmallScreen && (
-        <IconButton
+      {isSmallScreen ? <IconButton
           sx={{
             position: 'absolute',
             top: 26,
@@ -109,8 +106,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           onClick={toggleDrawer}
         >
           <CloseIcon sx={{ fontSize: '2rem' }} />
-        </IconButton>
-      )}
+        </IconButton> : null}
 
       {/* Header with Back Arrow */}
       <div

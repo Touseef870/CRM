@@ -17,9 +17,7 @@ interface EmployeeBiometricProps {
 
 const EmployeeBiometric: React.FC<EmployeeBiometricProps> = ({ employeeData }) => {
   return (
-    <Grid container spacing={3}>
-     
-    </Grid>
+    <Grid container spacing={3} />
   );
 };
 
