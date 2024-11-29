@@ -26,6 +26,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
   const [userType, setUserType] = useState<string>('');
   const [employData, setEmployData] = useState<Employ[]>([]);
 
+
   useEffect(() => {
     const getUserType = () => {
       const adminData = localStorage.getItem('AdminloginData');
@@ -44,7 +45,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
       if (adminData) {
         try {
           const { token } = JSON.parse(adminData);
-          const response = await axios.get('https://crm-api-backend.vercel.app/api/credentials/employees', {
+          const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
@@ -52,7 +53,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
           });
           setEmployData(response.data.data.employees.slice(0, 4));
         } catch (error) {
-          console.error('Error fetching employee data:', error);
+          console.log('Error fetching employee data:', error);
         }
       }
     };

@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
 import { blue } from '@mui/material/colors';
 
@@ -54,11 +54,12 @@ export function AccountDetailsForm(): React.JSX.Element {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
-    const { name, value } = e.target as HTMLInputElement;
+    const { name, value } = e.target as HTMLInputElement | { name: string; value: string };
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

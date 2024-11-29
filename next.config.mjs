@@ -14,12 +14,10 @@ const nextConfig = {
         });
 
         // Optional: Resolve potential CSS handling issues in server-side rendering
-        if (!isServer) {
             config.resolve.fallback = {
                 ...config.resolve.fallback,
                 fs: false, // Avoids "fs" module errors
             };
-        }
 
         return config;
     },
