@@ -72,10 +72,10 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
     const formattedData: FormattedData[] = jsonData.map((row) => {
       const checkInDecimal = row[2];
       const checkOutDecimal = row[3];
-
+  
       const checkInTime = checkInDecimal;
       const checkOutTime = checkOutDecimal;
-
+  
       return {
         userId: row[0],
         userType: row[1],
@@ -84,7 +84,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         checkOutTime: checkOutTime,
       };
     });
-
+  
     const dataToSend = {
       date: formattedData[0].date,
       dailyRecords: formattedData.map((item) => {
@@ -92,7 +92,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         return rest;
       }),
     };
-
+  
     try {
       const response = await axios.post(
         "https://api-vehware-crm.vercel.app/api/attendance/add",
@@ -104,38 +104,46 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           },
         }
       );
-
+  
       // Extract response data
-      const { unsaved, totalFailed } = response.data.data;
-
-      if (totalFailed > 0) {
-        // Concatenate all error messages into a single string
-        const errorMessages = unsaved
-          .map(
-            (error: any) =>
-              `Failed to save attendance for userId ${error.userId}. Reason: ${error.reason}`
-          )
-          .join("\n"); // Join all error messages into one string separated by newlines
-
-        // Display all errors in one Swal pop-up
-        Swal.fire({
-          title: "Error",
-          text: errorMessages,
-          icon: "error",
-          showConfirmButton: true,
-        });
-      } else {
-        // All data is saved successfully
-        console.log("Data sent successfully:", response.data.data);
-        Swal.fire("Success", "All data sent successfully!", "success");
+      const { unsaved, saved } = response.data.data;
+  
+      // Prepare messages for successful and unsuccessful records
+      const successfulUsers = saved.map(
+        (success: any) => `User ID: ${success.userId}`
+      );
+      const failedUsers = unsaved.map(
+        (error: any) =>
+          `User ID: ${error.userId} - Reason: ${error.reason || "Employee not found"}`
+      );
+  
+      let alertMessage = "";
+  
+      if (successfulUsers.length > 0) {
+        alertMessage += `✅ **Attendance Added**\n${successfulUsers.join("\n")}\n\n`;
       }
+  
+      if (failedUsers.length > 0) {
+        alertMessage += `❌ **Failed to Add Attendance**\n${failedUsers.join("\n")}\n\n`;
+        alertMessage += `➡️ **Action Required**: Please add missing employees to the database and try again.`;
+      }
+  
+      // Display the result in a professional Swal alert
+      Swal.fire({
+        title: successfulUsers.length > 0 ? "Partial Success" : "Error",
+        html: `<pre>${alertMessage}</pre>`, // Use <pre> for better formatting
+        icon: successfulUsers.length > 0 ? "warning" : "error",
+        showConfirmButton: true,
+      });
     } catch (error) {
       console.error("Error sending data:", error);
-
+  
       // Display generic error message
       Swal.fire("Error", "Failed to send data. Please try again.", "error");
     }
   };
+  
+  
 
   return (
     <Box sx={{ p: 3, position: "relative" }}>
