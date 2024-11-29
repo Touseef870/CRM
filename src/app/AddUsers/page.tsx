@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import UserForm from './create-sub-admin';
 import { useSearchParams } from 'next/navigation';
 import AddEmployeeForm from './create-employee';
 import ClientForm from './create-client';
-import { Typography, Box, Paper } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -54,10 +54,10 @@ export default function Page() {
     <Box
       sx={{
         height: '100vh',
-        position: 'relative', // Set the container as relative for layering
-        // Keep the background from overflowing
+        position: 'relative',
       }}
     >
+      {/* Background Image */}
       <Box
         sx={{
           position: 'absolute',
@@ -65,7 +65,8 @@ export default function Page() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)', // Replace with your image URL
+          backgroundImage:
+            'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)', // Replace with your image URL
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(0px)', // Blur the background
@@ -73,7 +74,6 @@ export default function Page() {
           opacity: 0.5, // Set the opacity of the background image (0.0 to 1.0)
         }}
       />
-
 
       {/* Form Container */}
       <Box
@@ -88,10 +88,11 @@ export default function Page() {
           padding: '10px', // Add padding for better spacing
         }}
       >
-        {renderForm()} {/* Render the form as it is */}
+        {/* Wrap renderForm in Suspense */}
+        <Suspense fallback={<Typography>Loading...</Typography>}>
+          {renderForm()}
+        </Suspense>
       </Box>
     </Box>
-
   );
-
 }
