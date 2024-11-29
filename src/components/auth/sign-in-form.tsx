@@ -113,11 +113,9 @@ export function SignInForm(): React.JSX.Element {
               label="Email address"
               type="email"
             />
-            {error.email && (
-              <Typography variant="body2" color="error">
+            {error.email ? <Typography variant="body2" color="error">
                 {error.email}
-              </Typography>
-            )}
+              </Typography> : null}
           </FormControl>
 
           <FormControl fullWidth error={Boolean(error.password)}>
@@ -131,24 +129,22 @@ export function SignInForm(): React.JSX.Element {
                   <EyeIcon
                     cursor="pointer"
                     fontSize="var(--icon-fontSize-md)"
-                    onClick={() => setShowPassword(false)}
+                    onClick={() => { setShowPassword(false); }}
                   />
                 ) : (
                   <EyeSlashIcon
                     cursor="pointer"
                     fontSize="var(--icon-fontSize-md)"
-                    onClick={() => setShowPassword(true)}
+                    onClick={() => { setShowPassword(true); }}
                   />
                 )
               }
               label="Password"
               type={showPassword ? 'text' : 'password'}
             />
-            {error.password && (
-              <Typography variant="body2" color="error">
+            {error.password ? <Typography variant="body2" color="error">
                 {error.password}
-              </Typography>
-            )}
+              </Typography> : null}
           </FormControl>
           <div>
             <Link component={RouterLink} href="/reset-password" variant="subtitle2">

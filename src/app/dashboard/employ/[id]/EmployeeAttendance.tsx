@@ -34,7 +34,7 @@ interface AttendanceRow {
 }
 
 const AttendanceTable: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string | undefined }>();
   const [loading, setLoading] = useState<boolean>(true); // Track loading state
   const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -43,32 +43,36 @@ const AttendanceTable: React.FC = () => {
   const [editedCheckOut, setEditedCheckOut] = useState<string>(""); // Check-out time in modal
 
   const getData = localStorage.getItem("AdminloginData");
-  let token = JSON.parse(getData!).token
+  const token = JSON.parse(getData!).token;
+
   useEffect(() => {
-    const fetchAttendanceData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-vehware-crm.vercel.app/api/attendance/get/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`
-            },
-          }
-        );
-
-        // Ensure ISO format for all times
-        setAttendanceData(response.data.data.attendance || []);
-      } catch (err) {
-        console.error("Error fetching attendance data:", err);
-      } finally {
-        setLoading(false); // Stop loading after the request is done
-      }
-    };
-
-    fetchAttendanceData();
-  }, [id]);
-
+    if (id) {
+      const fetchAttendanceData = async () => {
+        try {
+          const response = await axios.get(
+            `https://api-vehware-crm.vercel.app/api/attendance/get/${id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          setAttendanceData(response.data.data.attendance || []);
+        } catch (err) {
+          console.error("Error fetching attendance data:", err);
+        } finally {
+          setLoading(false); // Stop loading after the request is done
+        }
+      };
+  
+      fetchAttendanceData();
+    } else {
+      console.error("No ID provided");
+    }
+  }, [id, token]);
+    
   const handleEdit = (row: AttendanceRow) => {
     setEditingRow(row); // Set row to edit
     setEditedCheckIn(moment(row.checkInTime).format("HH:mm")); // Populate modal fields
@@ -99,8 +103,8 @@ const AttendanceTable: React.FC = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -168,7 +172,6 @@ const AttendanceTable: React.FC = () => {
 
     }
   };
-
   const formattedAttendanceData = attendanceData.map((row) => ({
     ...row,
     date: moment(row.date).format("DD-MM-YYYY"), // ISO date to DD-MM-YYYY
@@ -179,6 +182,8 @@ const AttendanceTable: React.FC = () => {
       ? moment(row.checkOutTime, "HH:mm").format("hh:mm A")
       : "N/A",
   }));
+
+
   return (
     <Box sx={{ margin: "20px" }}>
       <Typography
@@ -247,7 +252,7 @@ const AttendanceTable: React.FC = () => {
                         variant="contained"
                         color="primary"
                         size="small"
-                        onClick={() => handleEdit(data)}
+                        onClick={() => { handleEdit(data); }}
                       >
                         Edit
                       </Button>
@@ -276,7 +281,7 @@ const AttendanceTable: React.FC = () => {
       {/* Modal for Editing Attendance */}
       <Dialog
         open={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={() => { setOpenModal(false); }}
         fullWidth
         maxWidth="sm" // Adjust modal size
         sx={{
@@ -295,7 +300,7 @@ const AttendanceTable: React.FC = () => {
               fullWidth
               value={moment(editedCheckIn, "hh:mm A").format("HH:mm")} // Convert to 24-hour format
               onChange={(e) =>
-                setEditedCheckIn(moment(e.target.value, "HH:mm").format("hh:mm A")) // Convert back to 12-hour format
+                { setEditedCheckIn(moment(e.target.value, "HH:mm").format("hh:mm A")); } // Convert back to 12-hour format
               }
               helperText="Select the time you checked in"
               variant="outlined"
@@ -321,7 +326,7 @@ const AttendanceTable: React.FC = () => {
               fullWidth
               value={moment(editedCheckOut, "hh:mm A").format("HH:mm")}
               onChange={(e) =>
-                setEditedCheckOut(moment(e.target.value, "hh:mm A").format("hh:mm A"))
+                { setEditedCheckOut(moment(e.target.value, "hh:mm A").format("hh:mm A")); }
               }
               helperText="Select the time you checked out"
               variant="outlined"
@@ -343,7 +348,7 @@ const AttendanceTable: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", gap: 2, mb: 2 }}>
-          <Button onClick={() => setOpenModal(false)} color="secondary" variant="outlined">
+          <Button onClick={() => { setOpenModal(false); }} color="secondary" variant="outlined">
             Cancel
           </Button>
           <Button onClick={handleSave} variant="contained" color="primary">

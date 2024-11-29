@@ -6,9 +6,7 @@ export const metadata = { title: `Employee | Dashboard ` } satisfies Metadata;
 
 function page() {
   return (
-    <>
-      <Employee />
-    </>
+    <Employee />
   )
 }
 

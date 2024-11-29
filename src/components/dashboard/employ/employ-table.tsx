@@ -84,7 +84,7 @@ export function CustomersTable({
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
-                      {"Pakistan"}
+                      Pakistan
                     </TableCell>
                     <TableCell>{row.phone}</TableCell>
                     <TableCell>{row.salary}</TableCell>

@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Plus as PlusIcon } from '@phosphor-icons/react';
 import axios from 'axios';
-import { BrandingCard, Integration } from '@/components/dashboard/branding/branding-card';
+import { BrandingCard, type Integration } from '@/components/dashboard/branding/branding-card';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 
 
@@ -98,7 +98,7 @@ export default function BrandingPage(): React.JSX.Element {
       <input
         type="text"
         placeholder="Search by brand name"
-        onChange={(e) => handleBrandEmploy(e.target.value)}
+        onChange={(e) => { handleBrandEmploy(e.target.value); }}
         style={{
           width: '100%',
           padding: '14px 20px 12px 40px', // Add padding for the icon

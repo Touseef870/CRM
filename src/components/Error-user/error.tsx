@@ -1,9 +1,9 @@
 import React from 'react';
 
 // Define the error props type
-type ErrorProps = {
+interface ErrorProps {
   errorMessage: string | null; // Can either be a string or null if no error
-};
+}
 
 const ErrorComponent: React.FC<ErrorProps> = ({ errorMessage }) => {
   // If no error message is passed, return null (nothing to show)

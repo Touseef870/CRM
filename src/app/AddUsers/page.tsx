@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import UserForm from './create-sub-admin';
 import { useSearchParams } from 'next/navigation';
 import AddEmployeeForm from './create-employee';
@@ -9,11 +9,15 @@ import { Typography, Box } from '@mui/material';
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const slug = searchParams.get('slug') || 'create-client';
+  const slug = searchParams?.get('slug') || 'create-client'; // Nullish coalescing to handle null
 
-  const adminData = localStorage.getItem('AdminloginData');
-  const parsedAdminData = adminData ? JSON.parse(adminData) : null;
-  const userType = parsedAdminData?.type;
+  const [userType, setUserType] = useState<string | null>(null);
+
+  useEffect(() => {
+    const adminData = localStorage.getItem('AdminloginData');
+    const parsedAdminData = adminData ? JSON.parse(adminData) : null;
+    setUserType(parsedAdminData?.type || null); // Set user type from localStorage
+  }, []);
 
   const renderForm = () => {
     if (userType === 'admin') {
@@ -34,17 +38,16 @@ export default function Page() {
     } else if (userType === 'employee') {
       if (slug === 'create-client' || !slug) {
         return <ClientForm />;
-      } else {
-        return (
-          <Typography
-            variant="h5"
-            color="textPrimary"
-            sx={{ textAlign: 'center', marginTop: '50px' }}
-          >
-            You don't have permission to view this page
-          </Typography>
-        );
       }
+      return (
+        <Typography
+          variant="h5"
+          color="textPrimary"
+          sx={{ textAlign: 'center', marginTop: '50px' }}
+        >
+          You don't have permission to view this page
+        </Typography>
+      );
     } else {
       return <div>Please log in to continue</div>;
     }

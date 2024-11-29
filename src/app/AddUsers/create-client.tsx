@@ -115,7 +115,7 @@ const ClientForm: React.FC = () => {
                             {...field}
                             label="Email"
                             variant="outlined"
-                            error={!!errors.email}
+                            error={Boolean(errors.email)}
                             helperText={errors.email?.message}
                             fullWidth
                         />
@@ -131,7 +131,7 @@ const ClientForm: React.FC = () => {
                             {...field}
                             label="Name"
                             variant="outlined"
-                            error={!!errors.name}
+                            error={Boolean(errors.name)}
                             helperText={errors.name?.message}
                             fullWidth
                         />
@@ -147,7 +147,7 @@ const ClientForm: React.FC = () => {
                             {...field}
                             label="Phone"
                             variant="outlined"
-                            error={!!errors.phone}
+                            error={Boolean(errors.phone)}
                             helperText={errors.phone?.message}
                             fullWidth
                         />
@@ -163,7 +163,7 @@ const ClientForm: React.FC = () => {
                             {...field}
                             label="Country"
                             variant="outlined"
-                            error={!!errors.country}
+                            error={Boolean(errors.country)}
                             helperText={errors.country?.message}
                             fullWidth
                         />
@@ -179,7 +179,7 @@ const ClientForm: React.FC = () => {
                             {...field}
                             label="Amount"
                             variant="outlined"
-                            error={!!errors.amount}
+                            error={Boolean(errors.amount)}
                             helperText={errors.amount?.message}
                             fullWidth
                             type="number"
@@ -197,14 +197,14 @@ const ClientForm: React.FC = () => {
                             <Select
                                 {...field}
                                 label="Service Type"
-                                error={!!errors.serviceType}
+                                error={Boolean(errors.serviceType)}
                             >
                                 <MenuItem value="website">Website</MenuItem>
                                 <MenuItem value="logo">Logo</MenuItem>
                             </Select>
                         )}
                     />
-                    {errors.serviceType && <FormHelperText error>{errors.serviceType?.message}</FormHelperText>}
+                    {errors.serviceType ? <FormHelperText error>{errors.serviceType?.message}</FormHelperText> : null}
                 </FormControl>
 
                 <Controller
@@ -220,7 +220,7 @@ const ClientForm: React.FC = () => {
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            error={!!errors.dob}
+                            error={Boolean(errors.dob)}
                             helperText={errors.dob?.message}
                             fullWidth
                         />

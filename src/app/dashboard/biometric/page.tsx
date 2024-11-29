@@ -29,9 +29,7 @@ function DashboardPage() {
   }, [employeeData]);
 
   return (
-    <React.Fragment>
-      <UploadAndDisplay onFileUpload={handleFileUpload} />
-    </React.Fragment>
+    <UploadAndDisplay onFileUpload={handleFileUpload} />
   );
 
 }

@@ -72,7 +72,7 @@ const validationRules = {
     },
 };
 
-type FormData = {
+interface FormData {
     email: string;
     password: string;
     name: string;
@@ -84,9 +84,9 @@ type FormData = {
     type: "employee";
     isDeleted?: boolean;
     addedBy: string;
-};
+}
 
-const AddEmployeeForm = () => {
+function AddEmployeeForm() {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
@@ -159,7 +159,7 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("email", validationRules.email)}
-                            error={!!errors.email}
+                            error={Boolean(errors.email)}
                             helperText={errors.email?.message}
                         />
                     </Grid>
@@ -172,13 +172,13 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("password", validationRules.password)}
-                            error={!!errors.password}
+                            error={Boolean(errors.password)}
                             helperText={errors.password?.message}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
-                                            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                                            onClick={() => { setShowPassword(!showPassword); }} // Toggle visibility
                                             edge="end"
                                             aria-label="toggle password visibility"
                                         >
@@ -201,7 +201,7 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("name", validationRules.name)}
-                            error={!!errors.name}
+                            error={Boolean(errors.name)}
                             helperText={errors.name?.message}
                         />
                     </Grid>
@@ -214,7 +214,7 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("phone", validationRules.phone)}
-                            error={!!errors.phone}
+                            error={Boolean(errors.phone)}
                             helperText={errors.phone?.message}
                         />
                     </Grid>
@@ -227,14 +227,14 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("cnic", validationRules.cnic)}
-                            error={!!errors.cnic}
+                            error={Boolean(errors.cnic)}
                             helperText={errors.cnic?.message}
                         />
                     </Grid>
 
                     {/* Gender Field */}
                     <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined" error={!!errors.gender}>
+                        <FormControl fullWidth variant="outlined" error={Boolean(errors.gender)}>
                             <InputLabel>Gender</InputLabel>
                             <Select
                                 label="Gender"
@@ -256,7 +256,7 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("salary", validationRules.salary)}
-                            error={!!errors.salary}
+                            error={Boolean(errors.salary)}
                             helperText={errors.salary?.message}
                         />
                     </Grid>
@@ -269,7 +269,7 @@ const AddEmployeeForm = () => {
                             fullWidth
                             variant="outlined"
                             {...register("dob", validationRules.dob)}
-                            error={!!errors.dob}
+                            error={Boolean(errors.dob)}
                             helperText={errors.dob?.message}
                             InputLabelProps={{ shrink: true }}
                         />
@@ -291,6 +291,6 @@ const AddEmployeeForm = () => {
             </form>
         </Container>
     );
-};
+}
 
 export default AddEmployeeForm;

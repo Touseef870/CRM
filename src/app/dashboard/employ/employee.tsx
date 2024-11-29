@@ -100,7 +100,7 @@ export default function Employee(): React.JSX.Element {
       </Stack>
 
       {/* Search filter */}
-      <CustomersFilters onChange={(e) => handleFilterEmploy(e.target.value)} />
+      <CustomersFilters onChange={(e) => { handleFilterEmploy(e.target.value); }} />
 
       {/* Employee table */}
       <CustomersTable

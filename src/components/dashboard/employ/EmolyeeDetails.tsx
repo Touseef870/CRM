@@ -302,11 +302,9 @@ export default function EmployeeDetails() {
                     </Card>
                 </Grid>
 
-                {deleteError && (
-                    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+                {deleteError ? <Typography variant="body2" color="error" sx={{ mt: 2 }}>
                         {deleteError}
-                    </Typography>
-                )}
+                    </Typography> : null}
 
                 <Snackbar open={Boolean(success)} autoHideDuration={4000}>
                     <Alert severity="success">{success}</Alert>
