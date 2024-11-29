@@ -1,5 +1,4 @@
 'use client';
-
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -15,12 +14,11 @@ import {
     Button,
     Snackbar,
     Alert,
-    IconButton // Add IconButton import here
+    IconButton
 } from "@mui/material";
 import { blueGrey, indigo, grey, teal } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2";
-
 
 // Define Employee interface
 interface Employee {
@@ -37,7 +35,7 @@ interface Employee {
 }
 
 export default function EmployeeDetails() {
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>() || {}; // Make sure to destructure it properly or set a fallback
     const router = useRouter(); // To redirect after deletion
     const [employee, setEmployee] = useState<Employee | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -138,6 +136,7 @@ export default function EmployeeDetails() {
             }
         });
     };
+
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
