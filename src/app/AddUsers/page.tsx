@@ -46,7 +46,7 @@ const renderEmployeeForm = (slug: string) => {
   if (slug === 'create-client' || !slug) {
     return <ClientForm />;
   }
-  return <Typography variant="h5" color="textPrimary" sx={{ textAlign: 'center', marginTop: '50px' }}>
+  return <Typography variant="h5" color="textPrimary" sx={{ textAlign: 'center', marginTop: '50px' }} >
     You don't have permission to view this page
   </Typography>;
 };
@@ -55,13 +55,13 @@ const renderEmployeeForm = (slug: string) => {
 const renderSubAdminForm = (slug: string) => {
   if (slug === 'create-employee') {
     return <AddEmployeeForm />;
-  } 
+  }
   return <ClientForm />;
 };
 
 export default function Page() {
   const [userType, setUserType] = useState<string | null>(null);
-
+  
   // UseEffect to handle user type fetching
   useEffect(() => {
     setUserType(getUserType());
@@ -72,11 +72,7 @@ export default function Page() {
     const searchParams = useSearchParams();
     const slug = searchParams?.get('slug') || 'create-client'; // Default slug
 
-    return (
-      <Suspense fallback={<Typography>Loading...</Typography>}>
-        {renderForm(userType, slug)}
-      </Suspense>
-    );
+    return renderForm(userType, slug);
   };
 
   return (
@@ -111,7 +107,10 @@ export default function Page() {
           padding: '10px',
         }}
       >
-        <FormContent />
+        {/* Wrap FormContent inside Suspense */}
+        <Suspense fallback={<Typography>Loading...</Typography>}>
+          <FormContent />
+        </Suspense>
       </Box>
     </Box>
   );
