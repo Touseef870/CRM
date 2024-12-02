@@ -61,20 +61,23 @@ const renderSubAdminForm = (slug: string) => {
 
 export default function Page() {
   const [userType, setUserType] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const slug = searchParams?.get('slug') || 'create-client'; // Default slug
 
-  // Get user type on mount
+  // UseEffect to handle user type fetching
   useEffect(() => {
     setUserType(getUserType());
   }, []);
 
   // Wrapper to manage rendering of the forms
-  const FormContent = () => (
-    <Suspense fallback={<Typography>Loading...</Typography>}>
-      {renderForm(userType, slug)}
-    </Suspense>
-  );
+  const FormContent = () => {
+    const searchParams = useSearchParams();
+    const slug = searchParams?.get('slug') || 'create-client'; // Default slug
+
+    return (
+      <Suspense fallback={<Typography>Loading...</Typography>}>
+        {renderForm(userType, slug)}
+      </Suspense>
+    );
+  };
 
   return (
     <Box sx={{ height: '100vh', position: 'relative' }}>
