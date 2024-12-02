@@ -1,0 +1,9 @@
+{
+    "build": {
+      "env": {
+        "IGNORE_ERRORS": "true"
+      },
+      "ignore": ["some-error-pattern"]
+    }
+  }
+  
