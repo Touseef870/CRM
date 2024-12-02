@@ -1,6 +1,6 @@
 'use client'
 
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton , useMediaQuery, useTheme } from '@mui/material';
 import { ArrowBack, Dashboard, Home, PersonAdd, PersonSearch, Menu as MenuIcon } from '@mui/icons-material';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -50,14 +50,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       ? menuItems
       : userType === 'employee'
         ? menuItems.filter(item => item.slug === 'create-client')
-        : userType === 'sub-admin'
-          ? menuItems.filter(item => item.slug !== 'create-sub-admin')
-          : [];
+        : [];
 
   return (
     <div>
-      {/* Menu Icon for Mobile View */}
-      {isSmallScreen ? <IconButton
+    {/* Menu Icon for Mobile View */}
+    {isSmallScreen ? <IconButton
         sx={{
           position: 'absolute',
           top: 6,
@@ -75,29 +73,29 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <MenuIcon sx={{ color: 'white', fontSize: '1rem' }} />
       </IconButton> : null}
 
-      {/* Drawer Component */}
-      <Drawer
-        sx={{
-          width: 300,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 350,
-            background: '#000',
-            color: '#ffffff',
-            padding: '16px',
-            boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
-          },
-        }}
-        variant={isSmallScreen ? 'temporary' : 'permanent'}
-        anchor="left"
-        open={open}
-        onClose={toggleDrawer}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        {/* Close Icon for Mobile View */}
-        {isSmallScreen ? <IconButton
+    {/* Drawer Component */}
+    <Drawer
+      sx={{
+        width: 300,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: 350,
+          background: '#000',
+          color: '#ffffff',
+          padding: '16px',
+          boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
+        },
+      }}
+      variant={isSmallScreen ? 'temporary' : 'permanent'}
+      anchor="left"
+      open={open}
+      onClose={toggleDrawer}
+      ModalProps={{
+        keepMounted: true,
+      }}
+    >
+      {/* Close Icon for Mobile View */}
+      {isSmallScreen ? <IconButton
           sx={{
             position: 'absolute',
             top: 26,
@@ -110,87 +108,87 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <CloseIcon sx={{ fontSize: '2rem' }} />
         </IconButton> : null}
 
-        {/* Header with Back Arrow */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '20px',
-            marginBottom: '20px',
-          }}
-        >
-          <Link href="/dashboard">
-            <ArrowBack
-              sx={{
-                color: '#fff',
-                fontSize: '1.5rem',
+      {/* Header with Back Arrow */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          marginBottom: '20px',
+        }}
+      >
+        <Link href="/dashboard">
+          <ArrowBack
+            sx={{
+              color: '#fff',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              marginTop: '5px',
+              '&:hover': {
+                color: '#0335fc',
+              },
+            }}
+          />
+        </Link>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: '700' }}>Create Account</h2>
+      </div>
+
+      {/* Menu List */}
+      <List
+        sx={{
+          width: { xs: '80%', sm: '70%', md: '90%' },
+          margin: '0 auto',
+        }}
+      >
+        {filteredMenuItems.map((item, index) => (
+          <ListItem
+            key={index}
+            component={Link}
+            href={item.href || `?slug=${item.slug}`}
+            sx={{
+              '&:hover': {
+                transform: 'scale(1.03)',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                marginTop: '5px',
-                '&:hover': {
-                  color: '#0335fc',
-                },
+              },
+              transition: 'all 0.3s ease',
+              borderRadius: 2,
+              backgroundColor: '#fff',
+              mb: 2,
+              padding: '16px 20px',
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onClick={toggleDrawer}
+          >
+            <ListItemIcon
+              sx={{
+                color: '#0335fc',
+                minWidth: '40px',
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={item.text}
+              primaryTypographyProps={{
+                fontSize: '1rem',
+                fontWeight: 500,
+                color: '#000',
               }}
             />
-          </Link>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: '700' }}>Create Account</h2>
-        </div>
+          </ListItem>
+        ))}
+      </List>
+    </Drawer>
 
-        {/* Menu List */}
-        <List
-          sx={{
-            width: { xs: '80%', sm: '70%', md: '90%' },
-            margin: '0 auto',
-          }}
-        >
-          {filteredMenuItems.map((item, index) => (
-            <ListItem
-              key={index}
-              component={Link}
-              href={item.href || `?slug=${item.slug}`}
-              sx={{
-                '&:hover': {
-                  transform: 'scale(1.03)',
-                  cursor: 'pointer',
-                },
-                transition: 'all 0.3s ease',
-                borderRadius: 2,
-                backgroundColor: '#fff',
-                mb: 2,
-                padding: '16px 20px',
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-              onClick={toggleDrawer}
-            >
-              <ListItemIcon
-                sx={{
-                  color: '#0335fc',
-                  minWidth: '40px',
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontSize: '1rem',
-                  fontWeight: 500,
-                  color: '#000',
-                }}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-
-      {/* Main Content */}
-      <div className="flex-1 p-6">
-        <div>{children}</div>
-      </div>
+    {/* Main Content */}
+    <div className="flex-1 p-6">
+      <div>{children}</div>
     </div>
-
+  </div>
+  
   );
 };
 
