@@ -14,7 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { ListItemIcon } from '@mui/material';
 
 export function MainNav(): React.JSX.Element {
-  const [openNav, setOpenNav] = React.useState<boolean>(false);
+  const [openNav, setOpenNav] = React.useState<any>(false);
   const userPopover = usePopover<HTMLDivElement>();
 
   return (

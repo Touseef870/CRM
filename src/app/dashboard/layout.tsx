@@ -7,11 +7,7 @@ import { AuthGuard } from '@/components/auth/auth-guard';
 import { MainNav } from '@/components/dashboard/layout/main-nav';
 import { SideNav } from '@/components/dashboard/layout/side-nav';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps): React.JSX.Element {
+export default function Layout({ children }: any): React.JSX.Element {
   return (
     <AuthGuard>
       <GlobalStyles
@@ -43,7 +39,7 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
               {children}
             </Container>
           </main>
-        </Box>
+        </Box>  
       </Box>
     </AuthGuard>
   );

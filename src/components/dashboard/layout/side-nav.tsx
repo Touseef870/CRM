@@ -70,7 +70,7 @@ export function SideNav(): React.JSX.Element {
   );
 }
 
-function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: string }): React.JSX.Element {
+function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: any }): React.JSX.Element {
   const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
     const { key, ...item } = curr;
 
