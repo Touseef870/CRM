@@ -7,64 +7,77 @@ import AddEmployeeForm from './create-employee';
 import ClientForm from './create-client';
 import { Typography, Box } from '@mui/material';
 
+// Function to get user type from localStorage
+const getUserType = () => {
+  const adminData = localStorage.getItem('AdminloginData');
+  return adminData ? JSON.parse(adminData).type : null;
+};
+
+// Function to render the correct form based on user type and slug
+const renderForm = (userType: string | null, slug: string) => {
+  switch (userType) {
+    case 'admin':
+      return renderAdminForm(slug);
+    case 'employee':
+      return renderEmployeeForm(slug);
+    case 'sub-admin':
+      return renderSubAdminForm(slug);
+    default:
+      return <Typography variant="h5" color="textPrimary">Please log in to continue</Typography>;
+  }
+};
+
+// Function to render forms for 'admin' user type
+const renderAdminForm = (slug: string) => {
+  switch (slug) {
+    case 'create-sub-admin':
+      return <UserForm />;
+    case 'create-employee':
+      return <AddEmployeeForm />;
+    case 'create-client':
+      return <ClientForm />;
+    default:
+      return <Typography variant="h5" color="textPrimary">Select a component from the layout</Typography>;
+  }
+};
+
+// Function to render forms for 'employee' user type
+const renderEmployeeForm = (slug: string) => {
+  if (slug === 'create-client' || !slug) {
+    return <ClientForm />;
+  }
+  return <Typography variant="h5" color="textPrimary" sx={{ textAlign: 'center', marginTop: '50px' }}>
+    You don't have permission to view this page
+  </Typography>;
+};
+
+// Function to render forms for 'sub-admin' user type
+const renderSubAdminForm = (slug: string) => {
+  if (slug === 'create-employee') {
+    return <AddEmployeeForm />;
+  } 
+  return <ClientForm />;
+};
+
 export default function Page() {
   const [userType, setUserType] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const slug = searchParams?.get('slug') || 'create-client'; // Default slug
 
+  // Get user type on mount
   useEffect(() => {
-    const adminData = localStorage.getItem('AdminloginData');
-    const parsedAdminData = adminData ? JSON.parse(adminData) : null;
-    setUserType(parsedAdminData?.type || null); // Set user type from localStorage
+    setUserType(getUserType());
   }, []);
 
-  // Suspense Boundary Component to handle useSearchParams()
-  const SearchParamsWrapper = () => {
-    const searchParams = useSearchParams();
-    const slug = searchParams?.get('slug') || 'create-client'; // Default slug
-    
-    const renderForm = () => {
-      if (userType === 'admin') {
-        switch (slug) {
-          case 'create-sub-admin':
-            return <UserForm />;
-          case 'create-employee':
-            return <AddEmployeeForm />;
-          case 'create-client':
-            return <ClientForm />;
-          default:
-            return (
-              <Typography variant="h5" color="textPrimary">
-                Select a component from the layout
-              </Typography>
-            );
-        }
-      } else if (userType === 'employee') {
-        if (slug === 'create-client' || !slug) {
-          return <ClientForm />;
-        }
-        return (
-          <Typography
-            variant="h5"
-            color="textPrimary"
-            sx={{ textAlign: 'center', marginTop: '50px' }}
-          >
-            You don't have permission to view this page
-          </Typography>
-        );
-      } else {
-        return <div>Please log in to continue</div>;
-      }
-    };
-
-    return renderForm();
-  };
+  // Wrapper to manage rendering of the forms
+  const FormContent = () => (
+    <Suspense fallback={<Typography>Loading...</Typography>}>
+      {renderForm(userType, slug)}
+    </Suspense>
+  );
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        position: 'relative',
-      }}
-    >
+    <Box sx={{ height: '100vh', position: 'relative' }}>
       {/* Background Image */}
       <Box
         sx={{
@@ -73,13 +86,12 @@ export default function Page() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage:
-            'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)', // Replace with your image URL
+          backgroundImage: 'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'blur(0px)', // Blur the background
-          zIndex: 1, // Layer it below the form
-          opacity: 0.5, // Set the opacity of the background image (0.0 to 1.0)
+          filter: 'blur(0px)',
+          zIndex: 1,
+          opacity: 0.5,
         }}
       />
 
@@ -87,19 +99,16 @@ export default function Page() {
       <Box
         sx={{
           position: 'relative',
-          zIndex: 8, // Ensure it sits above the background
+          zIndex: 8,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%', // Full height for alignment
-          overflow: 'auto', // Enable scrolling if content exceeds viewport
-          padding: '10px', // Add padding for better spacing
+          height: '100%',
+          overflow: 'auto',
+          padding: '10px',
         }}
       >
-        {/* Wrap SearchParamsWrapper in Suspense */}
-        <Suspense fallback={<Typography>Loading...</Typography>}>
-          <SearchParamsWrapper />
-        </Suspense>
+        <FormContent />
       </Box>
     </Box>
   );
