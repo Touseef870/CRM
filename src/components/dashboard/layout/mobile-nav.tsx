@@ -25,7 +25,7 @@ export interface MobileNavProps {
   items?: NavItemConfig[];
 }
 
-export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
+export function MobileNav({ open, onClose }: any): React.JSX.Element {
   const pathname = usePathname();
 
   return (
@@ -75,7 +75,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
   );
 }
 
-function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: string }): React.JSX.Element {
+function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: any }): React.JSX.Element {
   const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
     const { key, ...item } = curr;
 
@@ -91,11 +91,8 @@ function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pat
   );
 }
 
-interface NavItemProps extends Omit<NavItemConfig, 'items'> {
-  pathname: string;
-}
 
-function NavItem({ disabled, external, href, icon, matcher, pathname, title }: NavItemProps): React.JSX.Element {
+function NavItem({ disabled, external, href, icon, matcher, pathname, title }: any): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
 
