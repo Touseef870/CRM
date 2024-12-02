@@ -8,9 +8,6 @@ import ClientForm from './create-client';
 import { Typography, Box } from '@mui/material';
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const slug = searchParams?.get('slug') || 'create-client'; // Nullish coalescing to handle null
-
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,38 +16,46 @@ export default function Page() {
     setUserType(parsedAdminData?.type || null); // Set user type from localStorage
   }, []);
 
-  const renderForm = () => {
-    if (userType === 'admin') {
-      switch (slug) {
-        case 'create-sub-admin':
-          return <UserForm />;
-        case 'create-employee':
-          return <AddEmployeeForm />;
-        case 'create-client':
+  // Suspense Boundary Component to handle useSearchParams()
+  const SearchParamsWrapper = () => {
+    const searchParams = useSearchParams();
+    const slug = searchParams?.get('slug') || 'create-client'; // Default slug
+    
+    const renderForm = () => {
+      if (userType === 'admin') {
+        switch (slug) {
+          case 'create-sub-admin':
+            return <UserForm />;
+          case 'create-employee':
+            return <AddEmployeeForm />;
+          case 'create-client':
+            return <ClientForm />;
+          default:
+            return (
+              <Typography variant="h5" color="textPrimary">
+                Select a component from the layout
+              </Typography>
+            );
+        }
+      } else if (userType === 'employee') {
+        if (slug === 'create-client' || !slug) {
           return <ClientForm />;
-        default:
-          return (
-            <Typography variant="h5" color="textPrimary">
-              Select a component from the layout
-            </Typography>
-          );
+        }
+        return (
+          <Typography
+            variant="h5"
+            color="textPrimary"
+            sx={{ textAlign: 'center', marginTop: '50px' }}
+          >
+            You don't have permission to view this page
+          </Typography>
+        );
+      } else {
+        return <div>Please log in to continue</div>;
       }
-    } else if (userType === 'employee') {
-      if (slug === 'create-client' || !slug) {
-        return <ClientForm />;
-      }
-      return (
-        <Typography
-          variant="h5"
-          color="textPrimary"
-          sx={{ textAlign: 'center', marginTop: '50px' }}
-        >
-          You don't have permission to view this page
-        </Typography>
-      );
-    } else {
-      return <div>Please log in to continue</div>;
-    }
+    };
+
+    return renderForm();
   };
 
   return (
@@ -91,9 +96,9 @@ export default function Page() {
           padding: '10px', // Add padding for better spacing
         }}
       >
-        {/* Wrap renderForm in Suspense */}
+        {/* Wrap SearchParamsWrapper in Suspense */}
         <Suspense fallback={<Typography>Loading...</Typography>}>
-          {renderForm()}
+          <SearchParamsWrapper />
         </Suspense>
       </Box>
     </Box>
