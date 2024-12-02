@@ -15,24 +15,14 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
-import { Controller, useForm } from 'react-hook-form';
-import { z as zod } from 'zod';
-
-import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
-import { useUser } from '@/hooks/use-user';
-
-const schema = zod.object({
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(1, { message: 'Password is required' }),
-});
-
-type Values = zod.infer<typeof schema>;
-
-const defaultValues = { email: 'sofia@devias.io', password: 'Secret1' } satisfies Values;
+import Swal from 'sweetalert2';
+import useProfile from '@/hooks/use-profile';
 
 export function SignInForm(): React.JSX.Element {
-  const router = useRouter();
+  const {setProfile} = useProfile();
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [error, setError] = useState<{ email?: string; password?: string }>({});
 
   const { checkSession } = useUser();
 
@@ -51,12 +41,20 @@ export function SignInForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signInWithPassword(values);
-
-      if (error) {
-        setError('root', { type: 'server', message: error });
-        setIsPending(false);
-        return;
+      if (response.status === 200) {
+        saveToLocalStorage('AdminloginData', response.data.data);
+        setProfile(response.data.data)
+        Swal.fire({
+          title: "Successfully Created!",
+          text: "Thank You",
+          icon: "success",
+        }).then((result) => {
+          // Check if the user clicked 'OK'
+          if (result.isConfirmed) {
+            // Redirect after clicking 'OK'
+            window.location.href = '/dashboard'; 
+          }
+        });
       }
 
       // Refresh the auth state

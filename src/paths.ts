@@ -7,7 +7,15 @@ export const paths = {
     employ: '/dashboard/employ',
     branding: '/dashboard/branding',
     settings: '/dashboard/settings',
-    invoice : '/dashboard/invoice'
+    invoice : '/dashboard/invoice',
+    client : '/dashboard/clients',
+    biometric : '/dashboard/biometric',
+
+    subadmin : '/dashboard/subadmin',
+
+    
+
+
   },
   errors: { notFound: '/errors/not-found' },
 } as const;
