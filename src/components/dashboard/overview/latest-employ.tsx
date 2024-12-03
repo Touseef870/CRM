@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, Card, CardActions, CardHeader, Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react';
@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
+import { AppContext } from '@/contexts/isLogin';
 
 export interface Employ {
   id: string;
@@ -27,14 +28,15 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
   const [userType, setUserType] = useState<string>('');
   const [employData, setEmployData] = useState<Employ[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { storedValue } = useContext(AppContext)!;
 
 
   useEffect(() => {
     const getUserType = () => {
-      const adminData = localStorage.getItem('AdminloginData');
+      const adminData = storedValue;
       if (adminData) {
         try {
-          const parsedData = JSON.parse(adminData);
+          const parsedData = adminData;
           setUserType(parsedData.type || '');
         } catch (error) {
           setLoading(false)
@@ -44,10 +46,10 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
     };
 
     const fetchEmployData = async () => {
-      const adminData = localStorage.getItem('AdminloginData');
+      const adminData = storedValue;
       if (adminData) {
         try {
-          const { token } = JSON.parse(adminData);
+          const { token } = adminData;
           const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
             headers: {
               'Content-Type': 'application/json',
