@@ -11,7 +11,7 @@ import {
     Grid,
     Divider,
     CircularProgress,
-    
+
     Snackbar,
     Alert,
     IconButton
@@ -19,6 +19,7 @@ import {
 import { blueGrey, indigo, grey, teal } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2";
+import { FiTrash } from 'react-icons/fi'; // Import the trash icon
 
 // Define Employee interface
 interface Employee {
@@ -168,6 +169,7 @@ export default function EmployeeDetails() {
     return (
         <Box sx={{ p: 4, backgroundColor: grey[100] }}>
             <Grid container spacing={4} maxWidth="lg">
+                {/* Title Section */}
                 <Grid item xs={12}>
                     <Typography
                         variant="h4"
@@ -179,7 +181,8 @@ export default function EmployeeDetails() {
                             color: teal[700],
                             textTransform: 'uppercase',
                             letterSpacing: '2px',
-                            margin: '0 auto'
+                            margin: '0 auto',
+                            mb: 3
                         }}
                     >
                         Employee Details
@@ -195,13 +198,15 @@ export default function EmployeeDetails() {
                             "&:hover": {
                                 backgroundColor: teal[50],
                             },
+                            marginBottom: 2
                         }}
                     >
-                        <DeleteIcon fontSize="large" />
+                        <FiTrash size={24} />
                     </IconButton>
                 </Grid>
 
-                <Grid item xs={12} sm={4} md={3}>
+                {/* Avatar and Name Section */}
+                <Grid item xs={12} sm={6} md={4}>
                     <Card
                         sx={{
                             display: "flex",
@@ -240,6 +245,7 @@ export default function EmployeeDetails() {
                                 fontWeight: 600,
                                 color: teal[800],
                                 textTransform: "capitalize",
+                                marginBottom: 1,
                             }}
                         >
                             {employee.name}
@@ -250,7 +256,8 @@ export default function EmployeeDetails() {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={8} md={9}>
+                {/* Personal Information Section */}
+                <Grid item xs={12} sm={6} md={8}>
                     <Card sx={{ boxShadow: 4, borderRadius: 3, backgroundColor: "#ffffff" }}>
                         <CardContent>
                             <Typography
@@ -260,12 +267,13 @@ export default function EmployeeDetails() {
                                     fontFamily: "'Poppins', sans-serif",
                                     fontWeight: 600,
                                     color: teal[700],
+                                    marginBottom: 2,
                                 }}
                             >
                                 Personal Information
                             </Typography>
                             <Divider sx={{ mb: 3, backgroundColor: grey[300] }} />
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} sx={{ mb: 2 }}>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
                                         <strong>CNIC:</strong> {employee.cnic}
@@ -277,7 +285,7 @@ export default function EmployeeDetails() {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                    <Typography variant="body1" sx={{ color: grey[700], textWrap: "wrap" }}>
                                         <strong>Email:</strong> {employee.email}
                                     </Typography>
                                 </Grid>
@@ -301,9 +309,12 @@ export default function EmployeeDetails() {
                     </Card>
                 </Grid>
 
-                {deleteError ? <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+                {/* Error / Success Message */}
+                {deleteError ? (
+                    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
                         {deleteError}
-                    </Typography> : null}
+                    </Typography>
+                ) : null}
 
                 <Snackbar open={Boolean(success)} autoHideDuration={4000}>
                     <Alert severity="success">{success}</Alert>
@@ -313,5 +324,7 @@ export default function EmployeeDetails() {
                 </Snackbar>
             </Grid>
         </Box>
+
+
     );
 }

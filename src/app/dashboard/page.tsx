@@ -48,48 +48,6 @@ export default function Page(): React.JSX.Element {
       </Grid> */}
       <Grid lg={4} md={6} xs={12}>
         <LatestEmploy
-          employ={[
-            {
-              id: 'EMP-005',
-              name: 'John Doe',
-              position: 'Software Engineer',
-              department: 'Development',
-              image: '/assets/avatar-10.png',
-              lastUpdated: dayjs().subtract(18, 'minutes').subtract(5, 'hour').toDate(),
-            },
-            {
-              id: 'EMP-004',
-              name: 'Jane Smith',
-              position: 'Product Manager',
-              department: 'Product',
-              image: '/assets/avatar-9.png',
-              lastUpdated: dayjs().subtract(41, 'minutes').subtract(3, 'hour').toDate(),
-            },
-            {
-              id: 'EMP-003',
-              name: 'Michael Johnson',
-              position: 'UI/UX Designer',
-              department: 'Design',
-              image: '/assets/avatar-8.png',
-              lastUpdated: dayjs().subtract(5, 'minutes').subtract(3, 'hour').toDate(),
-            },
-            {
-              id: 'EMP-002',
-              name: 'Emily Davis',
-              position: 'Marketing Specialist',
-              department: 'Marketing',
-              image: '/assets/avatar-7.png',
-              lastUpdated: dayjs().subtract(23, 'minutes').subtract(2, 'hour').toDate(),
-            },
-            {
-              id: 'EMP-001',
-              name: 'David Wilson',
-              position: 'Chief Executive Officer',
-              department: 'Executive',
-              image: '/assets/avatar-6.png',
-              lastUpdated: dayjs().subtract(10, 'minutes').toDate(),
-            },
-          ]}
           sx={{ height: '100%' }}
         />
       </Grid>

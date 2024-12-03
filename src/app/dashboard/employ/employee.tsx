@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -9,6 +9,7 @@ import { Box } from '@mui/system';
 import { CustomersFilters } from '@/components/dashboard/employ/employ-filters';
 import { CustomersTable } from '@/components/dashboard/employ/employ-table';
 import type { Customer } from '@/components/dashboard/employ/employ-table';
+import { AppContext } from '@/contexts/isLogin';
 
 export default function Employee(): React.JSX.Element {
   const [page, setPage] = useState(0);
@@ -17,18 +18,18 @@ export default function Employee(): React.JSX.Element {
   const [filteredEmploy, setFilteredEmploy] = useState<Customer[]>([]); // For filtered list
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { storedValue } = useContext(AppContext)!;
 
-  // Fetch employees from API
+
   useEffect(() => {
     async function fetchCustomers() {
       try {
         setLoading(true);
         setError(null);
-        const adminLoginData: string | null = localStorage.getItem('AdminloginData');
         const response = await axios.get("https://api-vehware-crm.vercel.app/api/credentials/employees", {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
+            'Authorization': `Bearer ${storedValue.token}`,
           },
         });
         setEmploy(response.data.data.employees);
@@ -49,8 +50,8 @@ export default function Employee(): React.JSX.Element {
     const filtered = value.trim() === ""
       ? employ // If search value is empty, show all employees
       : employ.filter((customer) =>
-          customer.name.toLowerCase().includes(value.toLowerCase())
-        );
+        customer.name.toLowerCase().includes(value.toLowerCase())
+      );
     setFilteredEmploy(filtered); // Update filtered list
     setPage(0); // Reset pagination to the first page
   };
