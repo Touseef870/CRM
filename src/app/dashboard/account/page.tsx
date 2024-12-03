@@ -18,10 +18,10 @@ export default function Page(): React.JSX.Element {
         <Typography
           variant="h4"
           sx={{
-            textAlign: 'center', // Center the title
-            color: blue[800], // Apply blue[800] color
-            fontSize: '2.5rem', // Adjusted the font size
-            fontWeight: 'bold', // Bold font for prominence
+            textAlign: 'center', 
+            color: blue[800], 
+            fontSize: '2.5rem', 
+            fontWeight: 'bold', 
           }}
         >
           Account

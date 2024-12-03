@@ -51,11 +51,11 @@ export function SideNav(): React.JSX.Element {
     >
       <Stack spacing={8} sx={{ p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex', ml: 0 }}>
-          {/* Replacing "Vehware" text with logo image */}
+        
           <img
-            src="/assets/vehwarelogo.png" // Adjust the logo file name and path as needed
+            src="/assets/vehwarelogo.png" 
             alt="Vehware Logo"
-            style={{ height: '72px', width: 'auto', maxWidth: '100px', objectFit: 'contain' }} // Increased width
+            style={{ height: '72px', width: 'auto', maxWidth: '100px', objectFit: 'contain' }} 
           />
         </Box>
       </Stack>

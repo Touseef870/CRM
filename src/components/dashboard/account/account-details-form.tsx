@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -36,7 +36,7 @@ export function AccountDetailsForm(): React.JSX.Element {
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
-    // Fetch initial user data from localStorage
+ 
     if (typeof window !== 'undefined') {
       const storedData = localStorage.getItem('AdminloginData');
       if (storedData) {
@@ -78,7 +78,7 @@ export function AccountDetailsForm(): React.JSX.Element {
 
       const data = await response.json();
       if (response.ok) {
-        // Success Alert
+       
         Swal.fire({
           icon: 'success',
           title: 'Success',
@@ -86,7 +86,6 @@ export function AccountDetailsForm(): React.JSX.Element {
           confirmButtonColor: '#3085d6',
         });
 
-        // Update localStorage with new data
         if (typeof window !== 'undefined') {
           const updatedData = {
             ...JSON.parse(localStorage.getItem('AdminloginData') || '{}'),
@@ -95,7 +94,7 @@ export function AccountDetailsForm(): React.JSX.Element {
           localStorage.setItem('AdminloginData', JSON.stringify(updatedData));
         }
       } else {
-        // Error Alert
+      
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -104,7 +103,7 @@ export function AccountDetailsForm(): React.JSX.Element {
         });
       }
     } catch (error) {
-      // Network/Error Alert
+     
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -123,8 +122,8 @@ export function AccountDetailsForm(): React.JSX.Element {
         sx={{
           maxWidth: 800,
           mx: 'auto',
-          mt: 1, // Reduced top margin further to bring the form higher
-          p: 4, // Increased padding for more space around the content
+          mt: 1, 
+          p: 4,
           boxShadow: 3,
           borderRadius: 2,
           bgcolor: 'white',
@@ -135,15 +134,15 @@ export function AccountDetailsForm(): React.JSX.Element {
           title="Profile"
           sx={{
             textAlign: 'center',
-            color: blue[800], // Applying a blue color (blue[800])
-            fontSize: '4rem', // Try using 4rem for the font size (this is a large size)
-            fontWeight: 'bold', // Optional: Make it bold to make it stand out more
+            color: blue[800], 
+            fontSize: '4rem', 
+            fontWeight: 'bold',
           }}
         />
         <Divider sx={{ mb: 6 }} />
         <CardContent>
           <Grid container spacing={3}>
-            {/* Full Name */}
+         
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Full Name</InputLabel>
@@ -155,7 +154,6 @@ export function AccountDetailsForm(): React.JSX.Element {
                 />
               </FormControl>
             </Grid>
-            {/* Contact */}
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Contact</InputLabel>
@@ -168,7 +166,6 @@ export function AccountDetailsForm(): React.JSX.Element {
                 />
               </FormControl>
             </Grid>
-            {/* CNIC */}
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>CNIC</InputLabel>
@@ -180,7 +177,6 @@ export function AccountDetailsForm(): React.JSX.Element {
                 />
               </FormControl>
             </Grid>
-            {/* Date of Birth */}
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Date of Birth</InputLabel>
@@ -198,7 +194,6 @@ export function AccountDetailsForm(): React.JSX.Element {
                 />
               </FormControl>
             </Grid>
-            {/* Gender */}
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Gender</InputLabel>
@@ -216,7 +211,6 @@ export function AccountDetailsForm(): React.JSX.Element {
                 </Select>
               </FormControl>
             </Grid>
-            {/* Salary */}
             <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Salary</InputLabel>
@@ -236,10 +230,10 @@ export function AccountDetailsForm(): React.JSX.Element {
           <Button
             type="submit"
             variant="contained"
-            disabled={loading} // Apply the disabled prop here, not inside sx
+            disabled={loading}
             sx={{
-              bgcolor: blue[600], // Applying blue[600] color
-              color: 'common.white', // Ensuring the text is white for better contrast
+              bgcolor: blue[600], 
+              color: 'common.white', 
               px: 4,
               py: 1,
               borderRadius: '8px',
@@ -247,7 +241,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               fontSize: '1rem',
               textTransform: 'none',
               '&:hover': {
-                bgcolor: blue[800], // Darker blue on hover
+                bgcolor: blue[800], 
               },
             }}
           >

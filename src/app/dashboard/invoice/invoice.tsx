@@ -17,7 +17,6 @@ import TextField from '@mui/material/TextField';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 
 function InvoicePage() {
-    // Original list of invoices
     const UserInvoice = [
         { id: 'ORD-007', customer: { name: 'Ekaterina Tankova' }, amount: 30.5, status: 'pending', createdAt: dayjs().subtract(10, 'minutes').toDate() },
         { id: 'ORD-006', customer: { name: 'Cao Yu' }, amount: 25.1, status: 'delivered', createdAt: dayjs().subtract(10, 'minutes').toDate() },
@@ -33,7 +32,7 @@ function InvoicePage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         title: '',
-        image: null as any, // Set image field type to 'any'
+        image: null as any,
         description: '',
     });
 
@@ -75,8 +74,8 @@ function InvoicePage() {
     };
 
     const handleFormSubmit = () => {
-        console.log(formData); // Log the form data to the console
-        handleCloseModal(); // Close the modal after submission
+        console.log(formData); 
+        handleCloseModal(); 
     };
 
     return (
@@ -89,7 +88,7 @@ function InvoicePage() {
                     <Button
                         startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
                         variant="contained"
-                        onClick={handleOpenModal} // Open modal on click
+                        onClick={handleOpenModal} 
                     >
                         Add
                     </Button>
@@ -99,7 +98,6 @@ function InvoicePage() {
 
             <Invoice orders={filteredInvoices} sx={{ height: '100%' }} />
 
-            {/* Modal for adding new invoice */}
             <Dialog open={open} onClose={handleCloseModal}>
                 <DialogTitle>Add Invoice</DialogTitle>
                 <DialogContent>

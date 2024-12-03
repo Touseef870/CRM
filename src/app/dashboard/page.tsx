@@ -34,18 +34,7 @@ export default function Page(): React.JSX.Element {
       <Grid lg={3} sm={6} xs={12}>
         <TotalProfit sx={{ height: '100%' }} value="$15k" />
       </Grid>
-      {/* <Grid lg={8} xs={12}>
-        <Sales
-          chartSeries={[
-            { name: 'This year', data: [18, 16, 19, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
-            { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
-          ]}
-          sx={{ height: '100%' }}
-        />
-      </Grid> */}
-      {/* <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 10, 27]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-      </Grid> */}
+     
       <Grid lg={4} md={6} xs={12}>
         <LatestEmploy
           sx={{ height: '100%' }}

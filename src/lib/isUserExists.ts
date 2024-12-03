@@ -15,12 +15,11 @@ export const getAdminLoginData = ({ key }: GetAdminLoginDataProps): AdminLoginDa
   const [data, setData] = useState<AdminLoginData | null>(null);
 
   useEffect(() => {
-    // Only run this on client-side (window object is available)
     const storedData = localStorage.getItem(key);
     if (storedData) {
       setData(JSON.parse(storedData));
     }
-  }, [key]); // Re-run when 'key' changes
+  }, [key]); 
 
-  return data; // Return the data once it is loaded
+  return data; 
 };

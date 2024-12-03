@@ -58,11 +58,11 @@ export function MobileNav({ open, onClose }: any): React.JSX.Element {
     >
       <Stack spacing={2} sx={{ p: 3 }}>
         <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-          {/* Replacing "Vehware" text with logo image */}
+        
           <img
-            src="/assets/vehwarelogo.png" // Adjust the logo file name and path as needed
+            src="/assets/vehwarelogo.png" 
             alt="Vehware Logo"
-            style={{ height: '52px', width: 'auto', maxWidth: '500px', objectFit: 'contain' }} // Increased width
+            style={{ height: '52px', width: 'auto', maxWidth: '500px', objectFit: 'contain' }} 
           />
         </Box>
       </Stack>

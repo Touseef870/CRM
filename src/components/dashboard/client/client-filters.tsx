@@ -7,7 +7,7 @@ import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/di
 
 interface CustomersFiltersProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onResetData?: () => void;  // Add a callback to reset data when input is cleared
+  onResetData?: () => void; 
 }
 
 export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProps): React.JSX.Element {
@@ -21,19 +21,18 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
     }
   };
 
-  // Effect to reset data when input is cleared
   React.useEffect(() => {
     if (inputValue === "") {
       if (onResetData) {
-        onResetData();  // Call the reset data function when input is cleared
+        onResetData(); 
       }
     }
   }, [inputValue, onResetData]);
 
   return (
     <OutlinedInput
-        value={inputValue}  // Bind the value to the state
-        onChange={handleChange}  // Update the state when the input changes
+        value={inputValue}  
+        onChange={handleChange}  
         fullWidth
         placeholder="Search client"
         startAdornment={
@@ -42,8 +41,8 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
           </InputAdornment>
         }
         sx={{
-          width: 'auto', // Adjust width to make it smaller
-          maxWidth: '250px', // Reduce the width of the search input
+          width: 'auto', 
+          maxWidth: '250px', 
           borderRadius: 1,
           '& .MuiOutlinedInput-root': {
             paddingLeft: 2,
