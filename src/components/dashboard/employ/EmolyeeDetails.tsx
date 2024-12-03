@@ -16,10 +16,11 @@ import {
     Alert,
     IconButton
 } from "@mui/material";
-import { blueGrey, indigo, grey, teal } from "@mui/material/colors";
+import { blueGrey, indigo, grey, teal, red } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2";
 import { FiTrash } from 'react-icons/fi'; // Import the trash icon
+import BackIcon from "@/components/BackIcon";
 
 // Define Employee interface
 interface Employee {
@@ -168,6 +169,31 @@ export default function EmployeeDetails() {
 
     return (
         <Box sx={{ p: 4, backgroundColor: grey[100] }}>
+            {/* Delete Button */}
+            <Grid item xs={12} sx={{width:"100%", display:"flex", justifyContent:"space-between"}} >
+
+                <BackIcon />
+
+                <IconButton
+                    onClick={handleDeleteConfirmation}
+                    sx={{
+
+                        backgroundColor: red[700],
+                        color: 'white',
+                        borderRadius: "5px",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        "&:hover": {
+                            backgroundColor: red[800],
+                        },
+                        marginBottom: 2
+                    }}
+                >
+                    <FiTrash size={24} />
+                </IconButton>
+            </Grid>
+
+
             <Grid container spacing={4} maxWidth="lg">
                 {/* Title Section */}
                 <Grid item xs={12}>
@@ -189,21 +215,6 @@ export default function EmployeeDetails() {
                     </Typography>
                 </Grid>
 
-                {/* Delete Button */}
-                <Grid item xs={12}>
-                    <IconButton
-                        onClick={handleDeleteConfirmation}
-                        sx={{
-                            color: teal[700],
-                            "&:hover": {
-                                backgroundColor: teal[50],
-                            },
-                            marginBottom: 2
-                        }}
-                    >
-                        <FiTrash size={24} />
-                    </IconButton>
-                </Grid>
 
                 {/* Avatar and Name Section */}
                 <Grid item xs={12} sm={6} md={4}>

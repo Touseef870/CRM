@@ -34,9 +34,7 @@ export function SignInForm(): React.JSX.Element {
     }));
   };
 
-  const saveToLocalStorage = (key: string, data: any) => {
-    localStorage.setItem(key, JSON.stringify(data));
-  };
+
 
   const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -66,31 +64,25 @@ export function SignInForm(): React.JSX.Element {
       );
 
       if (response.status === 200) {
-        saveToLocalStorage('AdminloginData', response.data.data);
-        setStoredValue(response.data.data); // Save the login data to the context
+        setStoredValue(response.data.data);
         Swal.fire({
           title: "Successfully Created!",
           text: "Thank You",
           icon: "success",
         }).then((result) => {
-          // Check if the user clicked 'OK'
           if (result.isConfirmed) {
-            // Redirect after clicking 'OK'
             window.location.href = '/dashboard';
           }
         });
       }
 
     } catch (error: any) {
-      // Handle error from API response
       if (error.response?.data?.message === 'Invalid email or password') {
-        // If both email and password are incorrect, show errors for both fields
         setError({
-          email: 'Invalid email or password', // Show general error for both fields
+          email: 'Invalid email or password',
           password: 'Invalid email or password',
         });
       } else {
-        // If any other error occurs, display a general error for both fields
         setError({
           email: 'An error occurred. Please try again later.',
           password: 'An error occurred. Please try again later.',

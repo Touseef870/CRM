@@ -15,14 +15,14 @@ interface AppProviderProps {
 const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const [storedValue, setStoredValue] = useState<any | null>(() => {
         try {
-            const storedData = localStorage.getItem('myData');
+            const storedData = localStorage.getItem('AdminloginData');
             if (storedData) {
                 const parsedData = JSON.parse(storedData);
 
                 
                 const expirationTime = parsedData?.expirationTime;
                 if (expirationTime && Date.now() > expirationTime) {
-                    localStorage.removeItem('myData');
+                    localStorage.removeItem('AdminloginData');
                     return null; 
                 }
 
@@ -40,7 +40,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             const expirationTime = Date.now() + 86400000; 
             const dataWithExpiration = { ...storedValue, expirationTime };
 
-            localStorage.setItem('myData', JSON.stringify(dataWithExpiration));
+            localStorage.setItem('AdminloginData', JSON.stringify(dataWithExpiration));
         }
     }, [storedValue]);
 
