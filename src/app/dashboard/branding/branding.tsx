@@ -7,19 +7,29 @@ import Button from '@mui/material/Button';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Unstable_Grid2';
 import { Plus as PlusIcon } from '@phosphor-icons/react';
 import axios from 'axios';
 import { BrandingCard, type Integration } from '@/components/dashboard/branding/branding-card';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
+import { Card, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@mui/material';
+import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 
 
 export default function BrandingPage(): React.JSX.Element {
   const [brandingData, setBrandingData] = useState<Integration[]>([]);
   const [filteredBranding, setFilteredBranding] = useState<Integration[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    image: null as any, // Set image field type to 'any'
+    description: '',
+  });
+
+  console.log(brandingData)
 
   const itemsPerPage = 6;
 
@@ -78,6 +88,37 @@ export default function BrandingPage(): React.JSX.Element {
     setCurrentPage(page);
   };
 
+  const handleOpenModal = () => {
+    setOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFormData({ ...formData, image: file });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFormSubmit = () => {
+    console.log(formData); // Log the form data to the console
+    handleCloseModal(); // Close the modal after submission
+  };
+
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredBranding.slice(startIndex, startIndex + itemsPerPage);
 
@@ -88,50 +129,107 @@ export default function BrandingPage(): React.JSX.Element {
           <Typography variant="h4">Branding</Typography>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenModal} >
             Add
           </Button>
         </div>
       </Stack>
 
       <div style={{ position: 'relative', display: 'inline-block', width: '30%', }}>
-      <input
-        type="text"
-        placeholder="Search by brand name"
-        onChange={(e) => { handleBrandEmploy(e.target.value); }}
-        style={{
-          width: '100%',
-          padding: '14px 20px 12px 40px', // Add padding for the icon
-          fontSize: '14px',
-          borderRadius: '8px',
-          border: '1px solid #ccc',
-          marginBottom: '16px',
-        }}
-      />
-      <MagnifyingGlassIcon
-        size={20}
-        weight="bold"
-        style={{
-          position: 'absolute',
-          top: '40%',
-          left: '10px',
-          transform: 'translateY(-50%)',
-          color: '#ccc',
-        }}
-      />
-    </div>
+        <input
+          type="text"
+          placeholder="Search by brand name"
+          onChange={(e) => { handleBrandEmploy(e.target.value); }}
+          style={{
+            width: '100%',
+            padding: '14px 20px 12px 40px', // Add padding for the icon
+            fontSize: '14px',
+            borderRadius: '8px',
+            border: '1px solid #ccc',
+            marginBottom: '16px',
+          }}
+        />
+        <MagnifyingGlassIcon
+          size={20}
+          weight="bold"
+          style={{
+            position: 'absolute',
+            top: '40%',
+            left: '10px',
+            transform: 'translateY(-50%)',
+            color: '#ccc',
+          }}
+        />
+      </div>
       {loading ? (
-        <Typography>Loading...</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '80vh', // Full height of the viewport
+          }}
+        >
+          <CircularProgress size={50} color="primary" />
+        </Box>
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {currentItems.map((branding) => (
-            <Grid key={branding.id} lg={4} md={6} xs={12}>
-              <BrandingCard integration={branding} />
+            <Grid item key={branding.id} lg={4} md={6} xs={12}>
+              <Card
+                sx={{
+                  maxWidth: "100%",
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  overflow: "hidden", // To ensure rounded corners don't interfere with the image
+                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="200" // Increased height for a larger image
+                  image={branding.logo || "https://via.placeholder.com/300"}
+                  alt={branding.title || "Brand Image"}
+                  sx={{
+                    objectFit: "cover", // Ensures image covers the area without distortion
+                  }}
+                />
+                <CardContent sx={{ padding: 3 }}>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.2rem", // Slightly larger font size
+                      color: "#333", // Dark color for better readability
+                    }}
+                  >
+                    {branding.title || "Brand Title"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontSize: "1rem",
+                      color: "#555", // Softer text color for description
+                      lineHeight: 1.6, // Better readability
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {branding.description || "Brand description goes here."}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>
+
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -142,6 +240,62 @@ export default function BrandingPage(): React.JSX.Element {
           size="small"
         />
       </Box>
+
+      {/* Modal for adding new brand */}
+      <Dialog open={open} onClose={handleCloseModal}>
+        <DialogTitle>Add Brand</DialogTitle>
+        <DialogContent>
+          <TextField
+            name="title"
+            label="Title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={formData.title}
+            onChange={handleFormChange}
+          />
+          <div style={{ marginBottom: '16px' }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              id="image-upload"
+              style={{ display: 'none' }}
+            />
+            <label htmlFor="image-upload">
+              <Button
+                component="span"
+                startIcon={<CloudUploadIcon />}
+                variant="outlined"
+                fullWidth
+                sx={{ textAlign: 'center' }}
+              >
+                {formData.image ? 'Image Selected' : 'Select Image'}
+              </Button>
+            </label>
+            {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: '100%', marginTop: '16px' }} />}
+          </div>
+          <TextField
+            name="description"
+            label="Description"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            multiline
+            rows={4}
+            value={formData.description}
+            onChange={handleFormChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleFormSubmit} variant="contained" color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }
