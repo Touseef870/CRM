@@ -24,6 +24,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Swal from "sweetalert2"; // Import SweetAlert
+import { Edit, Schedule } from "@mui/icons-material";
 
 interface AttendanceRow {
   date: string; // ISO format date
@@ -58,7 +59,7 @@ const AttendanceTable: React.FC = () => {
               },
             }
           );
-  
+
           setAttendanceData(response.data.data.attendance || []);
         } catch (err) {
           console.error("Error fetching attendance data:", err);
@@ -66,13 +67,13 @@ const AttendanceTable: React.FC = () => {
           setLoading(false); // Stop loading after the request is done
         }
       };
-  
+
       fetchAttendanceData();
     } else {
       console.error("No ID provided");
     }
   }, [id, token]);
-    
+
   const handleEdit = (row: AttendanceRow) => {
     setEditingRow(row); // Set row to edit
     setEditedCheckIn(moment(row.checkInTime).format("HH:mm")); // Populate modal fields
@@ -185,27 +186,22 @@ const AttendanceTable: React.FC = () => {
 
 
   return (
-    <Box sx={{ margin: "20px" }}>
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{ fontWeight: "bold", textAlign: "center" }}
-      >
-        Employee Attendance
-      </Typography>
+
+    <Box sx={{ margin: "30px" }}>
 
       {/* Show loading spinner while fetching data */}
       {loading ? (
-        <Box sx={{ textAlign: "center", padding: "20px" }}>
+        <Box sx={{ textAlign: "center", padding: "40px" }}>
           <CircularProgress />
         </Box>
       ) : (
         <TableContainer
           component={Paper}
           sx={{
-            borderRadius: 4,
+            // borderRadius: 4,
             overflow: "hidden",
             boxShadow: 3,
+            padding: "16px",
           }}
         >
           <Table>
@@ -234,7 +230,7 @@ const AttendanceTable: React.FC = () => {
                       "&:nth-of-type(odd)": { bgcolor: "grey.100" },
                       "&:nth-of-type(even)": { bgcolor: "grey.50" },
                       "&:hover": {
-                        bgcolor: "primary.light",
+                        bgcolor: "#abacc4",
                         cursor: "pointer",
                         transition: "background-color 0.3s ease",
                       },
@@ -253,6 +249,7 @@ const AttendanceTable: React.FC = () => {
                         color="primary"
                         size="small"
                         onClick={() => { handleEdit(data); }}
+                        startIcon={<Edit />}
                       >
                         Edit
                       </Button>
@@ -283,7 +280,7 @@ const AttendanceTable: React.FC = () => {
         open={openModal}
         onClose={() => { setOpenModal(false); }}
         fullWidth
-        maxWidth="sm" // Adjust modal size
+        maxWidth="sm"
         sx={{
           zIndex: 13010, // Custom z-index for MUI dialog (MUI modal default z-index is 1300)
         }}
@@ -298,24 +295,23 @@ const AttendanceTable: React.FC = () => {
               type="time"
               InputLabelProps={{ shrink: true }}
               fullWidth
-              value={moment(editedCheckIn, "hh:mm A").format("HH:mm")} // Convert to 24-hour format
-              onChange={(e) =>
-                { setEditedCheckIn(moment(e.target.value, "HH:mm").format("hh:mm A")); } // Convert back to 12-hour format
+              value={moment(editedCheckIn, "hh:mm A").format("HH:mm")}
+              onChange={(e) => { setEditedCheckIn(moment(e.target.value, "HH:mm").format("hh:mm A")); }
               }
               helperText="Select the time you checked in"
               variant="outlined"
               sx={{
                 "& .MuiInputBase-root": {
-                  paddingRight: "10px", // Add padding for input text to prevent cutting off
+                  paddingRight: "10px",
                 },
                 "& .MuiInputLabel-root": {
-                  top: "5px", // Ensure the label stays in place and doesn't shift
+                  top: "5px",
                 },
                 "& label.Mui-focused": {
-                  color: "#1976d2", // Change label color when focused
+                  color: "#1976d2",
                 },
                 "& .MuiInputBase-input": {
-                  paddingLeft: "10px", // Ensure input text has enough padding from left
+                  paddingLeft: "10px",
                 },
               }}
             />
@@ -325,23 +321,22 @@ const AttendanceTable: React.FC = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               value={moment(editedCheckOut, "hh:mm A").format("HH:mm")}
-              onChange={(e) =>
-                { setEditedCheckOut(moment(e.target.value, "hh:mm A").format("hh:mm A")); }
+              onChange={(e) => { setEditedCheckOut(moment(e.target.value, "hh:mm A").format("hh:mm A")); }
               }
               helperText="Select the time you checked out"
               variant="outlined"
               sx={{
                 "& .MuiInputBase-root": {
-                  paddingRight: "10px", // Add padding for input text to prevent cutting off
+                  paddingRight: "10px",
                 },
                 "& .MuiInputLabel-root": {
-                  top: "5px", // Ensure the label stays in place and doesn't shift
+                  top: "5px",
                 },
                 "& label.Mui-focused": {
-                  color: "#1976d2", // Change label color when focused
+                  color: "#1976d2",
                 },
                 "& .MuiInputBase-input": {
-                  paddingLeft: "10px", // Ensure input text has enough padding from left
+                  paddingLeft: "10px",
                 },
               }}
             />
@@ -351,13 +346,11 @@ const AttendanceTable: React.FC = () => {
           <Button onClick={() => { setOpenModal(false); }} color="secondary" variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleSave} variant="contained" color="primary">
+          <Button onClick={handleSave} variant="contained" color="primary" startIcon={<Schedule />}>
             Save
           </Button>
         </DialogActions>
       </Dialog>
-
-
     </Box>
   );
 };
