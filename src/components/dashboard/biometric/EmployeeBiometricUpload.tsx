@@ -37,22 +37,44 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }); // Parse data as 2D array
         const [headerRow, ...rows] = parsedData; // Separate headers from rows
 
-        setHeaders(headerRow as string[]); // Save headers
-        setJsonData(rows); // Save rows
+        // Filter out rows where essential values are missing or invalid
+        const validRows = rows.filter((row: any) => {
+          const userId = row[0];
+          const userType = row[1];
+          const checkInTime = row[2];
+          const checkOutTime = row[3];
+          const date = row[4];
 
-        // Send the parsed data back to the parent component
-        onFileUpload(rows);
+          // Check if any required field is invalid or NaN
+          return userId && userType && !isNaN(checkInTime) && !isNaN(checkOutTime) && formatExcelDate(date) !== "Invalid Date";
+        });
+
+        setHeaders(headerRow as string[]); // Save headers
+        setJsonData(validRows); // Save valid rows
+
+        // Send the valid data back to the parent component
+        onFileUpload(validRows);
       };
       reader.readAsBinaryString(file);
     }
   };
 
-  const formatExcelDate = (serial: number) => {
-    const date = new Date((serial - 25569) * 86400 * 1000); // Converts Excel serial date to JavaScript Date
+  const formatExcelDate = (serial: number): string => {
+    if (isNaN(serial) || serial <= 0) {
+      return "Invalid Date"; // Handle invalid serial number
+    }
+
+    const date = new Date((serial - 25569) * 86400 * 1000);
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "Invalid Date"; // Return a fallback message if the date is invalid
+    }
+
     return date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
   };
 
-  const formatTime = (decimal: number) => {
+  const formatTime = (decimal: number): string => {
     if (isNaN(decimal) || decimal < 0) {
       // Return a default value or handle invalid data
       return "Invalid Time";
@@ -72,10 +94,10 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
     const formattedData: FormattedData[] = jsonData.map((row) => {
       const checkInDecimal = row[2];
       const checkOutDecimal = row[3];
-  
+
       const checkInTime = checkInDecimal;
       const checkOutTime = checkOutDecimal;
-  
+
       return {
         userId: row[0],
         userType: row[1],
@@ -83,16 +105,21 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         checkInTime,
         checkOutTime,
       };
-    });
-  
+    }).filter(item => item.date !== "Invalid Date"); // Filter out invalid rows
+
     const dataToSend = {
-      date: formattedData[0].date,
+      date: formattedData[0]?.date, // Ensure this doesn't break if formattedData is empty
       dailyRecords: formattedData.map((item) => {
         const { date, ...rest } = item;
         return rest;
       }),
     };
-  
+
+    if (formattedData.length === 0) {
+      Swal.fire("Error", "No valid data to send.", "error");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://api-vehware-crm.vercel.app/api/attendance/add",
@@ -104,45 +131,35 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           },
         }
       );
-  
-      // Extract response data
+
       const { unsaved, saved } = response.data.data;
-  
-      // Prepare messages for successful and unsuccessful records
-      const successfulUsers = saved.map(
-        (success: any) => `User ID: ${success.userId}`
+      const successfulUsers = saved.map((success: any) => `User ID: ${success.userId}`);
+      const failedUsers = unsaved.map((error: any) =>
+        `User ID: ${error.userId} - Reason: ${error.reason || "Employee not found"}`
       );
-      const failedUsers = unsaved.map(
-        (error: any) =>
-          `User ID: ${error.userId} - Reason: ${error.reason || "Employee not found"}`
-      );
-  
+
       let alertMessage = "";
-  
+
       if (successfulUsers.length > 0) {
         alertMessage += `✅ **Attendance Added**\n${successfulUsers.join("\n")}\n\n`;
       }
-  
+
       if (failedUsers.length > 0) {
         alertMessage += `❌ **Failed to Add Attendance**\n${failedUsers.join("\n")}\n\n`;
         alertMessage += `➡️ **Action Required**: Please add missing employees to the database and try again.`;
       }
-  
-      // Display the result in a professional Swal alert
+
       Swal.fire({
         title: successfulUsers.length > 0 ? "Partial Success" : "Error",
-        html: `<pre>${alertMessage}</pre>`, // Use <pre> for better formatting
+        html: `<pre>${alertMessage}</pre>`,
         icon: successfulUsers.length > 0 ? "warning" : "error",
         showConfirmButton: true,
       });
     } catch (error) {
       console.error("Error sending data:", error);
-  
-      // Display generic error message
       Swal.fire("Error", "Failed to send data. Please try again.", "error");
     }
   };
-  
   
 
   return (
