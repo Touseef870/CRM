@@ -17,9 +17,10 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2"; // SweetAlert2 library
-import { blueGrey, grey, teal } from "@mui/material/colors";
+import BackIcon from "@/components/BackIcon";
+import { FiTrash } from "react-icons/fi";
+import { grey, teal, red } from "@mui/material/colors";
 
-// Define Employee interface
 interface Employee {
   _id: string;
   cnic: string;
@@ -190,12 +191,18 @@ export default function EmployeeDetails() {
         minHeight: "100vh",
       }}
     >
+      <Grid item xs={12} >
+        <BackIcon />
+      </Grid>
+
+
       <Grid
         container
         spacing={4}
         maxWidth="lg"
-        sx={{ margin: "0 auto", width: "100%" }}
-      >
+        sx={{ margin: "0 auto", width: "100%" }}>
+
+
         {/* Header */}
         <Grid item xs={12}>
           <Box
@@ -204,8 +211,7 @@ export default function EmployeeDetails() {
               justifyContent: "space-between",
               alignItems: "center",
               flexWrap: "wrap",
-            }}
-          >
+            }} >
             <Typography
               variant="h4"
               gutterBottom
@@ -216,26 +222,28 @@ export default function EmployeeDetails() {
                 textTransform: "uppercase",
                 letterSpacing: "2px",
                 fontSize: { xs: "1.5rem", sm: "2rem" },
-              }}
-            >
+              }} >
               Client Details
             </Typography>
             <IconButton
               onClick={confirmDelete}
               sx={{
-                color: teal[700],
+                color: red[700],
+                borderRadius: "5px",
+                display: "flex",
+                justifyContent: "flex-end",
                 "&:hover": {
-                  backgroundColor: teal[50],
-                  transform: "scale(1.1)",
-                  transition: "0.3s",
+                  backgroundColor: red[800],
+                  color: "white"
                 },
+                marginBottom: 2
               }}
             >
-              <DeleteIcon fontSize="large" />
+              <FiTrash size={30} />
             </IconButton>
           </Box>
         </Grid>
-  
+
         {/* Avatar and Personal Information */}
         <Grid item xs={12}>
           <Grid container spacing={4}>
@@ -256,8 +264,7 @@ export default function EmployeeDetails() {
                   "&:hover": {
                     boxShadow: 10,
                   },
-                }}
-              >
+                }}>
                 <Avatar
                   src={employee.avatar || ""}
                   sx={{
@@ -270,8 +277,7 @@ export default function EmployeeDetails() {
                     fontWeight: "bold",
                     border: 4,
                     boxShadow: 3,
-                  }}
-                >
+                  }}>
                   {employee.name.charAt(0).toUpperCase()}
                 </Avatar>
                 <Typography
@@ -282,8 +288,7 @@ export default function EmployeeDetails() {
                     color: teal[800],
                     textTransform: "capitalize",
                     fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                  }}
-                >
+                  }} >
                   {employee.name}
                 </Typography>
                 <Typography
@@ -292,13 +297,12 @@ export default function EmployeeDetails() {
                   sx={{
                     fontStyle: "italic",
                     fontSize: { xs: "0.875rem", sm: "1rem" },
-                  }}
-                >
+                  }}>
                   {employee.type.toUpperCase()}
                 </Typography>
               </Card>
             </Grid>
-  
+
             {/* Personal Information */}
             <Grid item xs={12} sm={8}>
               <Card
@@ -308,8 +312,7 @@ export default function EmployeeDetails() {
                   backgroundColor: "#ffffff",
                   p: 3,
                   width: "100%",
-                }}
-              >
+                }}>
                 <Typography
                   variant="h6"
                   gutterBottom
@@ -319,8 +322,7 @@ export default function EmployeeDetails() {
                     color: teal[700],
                     mb: 2,
                     fontSize: { xs: "1rem", sm: "1.25rem" },
-                  }}
-                >
+                  }}>
                   Personal Information
                 </Typography>
                 <Divider sx={{ mb: 2, backgroundColor: grey[300] }} />
@@ -332,8 +334,7 @@ export default function EmployeeDetails() {
                         color: grey[700],
                         mb: 1,
                         fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
+                      }} >
                       <strong>Service:</strong> {employee.serviceType}
                     </Typography>
                   </Grid>
@@ -344,8 +345,7 @@ export default function EmployeeDetails() {
                         color: grey[700],
                         mb: 1,
                         fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
+                      }}  >
                       <strong>Date of Birth:</strong>{" "}
                       {new Date(employee.dob).toLocaleDateString()}
                     </Typography>
@@ -357,8 +357,7 @@ export default function EmployeeDetails() {
                         color: grey[700],
                         mb: 1,
                         fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
+                      }} >
                       <strong>Email:</strong> {employee.email}
                     </Typography>
                   </Grid>
@@ -369,8 +368,7 @@ export default function EmployeeDetails() {
                         color: grey[700],
                         mb: 1,
                         fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
+                      }}  >
                       <strong>Phone:</strong> {employee.phone}
                     </Typography>
                   </Grid>
@@ -381,8 +379,7 @@ export default function EmployeeDetails() {
                         color: grey[700],
                         mb: 1,
                         fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
+                      }} >
                       <strong>Country:</strong> {employee.country}
                     </Typography>
                   </Grid>
@@ -392,7 +389,7 @@ export default function EmployeeDetails() {
           </Grid>
         </Grid>
       </Grid>
-  
+
       {/* Error Message */}
       {deleteError ? (
         <Typography
@@ -410,7 +407,7 @@ export default function EmployeeDetails() {
       ) : null}
     </Box>
   );
-  
+
 
 
 }

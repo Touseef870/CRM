@@ -16,7 +16,7 @@ import {
     Alert,
     IconButton
 } from "@mui/material";
-import { blueGrey, indigo, grey, teal, red } from "@mui/material/colors";
+import { grey, teal, red } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2";
 import { FiTrash } from 'react-icons/fi'; // Import the trash icon
@@ -169,27 +169,26 @@ export default function EmployeeDetails() {
 
     return (
         <Box sx={{ p: 4, backgroundColor: grey[100] }}>
-            {/* Delete Button */}
-            <Grid item xs={12} sx={{width:"100%", display:"flex", justifyContent:"space-between"}} >
+
+            <Grid item xs={12} sx={{ width: "100%", display: "flex", justifyContent: "space-between" }} >
 
                 <BackIcon />
 
                 <IconButton
                     onClick={handleDeleteConfirmation}
                     sx={{
-
-                        backgroundColor: red[700],
-                        color: 'white',
+                        color: red[700],
                         borderRadius: "5px",
                         display: "flex",
                         justifyContent: "flex-end",
                         "&:hover": {
                             backgroundColor: red[800],
+                            color: "white"
                         },
                         marginBottom: 2
                     }}
                 >
-                    <FiTrash size={24} />
+                    <FiTrash size={30} />
                 </IconButton>
             </Grid>
 

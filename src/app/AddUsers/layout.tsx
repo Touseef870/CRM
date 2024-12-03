@@ -48,11 +48,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const filteredMenuItems =
     userType === 'admin'
       ? menuItems
-      : userType === 'employee'
-        ? menuItems.filter(item => item.slug === 'create-client')
-        : userType === 'subadmin'
-          ? menuItems.filter(item => item.slug !== 'create-sub-admin')
+      : userType === 'sub-admin'
+        ? menuItems.filter(item => item.slug !== 'create-sub-admin')
+        : userType === 'employee'
+          ? menuItems.filter(item => item.slug === 'create-client')
           : [];
+
 
   return (
     <div>
