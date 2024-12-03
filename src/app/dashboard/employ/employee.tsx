@@ -4,12 +4,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { CircularProgress, TablePagination } from '@mui/material';
+import { Button, CircularProgress, TablePagination } from '@mui/material';
 import { Box } from '@mui/system';
 import { CustomersFilters } from '@/components/dashboard/employ/employ-filters';
 import { CustomersTable } from '@/components/dashboard/employ/employ-table';
 import type { Customer } from '@/components/dashboard/employ/employ-table';
 import { AppContext } from '@/contexts/isLogin';
+import UploadAndDisplay from '@/components/dashboard/biometric/EmployeeBiometricUpload';
+import EmployeeExcel from '@/components/dashboard/employ/EmployeeExcel';
 
 export default function Employee(): React.JSX.Element {
   const [page, setPage] = useState(0);
@@ -33,7 +35,7 @@ export default function Employee(): React.JSX.Element {
           },
         });
         setEmploy(response.data.data.employees);
-        setFilteredEmploy(response.data.data.employees); // Initialize filtered list
+        setFilteredEmploy(response.data.data.employees);
       } catch (err) {
         setError('Failed to fetch employees.');
         console.error(err);
@@ -45,31 +47,27 @@ export default function Employee(): React.JSX.Element {
     fetchCustomers();
   }, []);
 
-  // Filter employees based on search input
   const handleFilterEmploy = (value: string) => {
     const filtered = value.trim() === ""
-      ? employ // If search value is empty, show all employees
+      ? employ
       : employ.filter((customer) =>
         customer.name.toLowerCase().includes(value.toLowerCase())
       );
-    setFilteredEmploy(filtered); // Update filtered list
-    setPage(0); // Reset pagination to the first page
+    setFilteredEmploy(filtered);
+    setPage(0);
   };
 
-  // Pagination handlers
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset pagination when rows per page changes
+    setPage(0);
   };
 
-  // Paginate the filtered list of employees
   const paginatedEmployees = filteredEmploy.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  // Show loading spinner when data is being fetched
   if (loading) {
     return (
       <Box
@@ -87,7 +85,6 @@ export default function Employee(): React.JSX.Element {
     );
   }
 
-  // Show error message if data fetching fails
   if (error) {
     return <Typography variant="h6" color="error">{error}</Typography>;
   }
@@ -97,13 +94,13 @@ export default function Employee(): React.JSX.Element {
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Employee List</Typography>
+          <EmployeeExcel />
         </Stack>
       </Stack>
 
-      {/* Search filter */}
       <CustomersFilters onChange={(e) => { handleFilterEmploy(e.target.value); }} />
 
-      {/* Employee table */}
+
       <CustomersTable
         count={filteredEmploy.length}
         page={page}
@@ -111,10 +108,9 @@ export default function Employee(): React.JSX.Element {
         rowsPerPage={rowsPerPage}
       />
 
-      {/* Pagination controls */}
       <TablePagination
         component="div"
-        count={filteredEmploy.length} // Total count of filtered employees
+        count={filteredEmploy.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}

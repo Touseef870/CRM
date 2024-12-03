@@ -37,7 +37,6 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }); // Parse data as 2D array
         const [headerRow, ...rows] = parsedData; // Separate headers from rows
 
-        // Filter out rows where essential values are missing or invalid
         const validRows = rows.filter((row: any) => {
           const userId = row[0];
           const userType = row[1];
@@ -45,14 +44,12 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           const checkOutTime = row[3];
           const date = row[4];
 
-          // Check if any required field is invalid or NaN
           return userId && userType && !isNaN(checkInTime) && !isNaN(checkOutTime) && formatExcelDate(date) !== "Invalid Date";
         });
 
-        setHeaders(headerRow as string[]); // Save headers
-        setJsonData(validRows); // Save valid rows
+        setHeaders(headerRow as string[]); 
+        setJsonData(validRows); 
 
-        // Send the valid data back to the parent component
         onFileUpload(validRows);
       };
       reader.readAsBinaryString(file);
@@ -61,17 +58,17 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
 
   const formatExcelDate = (serial: number): string => {
     if (isNaN(serial) || serial <= 0) {
-      return "Invalid Date"; // Handle invalid serial number
+      return "Invalid Date"; 
     }
 
     const date = new Date((serial - 25569) * 86400 * 1000);
 
-    // Check if the date is valid
+   
     if (isNaN(date.getTime())) {
-      return "Invalid Date"; // Return a fallback message if the date is invalid
+      return "Invalid Date"; 
     }
 
-    return date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+    return date.toISOString().split('T')[0]; 
   };
 
   const formatTime = (decimal: number): string => {
