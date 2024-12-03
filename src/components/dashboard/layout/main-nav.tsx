@@ -43,46 +43,46 @@ export function MainNav(): React.JSX.Element {
             </IconButton>
           </Stack>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            {/* Button to open Sign-In Form */}
+          
 
 
 
             <Link
               href="/AddUsers"
               sx={{
-                display: 'inline-flex', // Aligns the icon and text in a row
-                alignItems: 'center', // Vertically centers the icon and text
-                backgroundColor: 'blue', // Button background color
-                color: 'white', // Text color
-                padding: '8px 16px', // Padding for button-like appearance
-                borderRadius: '4px', // Rounded corners
-                fontWeight: '600', // Bold text
-                fontSize: '1rem', // Font size for text
-                textDecoration: 'none', // Removes underline from the link
-                textAlign: 'center', // Centers the text
-                transition: 'all 0.3s ease', // Smooth hover effect
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Subtle shadow for depth
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                backgroundColor: 'blue', 
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                fontWeight: '600', 
+                fontSize: '1rem', 
+                textDecoration: 'none', 
+                textAlign: 'center', 
+                transition: 'all 0.3s ease', 
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
                 '&:hover': {
-                  backgroundColor: '#0039cb', // Darker blue on hover
-                  transform: 'scale(1.05)', // Slight scale-up effect
-                  boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)', // Enhanced shadow
+                  backgroundColor: '#0039cb', 
+                  transform: 'scale(1.05)', 
+                  boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)',
                 },
                 '&:active': {
-                  transform: 'scale(0.97)', // Slight press-down effect
+                  transform: 'scale(0.97)', 
                 },
                 '&:hover *': {
-                  textDecoration: 'none', // Ensures no underline on hover for child elements
+                  textDecoration: 'none', 
                 },
               }}
             >
               <ListItemIcon
                 sx={{
-                  color: 'white', // Icon color white
-                  marginRight: '-30px', // Reduce the gap between icon and text (set to 8px)
-                  fontSize: '1.25rem', // Icon size adjusted
+                  color: 'white',
+                  marginRight: '-30px',
+                  fontSize: '1.25rem', 
                 }}
               >
-                <AddIcon /> {/* Icon */}
+                <AddIcon /> 
               </ListItemIcon>
               Add User
             </Link>

@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
-// Interface for the form data
 interface FormData {
     name: string;
     email: string;
@@ -17,7 +16,7 @@ interface FormData {
     cnic: number;
     phone: number;
     salary: number;
-    dob: string;  // Updated to string since it's now a date input
+    dob: string;  
     addedBy: string;
     type: string;
 }
@@ -34,13 +33,12 @@ const UserForm: React.FC = () => {
     };
 
     const onSubmit = (data: FormData) => {
-        console.log(data); // Log the form data
+        console.log(data); 
     
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
     
         data.type = "sub-admin";
     
-        // Send data to API using axios
         axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -55,7 +53,7 @@ const UserForm: React.FC = () => {
                 icon: "success",
                 confirmButtonText: "OK",
             }).then(() => {
-                // Reset the form after the Swal confirmation
+             
                 reset();
             });
         })
@@ -67,7 +65,7 @@ const UserForm: React.FC = () => {
                 icon: "error",
                 confirmButtonText: "OK",
             }).then(() => {
-                // Reset the form in case of error as well
+                
                 reset();
             });
         });
@@ -80,7 +78,7 @@ const UserForm: React.FC = () => {
                 variant="h4"
                 sx={{
                     fontWeight: 'bold',
-                    fontSize: { xs: '1.8rem', sm: '3rem' }, // Adjust font size based on screen size
+                    fontSize: { xs: '1.8rem', sm: '3rem' },
                     textAlign: 'center',
                     letterSpacing: '0.5px',
                     lineHeight: 1.2,
@@ -93,7 +91,6 @@ const UserForm: React.FC = () => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={3}>
-                    {/* Name Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="name"
@@ -116,7 +113,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Email Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="email"
@@ -140,7 +136,6 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
-                    {/* Password Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="password"
@@ -168,7 +163,7 @@ const UserForm: React.FC = () => {
                                         label="Password"
                                         fullWidth
                                         variant="outlined"
-                                        type={showPassword ? "text" : "password"} // Toggle between text and password
+                                        type={showPassword ? "text" : "password"} 
                                         error={Boolean(errors.password)}
                                         helperText={errors.password?.message}
                                         InputProps={{
@@ -186,7 +181,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Gender Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="gender"
@@ -206,7 +200,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* CNIC Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="cnic"
@@ -230,7 +223,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Phone Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="phone"
@@ -253,7 +245,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Salary Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="salary"
@@ -273,7 +264,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Date of Birth Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="dob"
@@ -294,7 +284,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Type Field */}
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="type"
@@ -311,7 +300,6 @@ const UserForm: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Submit Button */}
                     <Grid item xs={12}>
                         <Button type="submit" fullWidth variant="contained" color="primary">
                             Submit

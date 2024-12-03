@@ -166,13 +166,12 @@ function SubAdminPage() {
     return (
         <Grid item xs={12}>
             <Stack direction="row" justifyContent="space-between" sx={{ mb: 2, p: 2 }}>
-                {/* Search Input */}
                 <TextField
                     label="Search SubAdmins"
                     variant="outlined"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    sx={{ width: '30%' }}  // Adjust width here, e.g., 50% or a specific pixel value
+                    sx={{ width: '30%' }} 
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -207,14 +206,13 @@ function SubAdminPage() {
                                         '&:hover': { backgroundColor: '#f5f5f5' },
                                     }}
                                 >
-                                    {/* Link only around the Name cell */}
                                     <TableCell>
                                         <Link
                                             href={`/dashboard/subadmin/${subAdmin._id}`}
                                             style={{
                                                 textDecoration: 'none',
                                                 color: 'inherit',
-                                                display: 'block', // Ensures only the Name cell is clickable
+                                                display: 'block', 
                                             }}
                                         >
                                             {subAdmin.name}
@@ -229,7 +227,7 @@ function SubAdminPage() {
                                     <TableCell align="right">
                                         <IconButton
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Prevent navigation when clicking the delete button
+                                                e.stopPropagation();
                                                 handleDelete(subAdmin._id);
                                             }}
                                             color="error"

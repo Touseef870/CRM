@@ -25,7 +25,7 @@ export default function BrandingPage(): React.JSX.Element {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
-    image: null as any, // Set image field type to 'any'
+    image: null as any, 
     description: '',
   });
 
@@ -33,7 +33,6 @@ export default function BrandingPage(): React.JSX.Element {
 
   const itemsPerPage = 6;
 
-  // Fetch branding data from the API
   useEffect(() => {
     const fetchBrandingData = async () => {
       try {
@@ -54,14 +53,13 @@ export default function BrandingPage(): React.JSX.Element {
           },
         });
 
-        // Transform the API response to match the Integration interface
         const fetchedData = response.data.data.map((item: any) => ({
           id: item._id,
           title: item.title,
           description: item.description,
           logo: item.img,
-          installs: 0, // Assuming installs are not provided
-          updatedAt: new Date(), // Assuming current time for demonstration
+          installs: 0,
+          updatedAt: new Date(), 
         }));
 
         setBrandingData(fetchedData);
@@ -114,8 +112,8 @@ export default function BrandingPage(): React.JSX.Element {
   };
 
   const handleFormSubmit = () => {
-    console.log(formData); // Log the form data to the console
-    handleCloseModal(); // Close the modal after submission
+    console.log(formData); 
+    handleCloseModal(); 
   };
 
 
@@ -142,7 +140,7 @@ export default function BrandingPage(): React.JSX.Element {
           onChange={(e) => { handleBrandEmploy(e.target.value); }}
           style={{
             width: '100%',
-            padding: '14px 20px 12px 40px', // Add padding for the icon
+            padding: '14px 20px 12px 40px',
             fontSize: '14px',
             borderRadius: '8px',
             border: '1px solid #ccc',
@@ -167,7 +165,7 @@ export default function BrandingPage(): React.JSX.Element {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '80vh', // Full height of the viewport
+            height: '80vh', 
           }}
         >
           <CircularProgress size={50} color="primary" />
@@ -183,18 +181,18 @@ export default function BrandingPage(): React.JSX.Element {
                   maxWidth: "100%",
                   boxShadow: 3,
                   borderRadius: 2,
-                  overflow: "hidden", // To ensure rounded corners don't interfere with the image
+                  overflow: "hidden", 
                   transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
 
                 }}
               >
                 <CardMedia
                   component="img"
-                  height="200" // Increased height for a larger image
+                  height="200"
                   image={branding.logo || "https://via.placeholder.com/300"}
                   alt={branding.title || "Brand Image"}
                   sx={{
-                    objectFit: "cover", // Ensures image covers the area without distortion
+                    objectFit: "cover", 
                   }}
                 />
                 <CardContent sx={{ padding: 3 }}>
@@ -204,8 +202,8 @@ export default function BrandingPage(): React.JSX.Element {
                     component="div"
                     sx={{
                       fontWeight: "bold",
-                      fontSize: "1.2rem", // Slightly larger font size
-                      color: "#333", // Dark color for better readability
+                      fontSize: "1.2rem", 
+                      color: "#333", 
                     }}
                   >
                     {branding.title || "Brand Title"}
@@ -215,8 +213,8 @@ export default function BrandingPage(): React.JSX.Element {
                     color="text.secondary"
                     sx={{
                       fontSize: "1rem",
-                      color: "#555", // Softer text color for description
-                      lineHeight: 1.6, // Better readability
+                      color: "#555", 
+                      lineHeight: 1.6,
                       textOverflow: "ellipsis",
                       overflow: "hidden",
                       whiteSpace: "nowrap",
@@ -241,7 +239,6 @@ export default function BrandingPage(): React.JSX.Element {
         />
       </Box>
 
-      {/* Modal for adding new brand */}
       <Dialog open={open} onClose={handleCloseModal}>
         <DialogTitle>Add Brand</DialogTitle>
         <DialogContent>

@@ -57,7 +57,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div>
-      {/* Menu Icon for Mobile View */}
       {isSmallScreen ? <IconButton
         sx={{
           position: 'absolute',
@@ -97,7 +96,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           keepMounted: true,
         }}
       >
-        {/* Close Icon for Mobile View */}
+       
         {isSmallScreen ? <IconButton
           sx={{
             position: 'absolute',
@@ -111,7 +110,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <CloseIcon sx={{ fontSize: '2rem' }} />
         </IconButton> : null}
 
-        {/* Header with Back Arrow */}
+      
         <div
           style={{
             display: 'flex',
@@ -137,7 +136,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <h2 style={{ fontSize: '1.75rem', fontWeight: '700' }}>Create Account</h2>
         </div>
 
-        {/* Menu List */}
+     
         <List
           sx={{
             width: { xs: '80%', sm: '70%', md: '90%' },
@@ -186,7 +185,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </List>
       </Drawer>
 
-      {/* Main Content */}
+    
       <div className="flex-1 p-6">
         <div>{children}</div>
       </div>

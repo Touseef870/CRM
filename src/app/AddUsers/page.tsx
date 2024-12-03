@@ -7,13 +7,11 @@ import AddEmployeeForm from './create-employee';
 import ClientForm from './create-client';
 import { Typography, Box } from '@mui/material';
 
-// Function to get user type from localStorage
 const getUserType = () => {
   const adminData = localStorage.getItem('AdminloginData');
   return adminData ? JSON.parse(adminData).type : null;
 };
 
-// Function to render the correct form based on user type and slug
 const renderForm = (userType: string | null, slug: string) => {
   switch (userType) {
     case 'admin':
@@ -27,7 +25,6 @@ const renderForm = (userType: string | null, slug: string) => {
   }
 };
 
-// Function to render forms for 'admin' user type
 const renderAdminForm = (slug: string) => {
   switch (slug) {
     case 'create-sub-admin':
@@ -41,7 +38,7 @@ const renderAdminForm = (slug: string) => {
   }
 };
 
-// Function to render forms for 'employee' user type
+
 const renderEmployeeForm = (slug: string) => {
   if (slug === 'create-client' || !slug) {
     return <ClientForm />;
@@ -51,7 +48,7 @@ const renderEmployeeForm = (slug: string) => {
   </Typography>;
 };
 
-// Function to render forms for 'sub-admin' user type
+
 const renderSubAdminForm = (slug: string) => {
   if (slug === 'create-employee') {
     return <AddEmployeeForm />;
@@ -62,22 +59,21 @@ const renderSubAdminForm = (slug: string) => {
 export default function Page() {
   const [userType, setUserType] = useState<string | null>(null);
   
-  // UseEffect to handle user type fetching
+
   useEffect(() => {
     setUserType(getUserType());
   }, []);
 
-  // Wrapper to manage rendering of the forms
+
   const FormContent = () => {
     const searchParams = useSearchParams();
-    const slug = searchParams?.get('slug') || 'create-client'; // Default slug
+    const slug = searchParams?.get('slug') || 'create-client';
 
     return renderForm(userType, slug);
   };
 
   return (
     <Box sx={{ height: '100vh', position: 'relative' }}>
-      {/* Background Image */}
       <Box
         sx={{
           position: 'absolute',
@@ -94,7 +90,6 @@ export default function Page() {
         }}
       />
 
-      {/* Form Container */}
       <Box
         sx={{
           position: 'relative',
@@ -107,7 +102,7 @@ export default function Page() {
           padding: '10px',
         }}
       >
-        {/* Wrap FormContent inside Suspense */}
+       
         <Suspense fallback={<Typography>Loading...</Typography>}>
           <FormContent />
         </Suspense>

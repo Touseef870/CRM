@@ -10,12 +10,12 @@ interface IFormInputs {
     name: string;
     phone: number;
     country: string;
-    // amount: number;
+   
     serviceType: string;
     dob: string;
 }
 
-// Custom validation rules
+
 const validationRules = {
     email: {
         required: "Email is required",
@@ -34,13 +34,7 @@ const validationRules = {
     country: {
         required: "Country is required",
     },
-    // amount: {
-    //     required: "Amount is required",
-    //     min: {
-    //         value: 0,
-    //         message: "Amount must be a positive number",
-    //     },
-    // },
+   
     serviceType: {
         required: "Service type is required",
     },
@@ -52,7 +46,7 @@ const validationRules = {
 
 const ClientForm: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, reset } = useForm<IFormInputs>({
-        mode: 'onBlur',  // Optional: Trigger validation on blur
+        mode: 'onBlur',  
     });
 
     const onSubmit = (data: IFormInputs) => {
@@ -70,7 +64,7 @@ const ClientForm: React.FC = () => {
                     icon: "success",
                     confirmButtonText: "OK",
                 });
-                reset();  // Reset form after submission
+                reset();  
             }).catch((e) => {
                 console.log(e.response.data)
                 Swal.fire({

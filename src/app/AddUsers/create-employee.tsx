@@ -6,7 +6,6 @@ import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlas
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import axios from "axios";
 import Swal from "sweetalert2";
-// Validation rules
 const validationRules = {
     email: {
         required: "Email is required",
@@ -97,10 +96,10 @@ function AddEmployeeForm() {
             data.type = 'employee'
 
 
-            // Simulate form submission
+           
             console.log(data);
             const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-            // send data to api using of axios
+           
             const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +151,7 @@ function AddEmployeeForm() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={3}>
-                    {/* Email Field */}
+                  
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Email"
@@ -164,7 +163,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Password Field */}
+                  
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Password"
@@ -194,7 +193,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Name Field */}
+                  
                     <Grid item xs={12}>
                         <TextField
                             label="Name"
@@ -206,7 +205,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Phone Field */}
+                 
                     <Grid item xs={12}>
                         <TextField
                             label="Phone"
@@ -219,7 +218,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* CNIC Field */}
+                   
                     <Grid item xs={12}>
                         <TextField
                             label="CNIC"
@@ -232,7 +231,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Gender Field */}
+                  
                     <Grid item xs={12} sm={6}>
                         <FormControl fullWidth variant="outlined" error={Boolean(errors.gender)}>
                             <InputLabel>Gender</InputLabel>
@@ -248,7 +247,6 @@ function AddEmployeeForm() {
                         </FormControl>
                     </Grid>
 
-                    {/* Salary Field */}
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Salary"
@@ -261,7 +259,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Date of Birth Field */}
+                  
                     <Grid item xs={12}>
                         <TextField
                             label="Date of Birth"
@@ -275,7 +273,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                    {/* Submit Button */}
+                  
                     <Grid item xs={12}>
                         <Button
                             type="submit"

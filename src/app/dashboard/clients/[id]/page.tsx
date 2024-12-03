@@ -185,227 +185,234 @@ export default function EmployeeDetails() {
 
   return (
     <Box
+    sx={{
+      p: { xs: 2, sm: 4 },
+      backgroundColor: grey[100],
+      minHeight: "100vh",
+      position: "relative",
+    }}
+  >
+    <Grid item xs={12} sx={{ position: "absolute", top: 16, left: 16 }}>
+      <BackIcon />
+    </Grid>
+  
+    <Grid item xs={12} sx={{ position: "absolute", top: 16, right: 16 }}>
+      <IconButton
+        onClick={confirmDelete}
+        sx={{
+          color: red[700],
+          borderRadius: "5px",
+          display: "flex",
+          justifyContent: "flex-end",
+          "&:hover": {
+            backgroundColor: red[800],
+            color: "white"
+          },
+          marginBottom: 2,
+        }}
+      >
+        <FiTrash size={30} />
+      </IconButton>
+    </Grid>
+  
+    <Grid
+      container
+      spacing={4}
+      maxWidth="lg"
       sx={{
-        p: { xs: 2, sm: 4 },
-        backgroundColor: grey[100],
-        minHeight: "100vh",
+        margin: "0 auto",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center", 
       }}
     >
-      <Grid item xs={12} >
-        <BackIcon />
+      <Grid item xs={12} sx={{ textAlign: "center", mb: 4 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 700,
+            color: teal[700],
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            fontSize: { xs: "1.5rem", sm: "2rem" },
+          }}
+        >
+          Client Details
+        </Typography>
       </Grid>
-
-
-      <Grid
-        container
-        spacing={4}
-        maxWidth="lg"
-        sx={{ margin: "0 auto", width: "100%" }}>
-
-
-        {/* Header */}
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }} >
-            <Typography
-              variant="h4"
-              gutterBottom
+  
+      <Grid item xs={12}>
+        <Grid container spacing={4} justifyContent="center">
+          <Grid item xs={12} sm={4}>
+            <Card
               sx={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 700,
-                color: teal[700],
-                textTransform: "uppercase",
-                letterSpacing: "2px",
-                fontSize: { xs: "1.5rem", sm: "2rem" },
-              }} >
-              Client Details
-            </Typography>
-            <IconButton
-              onClick={confirmDelete}
-              sx={{
-                color: red[700],
-                borderRadius: "5px",
                 display: "flex",
-                justifyContent: "flex-end",
+                flexDirection: "column",
+                alignItems: "center",
+                p: 3,
+                textAlign: "center",
+                height: "100%",
+                boxShadow: 6,
+                borderRadius: 4,
+                background: `linear-gradient(to bottom, ${teal[50]}, #fff)`,
+                border: `1px solid ${grey[300]}`,
                 "&:hover": {
-                  backgroundColor: red[800],
-                  color: "white"
+                  boxShadow: 10,
                 },
-                marginBottom: 2
               }}
             >
-              <FiTrash size={30} />
-            </IconButton>
-          </Box>
-        </Grid>
-
-        {/* Avatar and Personal Information */}
-        <Grid item xs={12}>
-          <Grid container spacing={4}>
-            {/* Avatar and Name */}
-            <Grid item xs={12} sm={4}>
-              <Card
+              <Avatar
+                src={employee.avatar || ""}
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  p: 3,
-                  textAlign: "center",
-                  height: "100%",
-                  boxShadow: 6,
-                  borderRadius: 4,
-                  background: `linear-gradient(to bottom, ${teal[50]}, #fff)`,
-                  border: `1px solid ${grey[300]}`,
-                  "&:hover": {
-                    boxShadow: 10,
-                  },
-                }}>
-                <Avatar
-                  src={employee.avatar || ""}
-                  sx={{
-                    width: { xs: 100, sm: 140 },
-                    height: { xs: 100, sm: 140 },
-                    mb: 2,
-                    bgcolor: teal[500],
-                    color: "common.white",
-                    fontSize: { xs: "2rem", sm: "2.5rem" },
-                    fontWeight: "bold",
-                    border: 4,
-                    boxShadow: 3,
-                  }}>
-                  {employee.name.charAt(0).toUpperCase()}
-                </Avatar>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 600,
-                    color: teal[800],
-                    textTransform: "capitalize",
-                    fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                  }} >
-                  {employee.name}
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  variant="body2"
-                  sx={{
-                    fontStyle: "italic",
-                    fontSize: { xs: "0.875rem", sm: "1rem" },
-                  }}>
-                  {employee.type.toUpperCase()}
-                </Typography>
-              </Card>
-            </Grid>
-
-            {/* Personal Information */}
-            <Grid item xs={12} sm={8}>
-              <Card
+                  width: { xs: 100, sm: 140 },
+                  height: { xs: 100, sm: 140 },
+                  mb: 2,
+                  bgcolor: teal[500],
+                  color: "common.white",
+                  fontSize: { xs: "2rem", sm: "2.5rem" },
+                  fontWeight: "bold",
+                  border: 4,
+                  boxShadow: 3,
+                }}
+              >
+                {employee.name.charAt(0).toUpperCase()}
+              </Avatar>
+              <Typography
+                variant="h5"
                 sx={{
-                  boxShadow: 6,
-                  borderRadius: 4,
-                  backgroundColor: "#ffffff",
-                  p: 3,
-                  width: "100%",
-                }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 600,
-                    color: teal[700],
-                    mb: 2,
-                    fontSize: { xs: "1rem", sm: "1.25rem" },
-                  }}>
-                  Personal Information
-                </Typography>
-                <Divider sx={{ mb: 2, backgroundColor: grey[300] }} />
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }} >
-                      <strong>Service:</strong> {employee.serviceType}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}  >
-                      <strong>Date of Birth:</strong>{" "}
-                      {new Date(employee.dob).toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }} >
-                      <strong>Email:</strong> {employee.email}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}  >
-                      <strong>Phone:</strong> {employee.phone}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }} >
-                      <strong>Country:</strong> {employee.country}
-                    </Typography>
-                  </Grid>
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 600,
+                  color: teal[800],
+                  textTransform: "capitalize",
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                }}
+              >
+                {employee.name}
+              </Typography>
+              <Typography
+                color="textSecondary"
+                variant="body2"
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: { xs: "0.875rem", sm: "1rem" },
+                }}
+              >
+                {employee.type.toUpperCase()}
+              </Typography>
+            </Card>
+          </Grid>
+  
+          <Grid item xs={12} sm={8}>
+            <Card
+              sx={{
+                boxShadow: 6,
+                borderRadius: 4,
+                backgroundColor: "#ffffff",
+                p: 3,
+                width: "100%",
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 600,
+                  color: teal[700],
+                  mb: 2,
+                  fontSize: { xs: "1rem", sm: "1.25rem" },
+                }}
+              >
+                Personal Information
+              </Typography>
+              <Divider sx={{ mb: 2, backgroundColor: grey[300] }} />
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: grey[700],
+                      mb: 1,
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
+                  >
+                    <strong>Service:</strong> {employee.serviceType}
+                  </Typography>
                 </Grid>
-              </Card>
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: grey[700],
+                      mb: 1,
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
+                  >
+                    <strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: grey[700],
+                      mb: 1,
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
+                  >
+                    <strong>Email:</strong> {employee.email}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: grey[700],
+                      mb: 1,
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
+                  >
+                    <strong>Phone:</strong> {employee.phone}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: grey[700],
+                      mb: 1,
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
+                  >
+                    <strong>Country:</strong> {employee.country}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
           </Grid>
         </Grid>
       </Grid>
-
-      {/* Error Message */}
-      {deleteError ? (
-        <Typography
-          variant="body2"
-          color="error"
-          sx={{
-            mt: 3,
-            textAlign: "center",
-            fontFamily: "'Poppins', sans-serif",
-            fontSize: { xs: "0.75rem", sm: "1rem" },
-          }}
-        >
-          {deleteError}
-        </Typography>
-      ) : null}
-    </Box>
+    </Grid>
+  
+    {deleteError && (
+      <Typography
+        variant="body2"
+        color="error"
+        sx={{
+          mt: 3,
+          textAlign: "center",
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: { xs: "0.75rem", sm: "1rem" },
+        }}
+      >
+        {deleteError}
+      </Typography>
+    )}
+  </Box>
+  
   );
 
 

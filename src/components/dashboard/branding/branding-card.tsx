@@ -18,7 +18,7 @@ export interface Integration {
   description: string;
   logo: string;
   installs: number;
-  updatedAt: Date; // Ensure this matches your API response
+  updatedAt: Date; 
 }
 
 export interface BrandingProps {

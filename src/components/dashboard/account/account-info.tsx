@@ -16,7 +16,6 @@ export function AccountInfo(): React.JSX.Element {
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Fetch data from localStorage
       const storedData = localStorage.getItem('AdminloginData');
       if (storedData) {
         setLoginData(JSON.parse(storedData));
@@ -43,14 +42,13 @@ export function AccountInfo(): React.JSX.Element {
       }}
     >
       <CardContent>
-        {/* Profile Avatar */}
         <Stack spacing={4} sx={{ alignItems: 'center', textAlign: 'center' }}>
           <Avatar
             sx={{
               width: 200,
               height: 200,
               mb: 2,
-              bgcolor: blue[800], // Lighter blue
+              bgcolor: blue[800],
               color: 'common.white',
               fontSize: '4rem',
               fontWeight: 'bold',
@@ -58,7 +56,7 @@ export function AccountInfo(): React.JSX.Element {
               transition: '0.3s ease-in-out',
               '&:hover': {
                 transform: 'scale(1.1)',
-                backgroundColor: blue[200], // Slightly darker blue on hover
+                backgroundColor: blue[200], 
               },
               '@media (max-width:600px)': {
                 width: 100,
@@ -69,32 +67,12 @@ export function AccountInfo(): React.JSX.Element {
             <PersonIcon fontSize="inherit" />
           </Avatar>
 
-          {/* Name */}
+        
           <Typography variant="h4" sx={{ fontWeight: '800', color: blue[800] }}>
             {name || 'No Name Available'}
           </Typography>
 
-          {/* Details */}
-          {/* <Stack spacing={1} sx={{ width: '100%' }}>
-            <Typography color="text.secondary" variant="body2">
-              {email || 'No Email Available'}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {phone || 'No Phone Available'}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {cnic || 'No CNIC Available'}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {salary || 'No Salary Available'}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {dob || 'No Date of Birth Available'}
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              {gender || 'No Gender Available'}
-            </Typography>
-          </Stack> */}
+         
         </Stack>
       </CardContent>
       <Divider sx={{ marginY: 2 }} />

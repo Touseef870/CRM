@@ -1,21 +1,25 @@
-import type { Icon } from '@phosphor-icons/react/dist/lib/types';
-import { ChartPie as ChartPieIcon } from '@phosphor-icons/react/dist/ssr/ChartPie';
 import { GearSix as GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
-import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist/ssr/PlugsConnected';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
-import { File as FileIcon } from '@phosphor-icons/react/dist/ssr/File';
-
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import type { Icon } from '@phosphor-icons/react/dist/lib/types';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import StoreIcon from '@mui/icons-material/Store';
+import UpdateIcon from '@mui/icons-material/Update';
 
 export const navIcons = {
-  'chart-pie': ChartPieIcon,
   'gear-six': GearSixIcon,
-  'plugs-connected': PlugsConnectedIcon,
   'x-square': XSquare,
-  file: FileIcon, // New File icon added
- 
+  'user': UserIcon,
+  'users': UsersIcon,
+  'dashboard': DashboardCustomizeIcon as unknown as Icon, // Type cast to Icon to match type
+  'SupervisorAccountIcon': SupervisorAccountIcon  as unknown as Icon,
+  'ReceiptIcon': ReceiptIcon  as unknown as Icon,
+  'StoreIcon': StoreIcon  as unknown as Icon,
+  'UpdateIcon': UpdateIcon  as unknown as Icon,
 
-  user: UserIcon,
-  users: UsersIcon,
+
+
 } as Record<string, Icon>;

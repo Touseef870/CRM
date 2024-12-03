@@ -15,12 +15,11 @@ import { Box } from '@mui/system';
 export default function Employee(): React.JSX.Element {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [originalEmployees, setOriginalEmployees] = useState<Customer[]>([]); // Store original data
-  const [employ, setEmploy] = useState<Customer[]>([]); // Start with an empty list
+  const [originalEmployees, setOriginalEmployees] = useState<Customer[]>([]); 
+  const [employ, setEmploy] = useState<Customer[]>([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch customers from API
   useEffect(() => {
     async function fetchCustomers() {
       try {
@@ -33,7 +32,7 @@ export default function Employee(): React.JSX.Element {
             'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
           },
         });
-        setOriginalEmployees(response.data.data.clients); // Store original data
+        setOriginalEmployees(response.data.data.clients); 
         setEmploy(response.data.data.clients);
       } catch (err) {
         setError('Failed to fetch customers.');
@@ -53,7 +52,7 @@ export default function Employee(): React.JSX.Element {
           customer.name.toLowerCase().includes(value.toLowerCase())
         );
     setEmploy(filtered);
-    setPage(0); // Reset to first page after filtering
+    setPage(0); 
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -62,7 +61,7 @@ export default function Employee(): React.JSX.Element {
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to first page when rows per page change
+    setPage(0); 
   };
 
   const paginatedEmployees = employ ? employ.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : [];
@@ -97,7 +96,7 @@ export default function Employee(): React.JSX.Element {
       </Stack>
       <CustomersFilters
         onChange={(e) => { handleFilterEmploy(e.target.value); }}
-        onResetData={() => { setEmploy(originalEmployees); }} // Reset data when input is cleared
+        onResetData={() => { setEmploy(originalEmployees); }} 
       />
       <CustomersTable
         count={employ.length}
@@ -107,7 +106,7 @@ export default function Employee(): React.JSX.Element {
       />
       <TablePagination
         component="div"
-        count={employ.length} // Total number of items in filtered list
+        count={employ.length} 
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}

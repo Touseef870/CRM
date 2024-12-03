@@ -18,7 +18,6 @@ import { useSelection } from '@/hooks/use-selection';
 import Link from 'next/link';
 
 function noop(): void {
-  // do nothing
 }
 
 export interface Customer {
@@ -55,7 +54,6 @@ export function CustomersTable({
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
 
   return (
-    // <div></div>
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: '800px' }}>

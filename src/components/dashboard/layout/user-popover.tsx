@@ -42,10 +42,8 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
 
-      // Refresh the router manually to reflect changes
       router.refresh();
     } catch (err) {
       logger.error('Sign out error', err);
