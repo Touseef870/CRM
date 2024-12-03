@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import RouterLink from 'next/link';
 import Button from '@mui/material/Button';
@@ -13,11 +13,13 @@ import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import Swal from 'sweetalert2';
+import { AppContext } from '@/contexts/isLogin';
 
 export function SignInForm(): React.JSX.Element {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<{ email?: string; password?: string }>({});
+  const { setStoredValue } = useContext(AppContext)!;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,8 +51,8 @@ export function SignInForm(): React.JSX.Element {
       setError((prevError) => ({ ...prevError, password: 'Password is required' }));
       return;
     }
-    
-    
+
+
 
     try {
       const response = await axios.post(
@@ -65,6 +67,7 @@ export function SignInForm(): React.JSX.Element {
 
       if (response.status === 200) {
         saveToLocalStorage('AdminloginData', response.data.data);
+        setStoredValue(response.data.data); // Save the login data to the context
         Swal.fire({
           title: "Successfully Created!",
           text: "Thank You",
@@ -73,11 +76,11 @@ export function SignInForm(): React.JSX.Element {
           // Check if the user clicked 'OK'
           if (result.isConfirmed) {
             // Redirect after clicking 'OK'
-            window.location.href = '/dashboard'; 
+            window.location.href = '/dashboard';
           }
         });
       }
-      
+
     } catch (error: any) {
       // Handle error from API response
       if (error.response?.data?.message === 'Invalid email or password') {
@@ -114,8 +117,8 @@ export function SignInForm(): React.JSX.Element {
               type="email"
             />
             {error.email ? <Typography variant="body2" color="error">
-                {error.email}
-              </Typography> : null}
+              {error.email}
+            </Typography> : null}
           </FormControl>
 
           <FormControl fullWidth error={Boolean(error.password)}>
@@ -143,8 +146,8 @@ export function SignInForm(): React.JSX.Element {
               type={showPassword ? 'text' : 'password'}
             />
             {error.password ? <Typography variant="body2" color="error">
-                {error.password}
-              </Typography> : null}
+              {error.password}
+            </Typography> : null}
           </FormControl>
           <div>
             <Link component={RouterLink} href="/reset-password" variant="subtitle2">
