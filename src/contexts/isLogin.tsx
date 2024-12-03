@@ -50,5 +50,5 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         </AppContext.Provider>
     );
 };
-
+  
 export { AppContext, AppProvider };
