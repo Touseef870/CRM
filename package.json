@@ -25,6 +25,7 @@
     "@hookform/resolvers": "3.9.1",
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.170",
+
     "@mui/material": "^5.11.0",
     "@mui/styles": "^6.1.9",
     "@mui/system": "^6.1.9",

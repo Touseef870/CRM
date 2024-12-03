@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import EmployeeBiometric from '../../../components/dashboard/biometric/employee-biometric';
 import UploadAndDisplay from '../../../components/dashboard/biometric/EmployeeBiometricUpload'; // Corrected import path
 
 function DashboardPage() {

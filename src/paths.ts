@@ -10,6 +10,8 @@ export const paths = {
     invoice : '/dashboard/invoice',
     client : '/dashboard/clients',
     biometric : '/dashboard/biometric',
+    subadmin : '/dashboard/subadmin',
+
 
   },
   errors: { notFound: '/errors/not-found' },

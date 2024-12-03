@@ -10,7 +10,7 @@ interface IFormInputs {
     name: string;
     phone: number;
     country: string;
-    amount: number;
+    // amount: number;
     serviceType: string;
     dob: string;
 }
@@ -29,25 +29,18 @@ const validationRules = {
     },
     phone: {
         required: "Phone number is required",
-        minLength: {
-            value: 10,
-            message: "Phone number must be at least 10 digits",
-        },
-        maxLength: {
-            value: 10,
-            message: "Phone number must be no more than 10 digits",
-        },
+       
     },
     country: {
         required: "Country is required",
     },
-    amount: {
-        required: "Amount is required",
-        min: {
-            value: 0,
-            message: "Amount must be a positive number",
-        },
-    },
+    // amount: {
+    //     required: "Amount is required",
+    //     min: {
+    //         value: 0,
+    //         message: "Amount must be a positive number",
+    //     },
+    // },
     serviceType: {
         required: "Service type is required",
     },
@@ -170,22 +163,7 @@ const ClientForm: React.FC = () => {
                     )}
                 />
 
-                <Controller
-                    name="amount"
-                    control={control}
-                    rules={validationRules.amount}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Amount"
-                            variant="outlined"
-                            error={Boolean(errors.amount)}
-                            helperText={errors.amount?.message}
-                            fullWidth
-                            type="number"
-                        />
-                    )}
-                />
+                
 
                 <FormControl fullWidth>
                     <InputLabel>Service Type</InputLabel>
