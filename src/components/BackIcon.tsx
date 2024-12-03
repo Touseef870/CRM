@@ -3,13 +3,10 @@ import { IconButton } from '@mui/material'
 import React from 'react'
 import { FaArrowLeft } from 'react-icons/fa'
 
-interface BackIconProps {
-    path: string; // Define the type for the 'path' prop
-}
 
-const BackIcon: React.FC<BackIconProps> = ({ path }) => {
+const BackIcon: React.FC = () => {
     const handleBackClick = () => {
-        window.location.href = path; // Redirect to the specified path
+        window.history.back();
     };
     return (
         <div>

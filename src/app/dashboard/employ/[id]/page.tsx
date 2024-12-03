@@ -18,7 +18,7 @@ function page() {
 
   return (
     <div>
-      <BackIcon path='/dashboard/employ' />
+      <BackIcon />
 
       <EmployeeDetails />
       <AttendanceTable />

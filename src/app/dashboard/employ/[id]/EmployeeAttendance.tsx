@@ -85,10 +85,8 @@ const AttendanceTable: React.FC = () => {
     if (!editingRow) return;
 
     try {
-      // Convert date to ISO format (YYYY-MM-DD)
       const formattedDate = moment(editingRow.date, "DD-MM-YYYY").format("YYYY-MM-DD");
 
-      // Convert check-in and check-out times to ISO format
       const formattedCheckIn = moment(editedCheckIn, "hh:mm A").format("HH:mm");
       const formattedCheckOut = moment(editedCheckOut, "hh:mm A").format("HH:mm");
 
