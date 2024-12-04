@@ -17,6 +17,6 @@ const allNavItems: NavItemConfig[] = [
 
 
 export const navItems = (userType === 'employee')
-  ? allNavItems.filter(item => item.key !== 'biometric' && item.key !== 'employ')
+  ? allNavItems.filter(item => item.key !== 'biometric' && item.key !== 'employ' && item.key !== 'subadmin')
   : (userType === 'sub-admin') ? allNavItems.filter(item => item.key !== 'subadmin') :
     allNavItems;

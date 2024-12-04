@@ -20,6 +20,7 @@ import Swal from "sweetalert2"; // SweetAlert2 library
 import BackIcon from "@/components/BackIcon";
 import { FiTrash } from "react-icons/fi";
 import { grey, teal, red } from "@mui/material/colors";
+import { createRouteLoader } from "next/dist/client/route-loader";
 
 interface Employee {
   _id: string;
@@ -47,6 +48,9 @@ export default function EmployeeDetails() {
   const router = useRouter(); // To redirect after deletion
   const [deleteError, setDeleteError] = useState<string | null>(null); // For delete errors
 
+  const getData = localStorage.getItem("AdminloginData");
+  const token = JSON.parse(getData!).token;
+
   useEffect(() => {
     if (!id) {
       setError("Employee ID is missing.");
@@ -56,15 +60,7 @@ export default function EmployeeDetails() {
 
     const fetchEmployee = async () => {
       try {
-        const adminLoginData = localStorage.getItem("AdminloginData");
-
-        if (!adminLoginData) {
-          throw new Error("Admin login data is missing");
-        }
-
-        const parsedData = JSON.parse(adminLoginData);
-
-        if (!parsedData.token) {
+        if (!token) {
           throw new Error("Token is missing in admin login data");
         }
 
@@ -73,7 +69,7 @@ export default function EmployeeDetails() {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${parsedData.token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -148,6 +144,27 @@ export default function EmployeeDetails() {
     });
   };
 
+  // const createOrder =async () => {
+
+
+  //       try {
+  //         const response = await axios.post(
+  //           `https://api-vehware-crm.vercel.app/api/order/create-orders`,
+  //           {
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         );
+  //         // setInvoices(response.data);
+  //       } catch (err) {
+  //         console.error("Error fetching attendance data:", err);
+  //       }
+
+ 
+  // }
+
 
   if (loading) {
     return (
@@ -177,7 +194,7 @@ export default function EmployeeDetails() {
     return (
       <Box sx={{ textAlign: "center", mt: 4 }}>
         <Typography variant="h6" color="textSecondary">
-          Employee not found
+          Client not found
         </Typography>
       </Box>
     );
@@ -245,6 +262,21 @@ export default function EmployeeDetails() {
       </Grid>
   
       <Grid item xs={12}>
+      {/* <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 700,
+            color: teal[700],
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            fontSize: { xs: "1.5rem", sm: "2rem" },
+          }}
+          onclick={createOrder()}
+        >
+          Added order
+        </Typography> */}
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} sm={4}>
             <Card

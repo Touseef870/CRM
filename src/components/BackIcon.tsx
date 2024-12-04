@@ -10,7 +10,7 @@ const BackIcon: React.FC = () => {
     };
     return (
         <div>
-            <IconButton style={{ padding: '10px', marginBottom: '10px', backgroundColor: '#0000ff', color: 'white', borderRadius: "10px" }} onClick={handleBackClick}   >
+            <IconButton style={{ padding: '10px', marginBottom: '10px', borderRadius: "10px" }} onClick={handleBackClick}   >
                 <FaArrowLeft />
             </IconButton>
         </div>
