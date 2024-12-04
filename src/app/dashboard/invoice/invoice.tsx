@@ -1,159 +1,318 @@
-'use client'
+'use client';
 
-import { InvoiceFilter } from '@/components/dashboard/invoice/invoice-filters';
-import { Invoice } from '@/components/dashboard/overview/latest-invoice';
-import { Grid } from '@mui/material';
-import dayjs from 'dayjs';
-import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, CircularProgress, IconButton, TextField } from '@mui/material';
+import { Visibility, Delete } from '@mui/icons-material';
+import axios from 'axios';
+import PDFDownloadUI from './PDFDownloadUI';
+import Swal from 'sweetalert2';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+
+
+interface Order {
+  _id: string;
+  title: string;
+  description: string;
+  discountPrice: number;
+  price: number;
+  status: string;
+  brand: {
+    _id: string;
+    title: string;
+    description: string;
+    img: string;
+  };
+}
 
 function InvoicePage() {
-    const UserInvoice = [
-        { id: 'ORD-007', customer: { name: 'Ekaterina Tankova' }, amount: 30.5, status: 'pending', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-006', customer: { name: 'Cao Yu' }, amount: 25.1, status: 'delivered', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-004', customer: { name: 'Alexa Richardson' }, amount: 10.99, status: 'refunded', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-003', customer: { name: 'Anje Keizer' }, amount: 96.43, status: 'pending', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-002', customer: { name: 'Clarke Gillebert' }, amount: 32.54, status: 'delivered', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-001', customer: { name: 'Adam Denisov' }, amount: 16.76, status: 'delivered', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-        { id: 'ORD-005', customer: { name: 'Adam Denisov' }, amount: 16.76, status: 'pending', createdAt: dayjs().subtract(10, 'minutes').toDate() },
-    ];
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [open, setOpen] = useState<boolean>(false);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [formData, setFormData] = useState({
-        title: '',
-        image: null as any,
-        description: '',
-    });
+  const token = JSON.parse(localStorage.getItem('AdminloginData') || '{}').token;
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value);
+  useEffect(() => {
+    if (!token) {
+      console.error('Token is missing.');
+      return;
+    }
+
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get('https://api-vehware-crm.vercel.app/api/order/get-orders', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setOrders(response.data.data.orders || []);
+        setFilteredOrders(response.data.data.orders || []);  // Initially set filtered orders
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setLoading(false);
+      }
     };
 
-    const filteredInvoices = UserInvoice.filter((invoice) => {
-        return (
-            invoice.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            invoice.customer.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    });
+    fetchOrders();
+  }, [token]);
 
-    const handleOpenModal = () => {
-        setOpen(true);
-    };
+  // Handle the search functionality
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredOrders(orders); // If search term is empty, show all orders
+    } else {
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      setFilteredOrders(
+        orders.filter(
+          (order) =>
+            order.title.toLowerCase().includes(lowercasedSearchTerm) ||
+            order.description.toLowerCase().includes(lowercasedSearchTerm)
+        )
+      );
+    }
+  }, [searchTerm, orders]);
 
-    const handleCloseModal = () => {
-        setOpen(false);
-    };
+  const handleOpenModal = (order: Order) => {
+    setSelectedOrder(order);
+    setOpenModal(true);
+  };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setFormData({ ...formData, image: file });
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedOrder(null);
+  };
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+  const handleDeleteOrder = (orderId: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this order!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.patch(
+            `https://api-vehware-crm.vercel.app/api/order/delete-order/${orderId}`,
+            {},
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+          setFilteredOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));  // Also filter from filtered orders
+
+          Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
+        } catch (error) {
+          Swal.fire('Error!', 'There was an issue deleting the order.', 'error');
         }
-    };
+      }
+    });
+  };
 
-    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  return (
+    <Grid container spacing={2} sx={{ padding: '24px' }}>
+      <Grid item xs={12}>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: '#2C3E50' }}>Invoices</Typography>
+      </Grid>
 
-    const handleFormSubmit = () => {
-        console.log(formData); 
-        handleCloseModal(); 
-    };
+      <Stack direction="row" justifyContent="space-between" sx={{ mb: 2, p: 2 }}>
+        <TextField
+          label="Search Orders"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ width: '100%' }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Stack>
 
-    return (
-        <Grid lg={8} md={12} xs={12}>
-            <Stack direction="row" spacing={3}>
-                <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-                    <Typography variant="h4">Invoice</Typography>
-                </Stack>
-                <div>
-                    <Button
-                        startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
-                        variant="contained"
-                        onClick={handleOpenModal} 
-                    >
-                        Add
-                    </Button>
-                </div>
-            </Stack>
-            <InvoiceFilter onChange={handleSearchChange} />
-
-            <Invoice orders={filteredInvoices} sx={{ height: '100%' }} />
-
-            <Dialog open={open} onClose={handleCloseModal}>
-                <DialogTitle>Add Invoice</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        name="title"
-                        label="Title"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        value={formData.title}
-                        onChange={handleFormChange}
-                    />
-                    <div style={{ marginBottom: '16px' }}>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            id="image-upload"
-                            style={{ display: 'none' }}
-                        />
-                        <label htmlFor="image-upload">
-                            <Button
-                                component="span"
-                                startIcon={<CloudUploadIcon />}
-                                variant="outlined"
-                                fullWidth
-                                sx={{ textAlign: 'center' }}
-                            >
-                                {formData.image ? 'Image Selected' : 'Select Image'}
-                            </Button>
-                        </label>
-                        {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: '100%', marginTop: '16px' }} />}
-                    </div>
-                    <TextField
-                        name="description"
-                        label="Description"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        multiline
-                        rows={4}
-                        value={formData.description}
-                        onChange={handleFormChange}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseModal} color="secondary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleFormSubmit} variant="contained" color="primary">
-                        Submit
-                    </Button>
-                </DialogActions>
-            </Dialog>
+      {loading ? (
+        <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '60vh' }}>
+          <CircularProgress size={60} sx={{ color: '#3498DB' }} />
         </Grid>
-    );
+      ) : (
+        <Grid item xs={12}>
+          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Brand</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Title</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Description</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Discount Price</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Price</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredOrders.length > 0 ? (
+                  filteredOrders.map((order) => (
+                    <TableRow key={order._id} sx={{ '&:hover': { backgroundColor: '#f0f8ff' } }}>
+                      <TableCell>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <img
+                            src={order.brand.img}
+                            alt={order.brand.title}
+                            style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #3498DB' }}
+                          />
+                          <Typography variant="body2" sx={{ color: '#34495E' }}>
+                            {order.brand.title}
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 500, color: '#34495E' }}>{order.title}</TableCell>
+                      <TableCell sx={{ fontSize: 14, color: '#7F8C8D' }}>{order.description}</TableCell>
+                      <TableCell sx={{ fontWeight: 500, color: '#E74C3C' }}>{order.discountPrice}</TableCell>
+                      <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>{order.price}</TableCell>
+                      <TableCell sx={{ fontWeight: 500, color: '#3498DB' }}>{order.status}</TableCell>
+                      <TableCell>
+                        <Stack direction="row" spacing={2}>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleOpenModal(order)}
+                            sx={{
+                              padding: 1,
+                              borderRadius: '50%',
+                              '&:hover': { backgroundColor: '#E3F2FD' },
+                            }}
+                          >
+                            <Visibility sx={{ fontSize: 24 }} />
+                          </IconButton>
+                          <IconButton
+                            color="secondary"
+                            onClick={() => handleDeleteOrder(order._id)}
+                            sx={{
+                              padding: 1,
+                              borderRadius: '50%',
+                              '&:hover': { backgroundColor: '#FFEBEE' },
+                            }}
+                          >
+                            <Delete sx={{ fontSize: 24 }} />
+                          </IconButton>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D' }}>
+                      No orders found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      )}
+
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="sm" 
+        fullWidth
+        sx={{
+          borderRadius: 4,
+          boxShadow: 24,
+          maxHeight: '80vh', 
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: 'bold',
+            fontSize: 24, 
+            color: '#333',
+            textAlign: 'center', 
+            paddingTop: 3, 
+            marginBottom: 2, 
+          }}
+        >
+          Order Details
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: 3 }}>
+          {selectedOrder && (
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50', marginBottom: 1 }}>
+                  Title: {selectedOrder.brand.title}
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: 14, color: '#7F8C8D', marginBottom: 2 }}>
+                  Description: {selectedOrder.brand.description}
+                </Typography>
+                <img
+                  src={selectedOrder.brand.img}
+                  alt={selectedOrder.brand.title}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                    marginTop: '15px', 
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>Order Title:</Typography>
+                <Typography variant="body1" sx={{ fontSize: 16, color: '#34495E' }}>
+                  {selectedOrder.title}
+                </Typography>
+                <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
+
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>Description:</Typography>
+                <Typography variant="body1" sx={{ fontSize: 14, color: '#7F8C8D' }}>
+                  {selectedOrder.description}
+                </Typography>
+                <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
+
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>Discount Price:</Typography>
+                <Typography variant="body1" sx={{ fontSize: 16, color: '#E74C3C' }}>
+                  {selectedOrder.discountPrice}
+                </Typography>
+                <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
+
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>Price:</Typography>
+                <Typography variant="body1" sx={{ fontSize: 16, color: '#27AE60' }}>
+                  {selectedOrder.price}
+                </Typography>
+                <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
+
+                <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>Status:</Typography>
+                <Typography variant="body1" sx={{ fontSize: 14, color: '#3498DB' }}>
+                  {selectedOrder.status}
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ padding: 2, justifyContent: 'space-between' }}>
+          <Button onClick={handleCloseModal} color="secondary" sx={{ fontWeight: 600 }}>
+            Close
+          </Button>
+          {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
+        </DialogActions>
+      </Dialog>
+    </Grid>
+  );
 }
 
 export default InvoicePage;

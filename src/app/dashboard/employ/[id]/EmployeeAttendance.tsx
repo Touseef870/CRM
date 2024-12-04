@@ -23,26 +23,25 @@ import {
 import { useParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2"; 
 import { Edit, Schedule } from "@mui/icons-material";
 
 interface AttendanceRow {
-  date: string; // ISO format date
-  checkInTime: string; // ISO format datetime
-  checkOutTime: string; // ISO format datetime
-  present: string; // "Yes" or "No"
+  date: string; 
+  checkInTime: string; 
+  checkOutTime: string; 
+  present: string; 
   _id: string;
 }
 
 const AttendanceTable: React.FC = () => {
   const { id } = useParams<{ id: string | undefined }>();
-  const [loading, setLoading] = useState<boolean>(true); // Track loading state
+  const [loading, setLoading] = useState<boolean>(true); 
   const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [editingRow, setEditingRow] = useState<AttendanceRow | null>(null); // Row being edited
-  const [editedCheckIn, setEditedCheckIn] = useState<string>(""); // Check-in time in modal
-  const [editedCheckOut, setEditedCheckOut] = useState<string>(""); // Check-out time in modal
-
+  const [editingRow, setEditingRow] = useState<AttendanceRow | null>(null);
+  const [editedCheckIn, setEditedCheckIn] = useState<string>(""); 
+  const [editedCheckOut, setEditedCheckOut] = useState<string>("");
   const getData = localStorage.getItem("AdminloginData");
   const token = JSON.parse(getData!).token;
 
@@ -64,7 +63,7 @@ const AttendanceTable: React.FC = () => {
         } catch (err) {
           console.error("Error fetching attendance data:", err);
         } finally {
-          setLoading(false); // Stop loading after the request is done
+          setLoading(false); 
         }
       };
 
@@ -75,10 +74,10 @@ const AttendanceTable: React.FC = () => {
   }, [id, token]);
 
   const handleEdit = (row: AttendanceRow) => {
-    setEditingRow(row); // Set row to edit
-    setEditedCheckIn(moment(row.checkInTime).format("HH:mm")); // Populate modal fields
+    setEditingRow(row); 
+    setEditedCheckIn(moment(row.checkInTime).format("HH:mm")); 
     setEditedCheckOut(moment(row.checkOutTime).format("HH:mm"));
-    setOpenModal(true); // Open the modal
+    setOpenModal(true); 
   };
 
   const handleSave = async () => {
@@ -90,7 +89,6 @@ const AttendanceTable: React.FC = () => {
       const formattedCheckIn = moment(editedCheckIn, "hh:mm A").format("HH:mm");
       const formattedCheckOut = moment(editedCheckOut, "hh:mm A").format("HH:mm");
 
-      // API Call
       await axios.patch(
         `https://api-vehware-crm.vercel.app/api/attendance/update`,
         {
@@ -107,7 +105,6 @@ const AttendanceTable: React.FC = () => {
         }
       );
 
-      // Update state locally
       setAttendanceData((prev) =>
         prev.map((row) =>
           row._id === editingRow._id
@@ -120,7 +117,6 @@ const AttendanceTable: React.FC = () => {
         )
       );
 
-      // Close modal and clear editing row
       setOpenModal(false);
       setEditingRow(null);
 
@@ -134,7 +130,6 @@ const AttendanceTable: React.FC = () => {
           popup: 'swal2-popup',
         },
         didOpen: () => {
-          // Set the z-index for the success popup
           const swalPopup = document.querySelector('.swal2-popup');
           if (swalPopup) {
             (swalPopup as HTMLElement).style.zIndex = '9999'; // Set z-index to bring it to the front
@@ -142,12 +137,10 @@ const AttendanceTable: React.FC = () => {
         },
       });
 
-      // Close the modal on success
       setOpenModal(false);
 
     } catch (err) {
       console.error("Error saving updated attendance data:", err);
-      // Show error alert in case of failure
       Swal.fire({
         icon: 'error',
         title: 'Error!',
@@ -155,25 +148,23 @@ const AttendanceTable: React.FC = () => {
         confirmButtonText: 'OK',
         confirmButtonColor: '#d33',
         customClass: {
-          popup: 'swal2-popup', // Same class as success alert to apply z-index changes
+          popup: 'swal2-popup', 
         },
         didOpen: () => {
-          // Set the z-index for the error popup
           const swalPopup = document.querySelector('.swal2-popup');
           if (swalPopup) {
-            (swalPopup as HTMLElement).style.zIndex = '9999'; // Ensure error popup is also on top
+            (swalPopup as HTMLElement).style.zIndex = '9999'; 
           }
         },
       });
 
-      // Close the modal on error
       setOpenModal(false);
 
     }
   };
   const formattedAttendanceData = attendanceData.map((row) => ({
     ...row,
-    date: moment(row.date).format("DD-MM-YYYY"), // ISO date to DD-MM-YYYY
+    date: moment(row.date).format("DD-MM-YYYY"), 
     checkInTime: row.checkInTime
       ? moment(row.checkInTime, "HH:mm").format("hh:mm A")
       : "N/A", // Handle empty time
@@ -187,7 +178,7 @@ const AttendanceTable: React.FC = () => {
 
     <Box sx={{ margin: "30px" }}>
 
-      {/* Show loading spinner while fetching data */}
+     
       {loading ? (
         <Box sx={{ textAlign: "center", padding: "40px" }}>
           <CircularProgress />
@@ -196,7 +187,7 @@ const AttendanceTable: React.FC = () => {
         <TableContainer
           component={Paper}
           sx={{
-            // borderRadius: 4,
+           
             overflow: "hidden",
             boxShadow: 3,
             padding: "16px",
@@ -273,14 +264,13 @@ const AttendanceTable: React.FC = () => {
         </TableContainer>
       )}
 
-      {/* Modal for Editing Attendance */}
       <Dialog
         open={openModal}
         onClose={() => { setOpenModal(false); }}
         fullWidth
         maxWidth="sm"
         sx={{
-          zIndex: 13010, // Custom z-index for MUI dialog (MUI modal default z-index is 1300)
+          zIndex: 13010,
         }}
       >
         <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>

@@ -26,6 +26,7 @@ export interface UserPopoverProps {
 interface User {
   name: string;
   email: string;
+  type: any;
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
@@ -73,18 +74,21 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
         <Typography color="text.secondary" variant="body2">
           {user?.email || 'No email available'}
         </Typography>
+        <Typography color="text.secondary" sx={{ textTransform: "capitalize" }} variant="body2">
+          {user?.type || 'No type available'}
+        </Typography>
       </Box>
       <Divider />
       <MenuList
         disablePadding
         sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}
       >
-        <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
+        {/* <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
           <ListItemIcon>
             <GearSixIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
           Settings
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
           <ListItemIcon>
             <UserIcon fontSize="var(--icon-fontSize-md)" />

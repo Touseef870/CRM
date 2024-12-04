@@ -22,7 +22,6 @@ import {
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
@@ -38,49 +37,50 @@ interface SubAdmin {
 }
 
 function SubAdminPage() {
-    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]); // Data for subadmins
+    const [loading, setLoading] = useState<boolean>(true); // Initial loading state
     const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [page, setPage] = useState(0); // Current page
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Items per page
+    const [searchTerm, setSearchTerm] = useState<string>(''); // Search term
+    const [totalSubAdmins, setTotalSubAdmins] = useState<number>(0); // Total number of subadmins
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const fetchSubAdmins = async () => {
-            setLoading(true);
             try {
                 const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-
                 if (adminLoginData) {
                     const token = JSON.parse(adminLoginData).token;
+                    const skip = page * rowsPerPage; // Calculate skip value
+                    const limit = rowsPerPage; // Items per page
 
-                    const response = await axios.get(
-                        'https://api-vehware-crm.vercel.app/api/credentials/admins',
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
+                    const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/admins', {
+                        params: { skip, limit },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
 
                     if (response.status === 200) {
                         setSubAdmins(response.data.data.admins);
+                        setTotalSubAdmins(response.data.data.total); // Set the total count for pagination
                     }
                 } else {
                     setError('Admin login data is missing.');
                 }
             } catch (err) {
                 setError('Failed to fetch data.');
+            } finally {
+                setLoading(false); // Stop the loader once data is fetched
             }
-            setLoading(false);
         };
 
         fetchSubAdmins();
-    }, []);
+    }, [page, rowsPerPage]); // Fetch new data when page or rowsPerPage changes
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -96,10 +96,8 @@ function SubAdminPage() {
                 setLoading(true);
                 try {
                     const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-
                     if (adminLoginData) {
                         const token = JSON.parse(adminLoginData).token;
-
                         const response = await axios.delete(
                             `https://api-vehware-crm.vercel.app/api/auth/delete/${id}`,
                             {
@@ -128,11 +126,9 @@ function SubAdminPage() {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(0); // Reset to first page when rows per page changes
     };
 
     const formatDate = (dateString: string) => {
@@ -171,7 +167,7 @@ function SubAdminPage() {
                     variant="outlined"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    sx={{ width: '30%' }} 
+                    sx={{ width: '30%' }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -181,7 +177,6 @@ function SubAdminPage() {
                     }}
                 />
             </Stack>
-
 
             <TableContainer sx={{ overflowX: 'auto' }}>
                 <Table>
@@ -197,49 +192,47 @@ function SubAdminPage() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredSubAdmins
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((subAdmin) => (
-                                <TableRow
-                                    key={subAdmin._id}
-                                    sx={{
-                                        '&:hover': { backgroundColor: '#f5f5f5' },
-                                    }}
-                                >
-                                    <TableCell>
-                                        <Link
-                                            href={`/dashboard/subadmin/${subAdmin._id}`}
-                                            style={{
-                                                textDecoration: 'none',
-                                                color: 'inherit',
-                                                display: 'block', 
-                                            }}
-                                        >
-                                            {subAdmin.name}
-                                        </Link>
-                                    </TableCell>
+                        {filteredSubAdmins.map((subAdmin) => (
+                            <TableRow
+                                key={subAdmin._id}
+                                sx={{
+                                    '&:hover': { backgroundColor: '#f5f5f5' },
+                                }}
+                            >
+                                <TableCell>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.name}
+                                    </Link>
+                                </TableCell>
 
-                                    <TableCell>{subAdmin.email}</TableCell>
-                                    {!isSmallScreen && <TableCell>{subAdmin.phone}</TableCell>}
-                                    {!isSmallScreen && <TableCell>{formatDate(subAdmin.dob)}</TableCell>}
-                                    <TableCell>{subAdmin.cnic}</TableCell>
-                                    <TableCell>{subAdmin.salary}</TableCell>
-                                    <TableCell align="right">
-                                        <IconButton
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDelete(subAdmin._id);
-                                            }}
-                                            color="error"
-                                            sx={{
-                                                padding: isSmallScreen ? '4px' : '8px',
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                <TableCell>{subAdmin.email}</TableCell>
+                                {!isSmallScreen && <TableCell>{subAdmin.phone}</TableCell>}
+                                {!isSmallScreen && <TableCell>{formatDate(subAdmin.dob)}</TableCell>}
+                                <TableCell>{subAdmin.cnic}</TableCell>
+                                <TableCell>{subAdmin.salary}</TableCell>
+                                <TableCell align="right">
+                                    <IconButton
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(subAdmin._id);
+                                        }}
+                                        color="error"
+                                        sx={{
+                                            padding: isSmallScreen ? '4px' : '8px',
+                                        }}
+                                    >
+                                        <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -247,7 +240,7 @@ function SubAdminPage() {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={filteredSubAdmins.length}
+                count={totalSubAdmins} // Total number of subadmins in the system
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
