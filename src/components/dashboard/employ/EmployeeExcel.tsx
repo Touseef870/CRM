@@ -68,35 +68,58 @@ const EmployeeExcel: React.FC = () => {
         setOpen(false);
     };
 
-    // Function to handle "Send" button click
+
     const handleSend = async () => {
-        const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', employeeData, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${storedValue.token}`,
-            },
-        }).then((res) => {
-            console.log(res.data)
-            Swal.fire({
-                title: "Success",
-                text: "Employee added successfully",
-                icon: "success",
-                confirmButtonText: "OK",
-            });
-        }).catch((e) => {
-            console.log(e.response.data)
-            Swal.fire({
-                title: "Error",
-                text: e.response.data.error,
-                icon: "error",
-                confirmButtonText: "OK",
+        // Convert employee data into the desired format
+        const formattedData = {
+            employeeArr: employeeData.map(employee => ({
+                name: employee.name,
+                email: employee.email,
+                password: employee.password,
+                phone: `+92${employee.phone}`, // Add country code to phone number
+                cnic: employee.cnic.toString(), // Ensure CNIC is a string
+                salary: employee.salary,
+                type: employee.type,
+                dob: new Date(employee.dob).toISOString().split('T')[0], // Format DOB as YYYY-MM-DD
+                gender: employee.gender
+            }))
+        };
+
+        console.log('Formatted Employee Data:', formattedData);
+
+        try {
+            const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', formattedData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${storedValue.token}`,
+                },
             })
-        })
-        console.log('Uploaded Employee Data:', employeeData);
+                .then((res) => {
+                    console.log(res.data)
+                    Swal.fire({
+                        title: "Success",
+                        text: "Employee added successfully",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                    });
+                }).catch((e) => {
+                    console.log(e.response.data)
+                    Swal.fire({
+                        title: "Error",
+                        text: e.response.data.error,
+                        icon: "error",
+                        confirmButtonText: "OK",
+                    })
+                })
+        } catch (error) {
+            console.error('Error sending data:', error);
+            Swal.fire('Error', 'There was an issue sending the data', 'error');
+        }
+
         setOpen(false); // Close modal after sending
     };
 
-    console.log("employeeData--->", employeeData)
+
 
     return (
         <div>
@@ -142,7 +165,7 @@ const EmployeeExcel: React.FC = () => {
                                         <TableCell>{employee.type}</TableCell>
                                         <TableCell>{new Date(employee.dob).toLocaleDateString()}</TableCell>
                                         <TableCell>{employee.password}</TableCell>
-                                    </TableRow> 
+                                    </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
