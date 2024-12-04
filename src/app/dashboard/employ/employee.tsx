@@ -4,13 +4,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Button, CircularProgress} from '@mui/material';
-import { Box } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/system/Box';
 import { CustomersFilters } from '@/components/dashboard/employ/employ-filters';
 import { CustomersTable } from '@/components/dashboard/employ/employ-table';
 import type { Customer } from '@/components/dashboard/employ/employ-table';
 import { AppContext } from '@/contexts/isLogin';
-import UploadAndDisplay from '@/components/dashboard/biometric/EmployeeBiometricUpload';
 import EmployeeExcel from '@/components/dashboard/employ/EmployeeExcel';
 
 export default function Employee(): React.JSX.Element {
@@ -18,39 +17,39 @@ export default function Employee(): React.JSX.Element {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [employ, setEmploy] = useState<Customer[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Show loading only for table rows
   const [error, setError] = useState<string | null>(null);
   const { storedValue } = useContext(AppContext)!;
 
-  useEffect(() => {
-    async function fetchPaginatedCustomers() {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchPaginatedCustomers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const skip = page * rowsPerPage;
-        const limit = rowsPerPage;
+      const skip = page * rowsPerPage;
+      const limit = rowsPerPage;
 
-        const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
-          params: { skip, limit },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${storedValue.token}`,
-          },
-        });
+      const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
+        params: { skip, limit },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${storedValue.token}`,
+        },
+      });
 
-        setEmploy(response.data.data.employees); 
-        setTotalEmployees(response.data.data.total); 
-      } catch (err) {
-        setError('Failed to fetch employees.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      setEmploy(response.data.data.employees);
+      setTotalEmployees(response.data.data.total);
+    } catch (err) {
+      setError('Failed to fetch employees.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchPaginatedCustomers();
-  }, [page, rowsPerPage, storedValue.token]); 
+  }, [page, rowsPerPage, storedValue.token]);
 
   const handleFilterEmploy = (value: string) => {
     const filtered = value.trim() === ''
@@ -68,29 +67,8 @@ export default function Employee(): React.JSX.Element {
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); 
+    setPage(0);
   };
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          textAlign: 'center',
-        }}
-      >
-        <CircularProgress size={60} />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return <Typography variant="h6" color="error">{error}</Typography>;
-  }
 
   return (
     <Stack spacing={3}>
@@ -110,11 +88,13 @@ export default function Employee(): React.JSX.Element {
       <CustomersTable
         count={totalEmployees}
         page={page}
-        rows={employ} 
+        rows={employ}
         rowsPerPage={rowsPerPage}
+        loading={loading} // Pass loading prop here
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
     </Stack>
   );
 }

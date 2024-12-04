@@ -14,6 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import TablePagination from '@mui/material/TablePagination';
 import Link from 'next/link';
+import { CircularProgress } from '@mui/material';
 
 export interface Customer {
   _id: string;
@@ -30,6 +31,7 @@ interface CustomersTableProps {
   rows: Customer[];
   page: number;
   rowsPerPage: number;
+  loading: boolean; // Add this line
   onPageChange: (event: unknown, newPage: number) => void;
   onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -39,6 +41,7 @@ export function CustomersTable({
   rows,
   page,
   rowsPerPage,
+  loading,
   onPageChange,
   onRowsPerPageChange,
 }: CustomersTableProps): React.JSX.Element {
@@ -56,27 +59,37 @@ export function CustomersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Link href={`/dashboard/employ/${row._id}`} key={row._id} passHref legacyBehavior>
-                <TableRow hover key={row._id} sx={{ cursor: 'pointer' }}>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>Pakistan</TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{row.salary}</TableCell>
-                </TableRow>
-              </Link>
-            ))}
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <CircularProgress size={24}  />
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((row) => (
+                <Link href={`/dashboard/employ/${row._id}`} key={row._id} passHref legacyBehavior>
+                  <TableRow hover key={row._id} sx={{ cursor: 'pointer' }}>
+                    <TableCell>
+                      <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
+                        <Avatar src={row.avatar} />
+                        <Typography variant="subtitle2">{row.name}</Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>Pakistan</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>{row.salary}</TableCell>
+                  </TableRow>
+                </Link>
+              ))
+            )}
           </TableBody>
+
+
         </Table>
       </Box>
       <Divider />
-      
+
       <TablePagination
         component="div"
         count={count}
