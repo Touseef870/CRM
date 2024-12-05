@@ -142,7 +142,7 @@ export function SignInForm(): React.JSX.Element {
             </Typography> : null}
           </FormControl>
           <div>
-            <Link component={RouterLink} href="/reset-password" variant="subtitle2">
+            <Link component={RouterLink} href="/auth/reset-password" variant="subtitle2">
               Forgot password?
             </Link>
           </div>

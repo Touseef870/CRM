@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -11,44 +10,59 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Controller, useForm } from 'react-hook-form';
-import { z as zod } from 'zod';
-
-import { authClient } from '@/lib/auth/client';
-
-const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
-
-type Values = zod.infer<typeof schema>;
-
-const defaultValues = { email: '' } satisfies Values;
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export function ResetPasswordForm(): React.JSX.Element {
-  const [isPending, setIsPending] = React.useState<boolean>(false);
+  const [isPending, setIsPending] = React.useState<boolean>(false); 
+  const [formData, setFormData] = React.useState<any>(null); 
 
   const {
-    control,
     handleSubmit,
-    setError,
+    control,
     formState: { errors },
-  } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
-
-  const onSubmit = React.useCallback(
-    async (values: Values): Promise<void> => {
-      setIsPending(true);
-
-      const { error } = await authClient.resetPassword(values);
-
-      if (error) {
-        setError('root', { type: 'server', message: error });
-        setIsPending(false);
-        return;
-      }
-
-      setIsPending(false);
-
-      // Redirect to confirm password reset
+  } = useForm<any>({
+    defaultValues: {
+      email: '',
     },
-    [setError]
-  );
+  });
+
+  const onSubmit = async (data: any) => {
+    setIsPending(true); 
+    setFormData(data);  
+
+    try {
+      const response = await axios.post(
+        'https://api-vehware-crm.vercel.app/api/auth/forget',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        Swal.fire({
+          title: "Password Reset Link Sent!",
+          text: "Please check your email for the reset link.",
+          icon: "success",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/auth/sign-in';
+          }
+        });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message || 'Something went wrong, please try again.',
+        icon: 'error', 
+      });
+    } finally {
+      setIsPending(false); 
+    }
+  };
 
   return (
     <Stack spacing={4}>
@@ -56,19 +70,27 @@ export function ResetPasswordForm(): React.JSX.Element {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <Controller
-            control={control}
             name="email"
+            control={control}
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: 'Invalid email address', 
+              },
+            }}
             render={({ field }) => (
-              <FormControl error={Boolean(errors.email)}>
+              <FormControl error={Boolean(errors.email)} fullWidth>
                 <InputLabel>Email address</InputLabel>
                 <OutlinedInput {...field} label="Email address" type="email" />
-                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
+                {errors.email && (
+                  <FormHelperText>{String(errors.email.message)}</FormHelperText> 
+                )}
               </FormControl>
             )}
           />
-          {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
           <Button disabled={isPending} type="submit" variant="contained">
-            Send recovery link
+            {isPending ? 'Sending...' : 'Send recovery link'}
           </Button>
         </Stack>
       </form>
