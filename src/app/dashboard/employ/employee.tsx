@@ -4,8 +4,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/system/Box';
 import { CustomersFilters } from '@/components/dashboard/employ/employ-filters';
 import { CustomersTable } from '@/components/dashboard/employ/employ-table';
 import type { Customer } from '@/components/dashboard/employ/employ-table';
@@ -17,11 +15,12 @@ export default function Employee(): React.JSX.Element {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [employ, setEmploy] = useState<Customer[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [loading, setLoading] = useState(false); // Show loading only for table rows
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState<string | null>(null);
   const { storedValue } = useContext(AppContext)!;
+  const [searchQuery, setSearchQuery] = useState<string>(''); 
 
-  const fetchPaginatedCustomers = async () => {
+  const fetchEmployees = async (search: string = '') => {
     try {
       setLoading(true);
       setError(null);
@@ -30,7 +29,7 @@ export default function Employee(): React.JSX.Element {
       const limit = rowsPerPage;
 
       const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
-        params: { skip, limit },
+        params: { search, skip, limit },
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${storedValue.token}`,
@@ -48,28 +47,27 @@ export default function Employee(): React.JSX.Element {
   };
 
   useEffect(() => {
-    fetchPaginatedCustomers();
-  }, [page, rowsPerPage, storedValue.token]);
+    fetchEmployees(searchQuery);  
+  }, [page, rowsPerPage, searchQuery, storedValue.token]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchQuery(value);
+  };
 
   const handleFilterEmploy = (value: string) => {
-    const filtered = value.trim() === ''
-      ? employ
-      : employ.filter((customer) =>
-        customer.name.toLowerCase().includes(value.toLowerCase())
-      );
-    setEmploy(filtered);
+    setSearchQuery(value); 
     setPage(0);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    setPage(newPage); 
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10)); 
+    setPage(0); 
   };
-
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
@@ -79,18 +77,17 @@ export default function Employee(): React.JSX.Element {
         </Stack>
       </Stack>
 
-      <CustomersFilters
-        onChange={(e) => {
-          handleFilterEmploy(e.target.value);
-        }}
+        <CustomersFilters
+        onChange={handleSearchChange}  
       />
+
 
       <CustomersTable
         count={totalEmployees}
         page={page}
         rows={employ}
         rowsPerPage={rowsPerPage}
-        loading={loading} // Pass loading prop here
+        loading={loading} 
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />

@@ -28,10 +28,10 @@ export interface Customer {
 
 interface CustomersTableProps {
   count: number;
-  rows: Customer[];
+  rows: Customer[];  // This should always be an array
   page: number;
   rowsPerPage: number;
-  loading: boolean; // Add this line
+  loading: boolean;
   onPageChange: (event: unknown, newPage: number) => void;
   onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -45,6 +45,8 @@ export function CustomersTable({
   onPageChange,
   onRowsPerPageChange,
 }: CustomersTableProps): React.JSX.Element {
+  const rowsToRender = Array.isArray(rows) ? rows : []; // Ensure rows is an array
+  
   return (
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
@@ -62,13 +64,13 @@ export function CustomersTable({
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                  <CircularProgress size={24}  />
+                  <CircularProgress size={24} />
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((row) => (
+              rowsToRender.map((row) => (
                 <Link href={`/dashboard/employ/${row._id}`} key={row._id} passHref legacyBehavior>
-                  <TableRow hover key={row._id} sx={{ cursor: 'pointer' }}>
+                  <TableRow hover sx={{ cursor: 'pointer' }}>
                     <TableCell>
                       <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
                         <Avatar src={row.avatar} />
@@ -84,8 +86,6 @@ export function CustomersTable({
               ))
             )}
           </TableBody>
-
-
         </Table>
       </Box>
       <Divider />

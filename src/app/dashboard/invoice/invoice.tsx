@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, CircularProgress, IconButton, TextField } from '@mui/material';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, CircularProgress, IconButton, TextField, Pagination } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
 import axios from 'axios';
 import PDFDownloadUI from './PDFDownloadUI';
@@ -32,6 +32,8 @@ function InvoicePage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1); // for pagination
+  const [rowsPerPage, setRowsPerPage] = useState(10); // items per page
 
   const token = JSON.parse(localStorage.getItem('AdminloginData') || '{}').token;
 
@@ -40,7 +42,6 @@ function InvoicePage() {
       console.error('Token is missing.');
       return;
     }
-
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/order/get-orders', {
@@ -48,10 +49,14 @@ function InvoicePage() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
+          params: {
+            limit: rowsPerPage,
+            skip: (page - 1) * rowsPerPage,
+          },
         });
 
         setOrders(response.data.data.orders || []);
-        setFilteredOrders(response.data.data.orders || []);  // Initially set filtered orders
+        setFilteredOrders(response.data.data.orders || []); 
         setLoading(false);
       } catch (err) {
         console.error('Error fetching orders:', err);
@@ -60,12 +65,11 @@ function InvoicePage() {
     };
 
     fetchOrders();
-  }, [token]);
+  }, [token,  page, rowsPerPage]);
 
-  // Handle the search functionality
   useEffect(() => {
     if (searchTerm === '') {
-      setFilteredOrders(orders); // If search term is empty, show all orders
+      setFilteredOrders(orders); 
     } else {
       const lowercasedSearchTerm = searchTerm.toLowerCase();
       setFilteredOrders(
@@ -112,7 +116,7 @@ function InvoicePage() {
           );
 
           setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
-          setFilteredOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));  // Also filter from filtered orders
+          setFilteredOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));  
 
           Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
         } catch (error) {
@@ -122,6 +126,26 @@ function InvoicePage() {
     });
   };
 
+ // Pagination handler
+ const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
+  setPage(newPage);
+};
+
+// Render Pagination Component
+const renderPagination = () => {
+  const totalOrders = orders.length; // This should be replaced with the total count from your API response if provided
+  const totalPages = Math.ceil(totalOrders / rowsPerPage);
+  return (
+    <Pagination
+      count={totalPages}
+      page={page}
+      onChange={handleChangePage}
+      color="primary"
+      variant="outlined"
+      shape="rounded"
+    />
+  );
+};
   return (
     <Grid container spacing={2} sx={{ padding: '24px' }}>
       <Grid item xs={12}>
@@ -181,7 +205,7 @@ function InvoicePage() {
                         </Stack>
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500, color: '#34495E' }}>{order.title}</TableCell>
-                      <TableCell sx={{ fontSize: 14, color: '#7F8C8D' }}>{order.description}</TableCell>
+                      <TableCell sx={{ fontSize: 14, color: '#7F8C8D' }}>{order.description.split(" ").slice(0, 5).join(" ") + (order.description.split(" ").length > 15 ? "..." : "")}</TableCell>
                       <TableCell sx={{ fontWeight: 500, color: '#E74C3C' }}>{order.discountPrice}</TableCell>
                       <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>{order.price}</TableCell>
                       <TableCell sx={{ fontWeight: 500, color: '#3498DB' }}>{order.status}</TableCell>
@@ -311,7 +335,22 @@ function InvoicePage() {
           {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
         </DialogActions>
       </Dialog>
+      
+      {/* Pagination */}
+      <Grid item xs={12} container justifyContent="center" sx={{ mt: 2 }}>
+        <Pagination
+          count={Math.ceil(orders.length / rowsPerPage)}
+          page={page}
+          onChange={handleChangePage}
+          color="primary"
+          showFirstButton
+          showLastButton
+        />
+      </Grid>
     </Grid>
+
+
+
   );
 }
 
