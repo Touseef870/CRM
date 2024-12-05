@@ -21,7 +21,7 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
     }
   };
 
-  // Effect to reset data when input is cleared
+  // Reset data when input is cleared
   React.useEffect(() => {
     if (inputValue === "") {
       if (onResetData) {
@@ -32,28 +32,28 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
 
   return (
     <OutlinedInput
-        value={inputValue}  // Bind the value to the state
-        onChange={handleChange}  // Update the state when the input changes
-        fullWidth
-        placeholder="Search employee"
-        startAdornment={
-          <InputAdornment position="start">
-            <MagnifyingGlassIcon fontSize="1.5rem" />
-          </InputAdornment>
-        }
-        sx={{
-          width: 'auto', // Adjust width to make it smaller
-          maxWidth: '250px', // Reduce the width of the search input
-          borderRadius: 1,
-          '& .MuiOutlinedInput-root': {
-            paddingLeft: 2,
-            paddingRight: 2,
-          },
-          '& .MuiOutlinedInput-input': {
-            paddingTop: 2,
-            paddingBottom: 2,
-          },
-        }}
-      />
+      value={inputValue}
+      onChange={handleChange}
+      fullWidth
+      placeholder="Search employee"
+      startAdornment={
+        <InputAdornment position="start">
+          <MagnifyingGlassIcon fontSize="1.5rem" />
+        </InputAdornment>
+      }
+      sx={{
+        width: 'auto', // Adjust width to make it smaller
+        maxWidth: '250px', // Reduce the width of the search input
+        borderRadius: 1,
+        '& .MuiOutlinedInput-root': {
+          paddingLeft: 2,
+          paddingRight: 2,
+        },
+        '& .MuiOutlinedInput-input': {
+          paddingTop: 2,
+          paddingBottom: 2,
+        },
+      }}
+    />
   );
 }
