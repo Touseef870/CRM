@@ -386,7 +386,7 @@ export default function clientDetails() {
             sx={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700,
-              color: blue[700], 
+              color: blue[800], 
               textTransform: "uppercase",
               letterSpacing: "2px",
               fontSize: { xs: "1.5rem", sm: "2rem" },
@@ -422,7 +422,7 @@ export default function clientDetails() {
                     width: { xs: 100, sm: 140 },
                     height: { xs: 100, sm: 140 },
                     mb: 2,
-                    bgcolor: blue[700], 
+                    bgcolor: blue[800], 
                     color: "common.white",
                     fontSize: { xs: "2rem", sm: "2.5rem" },
                     fontWeight: "bold",
@@ -473,7 +473,7 @@ export default function clientDetails() {
                   sx={{
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 700,
-                    color: blue[700],
+                    color: blue[800],
                     mb: 2,
                     fontSize: { xs: "1rem", sm: "1.25rem" },
                   }}

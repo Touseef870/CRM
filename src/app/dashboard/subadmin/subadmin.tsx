@@ -25,6 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
+import { red } from '@mui/material/colors';
 
 interface SubAdmin {
     _id: string;
@@ -226,6 +227,7 @@ function SubAdminPage() {
                                         color="error"
                                         sx={{
                                             padding: isSmallScreen ? '4px' : '8px',
+                                            color: red[700], 
                                         }}
                                     >
                                         <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />

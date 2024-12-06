@@ -16,10 +16,9 @@ import {
     Alert,
     IconButton
 } from "@mui/material";
-import { grey, teal, red } from "@mui/material/colors";
+import { grey,  red, blue } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
 import Swal from "sweetalert2";
-import { FiTrash } from 'react-icons/fi'; // Import the trash icon
 import BackIcon from "@/components/BackIcon";
 
 // Define Employee interface
@@ -178,19 +177,27 @@ export default function EmployeeDetails() {
                     onClick={handleDeleteConfirmation}
                     sx={{
                         color: red[700],
-                        borderRadius: "5px",
+                        borderRadius: "8px",
                         display: "flex",
-                        justifyContent: "flex-end",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "12px",
                         "&:hover": {
-                            backgroundColor: red[800],
-                            color: "white"
+                            backgroundColor: "white",
+                            color: "red"
                         },
+                        transition: "all 0.3s ease",
                         marginBottom: 2
                     }}
                 >
-                    <FiTrash size={30} />
+                    <DeleteIcon sx={{ fontSize: 30 }} />
                 </IconButton>
             </Grid>
+
+
+
+
+
 
 
             <Grid container spacing={4} maxWidth="lg">
@@ -203,7 +210,7 @@ export default function EmployeeDetails() {
                         sx={{
                             fontFamily: "'Poppins', sans-serif",
                             fontWeight: 700,
-                            color: teal[700],
+                            color: blue[800],
                             textTransform: 'uppercase',
                             letterSpacing: '2px',
                             margin: '0 auto',
@@ -238,7 +245,7 @@ export default function EmployeeDetails() {
                                 width: 120,
                                 height: 120,
                                 mb: 2,
-                                bgcolor: teal[500],
+                                bgcolor: blue[800],
                                 color: "common.white",
                                 fontSize: "2.5rem",
                                 fontWeight: "bold",
@@ -253,7 +260,7 @@ export default function EmployeeDetails() {
                             sx={{
                                 fontFamily: "'Poppins', sans-serif",
                                 fontWeight: 600,
-                                color: teal[800],
+                                color: blue[800],
                                 textTransform: "capitalize",
                                 marginBottom: 1,
                             }}
@@ -276,7 +283,7 @@ export default function EmployeeDetails() {
                                 sx={{
                                     fontFamily: "'Poppins', sans-serif",
                                     fontWeight: 600,
-                                    color: teal[700],
+                                    color: blue[800],
                                     marginBottom: 2,
                                 }}
                             >
