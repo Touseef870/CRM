@@ -162,93 +162,130 @@ function SubAdminPage() {
 
     return (
         <Grid item xs={12}>
-            <Stack direction="row" justifyContent="space-between" sx={{ mb: 2, p: 2 }}>
-                <TextField
-                    label="Search SubAdmins"
-                    variant="outlined"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    sx={{ width: '30%' }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-            </Stack>
-
-            <TableContainer sx={{ overflowX: 'auto' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
-                            {!isSmallScreen && <TableCell>Contact</TableCell>}
-                            {!isSmallScreen && <TableCell>Date of Birth</TableCell>}
-                            <TableCell>CNIC</TableCell>
-                            <TableCell>Salary</TableCell>
-                            <TableCell align="right">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredSubAdmins.map((subAdmin) => (
-                            <TableRow
-                                key={subAdmin._id}
-                                sx={{
-                                    '&:hover': { backgroundColor: '#f5f5f5' },
-                                }}
-                            >
-                                <TableCell>
-                                    <Link
-                                        href={`/dashboard/subadmin/${subAdmin._id}`}
-                                        style={{
-                                            textDecoration: 'none',
-                                            color: 'inherit',
-                                            display: 'block',
-                                        }}
-                                    >
-                                        {subAdmin.name}
-                                    </Link>
-                                </TableCell>
-
-                                <TableCell>{subAdmin.email}</TableCell>
-                                {!isSmallScreen && <TableCell>{subAdmin.phone}</TableCell>}
-                                {!isSmallScreen && <TableCell>{formatDate(subAdmin.dob)}</TableCell>}
-                                <TableCell>{subAdmin.cnic}</TableCell>
-                                <TableCell>{subAdmin.salary}</TableCell>
-                                <TableCell align="right">
-                                    <IconButton
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(subAdmin._id);
-                                        }}
-                                        color="error"
-                                        sx={{
-                                            padding: isSmallScreen ? '4px' : '8px',
-                                            color: red[700], 
-                                        }}
-                                    >
-                                        <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={totalSubAdmins} // Total number of subadmins in the system
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            sx={{
+                mb: 3,
+                p: 2,
+                backgroundColor: 'background.paper',
+                borderRadius: '8px',
+                boxShadow: 2,
+            }}
+        >
+            <TextField
+                label="Search SubAdmins"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{
+                    width: '100%',
+                    maxWidth: '300px',
+                    borderRadius: '8px',
+                    boxShadow: 1,
+                }}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon sx={{ color: 'text.secondary' }} />
+                        </InputAdornment>
+                    ),
+                }}
             />
-        </Grid>
+        </Stack>
+    
+        <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 2 }}>
+            <Table>
+                <TableHead sx={{ backgroundColor: 'primary.main' }}>
+                    <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Name</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Email</TableCell>
+                        {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Contact</TableCell>}
+                        {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Date of Birth</TableCell>}
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>CNIC</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Salary</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', color: 'white' }}>
+                            Actions
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {filteredSubAdmins.map((subAdmin) => (
+                        <TableRow
+                            key={subAdmin._id}
+                            sx={{
+                                '&:hover': { backgroundColor: '#f0f0f0' },
+                                '&:nth-of-type(even)': { backgroundColor: '#fafafa' },
+                            }}
+                        >
+                            <TableCell>
+                                <Link
+                                    href={`/dashboard/subadmin/${subAdmin._id}`}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        display: 'block',
+                                    }}
+                                >
+                                    {subAdmin.name}
+                                </Link>
+                            </TableCell>
+    
+                            <TableCell>{subAdmin.email}</TableCell>
+                            {!isSmallScreen && <TableCell>{subAdmin.phone}</TableCell>}
+                            {!isSmallScreen && <TableCell>{formatDate(subAdmin.dob)}</TableCell>}
+                            <TableCell>{subAdmin.cnic}</TableCell>
+                            <TableCell>{subAdmin.salary}</TableCell>
+                            <TableCell align="right">
+                                <IconButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDelete(subAdmin._id);
+                                    }}
+                                    color="error"
+                                    sx={{
+                                        padding: isSmallScreen ? '6px' : '12px',
+                                        color: red[800],
+                                        '&:hover': {
+                                            backgroundColor: 'white',
+                                            color: red[500], // Change the color on hover
+                                        },
+                                    }}
+                                >
+                                    <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
+                                </IconButton>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    
+        <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={totalSubAdmins} // Total number of subadmins in the system
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{
+                mt: 2,
+                '& .MuiTablePagination-selectLabel': {
+                    fontWeight: 'bold',
+                },
+                '& .MuiTablePagination-select': {
+                    borderRadius: '8px',
+                    backgroundColor: 'background.paper',
+                    boxShadow: 1,
+                },
+                '& .MuiTablePagination-actions': {
+                    color: 'text.primary',
+                },
+            }}
+        />
+    </Grid>
+    
     );
 }
 
