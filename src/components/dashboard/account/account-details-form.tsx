@@ -201,7 +201,7 @@ export function AccountDetailsForm(): React.JSX.Element {
 
       fetchAttendanceData();
     } else {
-      console.error("No ID provided");
+      console.log("No ID provided");
     }
   }, [ID, token]);
 

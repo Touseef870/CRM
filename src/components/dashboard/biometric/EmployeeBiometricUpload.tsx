@@ -153,7 +153,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         showConfirmButton: true,
       });
     } catch (error) {
-      console.error("Error sending data:", error);
+      console.log("Error sending data:", error);
       Swal.fire("Error", "Failed to send data. Please try again.", "error");
     }
   };

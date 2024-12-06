@@ -61,7 +61,7 @@ const AttendanceTable: React.FC = () => {
 
           setAttendanceData(response.data.data.attendance || []);
         } catch (err) {
-          console.error("Error fetching attendance data:", err);
+          console.log("Error fetching attendance data:", err);
         } finally {
           setLoading(false); 
         }
@@ -69,7 +69,7 @@ const AttendanceTable: React.FC = () => {
 
       fetchAttendanceData();
     } else {
-      console.error("No ID provided");
+      console.log("No ID provided");
     }
   }, [id, token]);
 
@@ -140,7 +140,7 @@ const AttendanceTable: React.FC = () => {
       setOpenModal(false);
 
     } catch (err) {
-      console.error("Error saving updated attendance data:", err);
+      console.log("Error saving updated attendance data:", err);
       Swal.fire({
         icon: 'error',
         title: 'Error!',

@@ -40,7 +40,7 @@ export default function Employee(): React.JSX.Element {
       setTotalEmployees(response.data.data.total);
     } catch (err) {
       setError('Failed to fetch employees.');
-      console.error(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }

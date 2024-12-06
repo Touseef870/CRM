@@ -112,7 +112,7 @@ const EmployeeExcel: React.FC = () => {
                     })
                 })
         } catch (error) {
-            console.error('Error sending data:', error);
+            console.log('Error sending data:', error);
             Swal.fire('Error', 'There was an issue sending the data', 'error');
         }
 

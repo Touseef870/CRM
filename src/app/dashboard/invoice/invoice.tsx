@@ -8,7 +8,7 @@ import PDFDownloadUI from './PDFDownloadUI';
 import Swal from 'sweetalert2';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
-
+import TablePagination from '@mui/material/TablePagination';
 
 interface Order {
   _id: string;
@@ -25,6 +25,16 @@ interface Order {
   };
 }
 
+interface OrderInoviceProps {
+  count: number;
+  rows: Order[];
+  page: number;
+  rowsPerPage: number;
+  loading: boolean;
+  onPageChange: (event: unknown, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 function InvoicePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -32,53 +42,56 @@ function InvoicePage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // for pagination
-  const [rowsPerPage, setRowsPerPage] = useState(10); // items per page
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const token = JSON.parse(localStorage.getItem('AdminloginData') || '{}').token;
+  const skip = page * rowsPerPage; // Calculate skip value
+
 
   useEffect(() => {
     if (!token) {
-      console.error('Token is missing.');
+      console.log('Token is missing.');
       return;
     }
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/order/get-orders', {
+          params: {
+            page: page + 1, // Adjusting for zero-based page index
+            limit: rowsPerPage,
+            skip: skip,
+          },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          params: {
-            limit: rowsPerPage,
-            skip: (page - 1) * rowsPerPage,
-          },
         });
 
         setOrders(response.data.data.orders || []);
-        setFilteredOrders(response.data.data.orders || []); 
+        setFilteredOrders(response.data.data.orders || []);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching orders:', err);
+        console.log('Error fetching orders:', err);
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, [token,  page, rowsPerPage]);
+  }, [token, page, rowsPerPage]);
 
   useEffect(() => {
     if (searchTerm === '') {
-      setFilteredOrders(orders); 
+      setFilteredOrders(orders);
     } else {
       const lowercasedSearchTerm = searchTerm.toLowerCase();
-      setFilteredOrders(
-        orders.filter(
-          (order) =>
-            order.title.toLowerCase().includes(lowercasedSearchTerm) ||
-            order.description.toLowerCase().includes(lowercasedSearchTerm)
-        )
+      const filtered = orders.filter(
+        (order) =>
+          order.title.toLowerCase().includes(lowercasedSearchTerm) ||
+          order.description.toLowerCase().includes(lowercasedSearchTerm)
       );
+      setFilteredOrders(filtered); // Apply search filter to all orders
     }
   }, [searchTerm, orders]);
 
@@ -116,7 +129,7 @@ function InvoicePage() {
           );
 
           setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
-          setFilteredOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));  
+          setFilteredOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
 
           Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
         } catch (error) {
@@ -125,27 +138,20 @@ function InvoicePage() {
       }
     });
   };
+  const handlePageChange = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
- // Pagination handler
- const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
-  setPage(newPage);
-};
+  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page when rowsPerPage changes
+  };
 
-// Render Pagination Component
-const renderPagination = () => {
-  const totalOrders = orders.length; // This should be replaced with the total count from your API response if provided
-  const totalPages = Math.ceil(totalOrders / rowsPerPage);
-  return (
-    <Pagination
-      count={totalPages}
-      page={page}
-      onChange={handleChangePage}
-      color="primary"
-      variant="outlined"
-      shape="rounded"
-    />
-  );
-};
+  // Pagination for filtered orders
+  const currentPageOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+
+
   return (
     <Grid container spacing={2} sx={{ padding: '24px' }}>
       <Grid item xs={12}>
@@ -190,7 +196,7 @@ const renderPagination = () => {
               </TableHead>
               <TableBody>
                 {filteredOrders.length > 0 ? (
-                  filteredOrders.map((order) => (
+                  filteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order) => (
                     <TableRow key={order._id} sx={{ '&:hover': { backgroundColor: '#f0f8ff' } }}>
                       <TableCell>
                         <Stack direction="row" spacing={2} alignItems="center">
@@ -247,28 +253,29 @@ const renderPagination = () => {
               </TableBody>
             </Table>
           </TableContainer>
+
         </Grid>
       )}
 
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
-        maxWidth="sm" 
+        maxWidth="sm"
         fullWidth
         sx={{
           borderRadius: 4,
           boxShadow: 24,
-          maxHeight: '80vh', 
+          maxHeight: '80vh',
         }}
       >
         <DialogTitle
           sx={{
             fontWeight: 'bold',
-            fontSize: 24, 
+            fontSize: 24,
             color: '#333',
-            textAlign: 'center', 
-            paddingTop: 3, 
-            marginBottom: 2, 
+            textAlign: 'center',
+            paddingTop: 3,
+            marginBottom: 2,
           }}
         >
           Order Details
@@ -291,7 +298,7 @@ const renderPagination = () => {
                     height: 'auto',
                     borderRadius: '12px',
                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                    marginTop: '15px', 
+                    marginTop: '15px',
                   }}
                 />
               </Grid>
@@ -335,22 +342,20 @@ const renderPagination = () => {
           {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
         </DialogActions>
       </Dialog>
-      
-      {/* Pagination */}
-      <Grid item xs={12} container justifyContent="center" sx={{ mt: 2 }}>
-        <Pagination
-          count={Math.ceil(orders.length / rowsPerPage)}
-          page={page}
-          onChange={handleChangePage}
-          color="primary"
-          showFirstButton
-          showLastButton
-        />
-      </Grid>
+
+     <Grid>
+     <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredOrders.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+      />
+     </Grid>
     </Grid>
-
-
-
+    
   );
 }
 

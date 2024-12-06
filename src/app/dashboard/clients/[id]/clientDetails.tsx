@@ -386,7 +386,7 @@ export default function clientDetails() {
             sx={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700,
-              color: blue[700], // Changed from teal to blue
+              color: blue[700], 
               textTransform: "uppercase",
               letterSpacing: "2px",
               fontSize: { xs: "1.5rem", sm: "2rem" },
@@ -409,7 +409,7 @@ export default function clientDetails() {
                   height: "100%",
                   boxShadow: 6,
                   borderRadius: 4,
-                  background: `linear-gradient(to bottom, ${blue[50]}, #fff)`, // Changed from teal to blue
+                  background: `linear-gradient(to bottom, ${blue[50]}, #fff)`, 
                   border: `1px solid ${grey[300]}`,
                   "&:hover": {
                     boxShadow: 10,
@@ -422,7 +422,7 @@ export default function clientDetails() {
                     width: { xs: 100, sm: 140 },
                     height: { xs: 100, sm: 140 },
                     mb: 2,
-                    bgcolor: blue[700], // Changed from teal to blue
+                    bgcolor: blue[700], 
                     color: "common.white",
                     fontSize: { xs: "2rem", sm: "2.5rem" },
                     fontWeight: "bold",
@@ -437,7 +437,7 @@ export default function clientDetails() {
                   sx={{
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 700,
-                    color: blue[800], // Changed from teal to blue
+                    color: blue[800], 
                     textTransform: "capitalize",
                     fontSize: { xs: "1.25rem", sm: "1.5rem" },
                   }}
@@ -473,7 +473,7 @@ export default function clientDetails() {
                   sx={{
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 700,
-                    color: blue[700], // Changed from teal to blue
+                    color: blue[700],
                     mb: 2,
                     fontSize: { xs: "1rem", sm: "1.25rem" },
                   }}
