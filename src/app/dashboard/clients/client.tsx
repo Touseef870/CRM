@@ -36,7 +36,7 @@ export default function Employee(): React.JSX.Element {
         setEmploy(response.data.data.clients);
       } catch (err) {
         setError('Failed to fetch customers.');
-        console.error(err);
+        console.log(err);
       } finally {
         setLoading(false);
       }

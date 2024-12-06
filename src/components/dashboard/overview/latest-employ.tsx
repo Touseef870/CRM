@@ -40,7 +40,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
           setUserType(parsedData.type || '');
         } catch (error) {
           setLoading(false)
-          console.error('Error parsing AdminloginData:', error);
+          console.log('Error parsing AdminloginData:', error);
         }
       }
     };

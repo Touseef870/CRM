@@ -126,7 +126,7 @@ function AddEmployeeForm() {
 
             reset();
         } catch (error) {
-            console.error("Error submitting form:", error);
+            console.log("Error submitting form:", error);
         } finally {
             setIsSubmitting(false);
         }

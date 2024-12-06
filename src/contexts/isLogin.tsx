@@ -30,7 +30,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             }
             return null;
         } catch (error) {
-            console.error('Failed to parse localStorage data:', error);
+            console.log('Failed to parse localStorage data:', error);
             return null;
         }
     });

@@ -87,7 +87,7 @@ export function SignInForm(): React.JSX.Element {
           email: 'An error occurred. Please try again later.',
           password: 'An error occurred. Please try again later.',
         });
-        console.error('Error during login:', error);
+        console.log('Error during login:', error);
       }
     }
   };
