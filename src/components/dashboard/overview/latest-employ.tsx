@@ -9,10 +9,12 @@ import Link from 'next/link';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import { AppContext } from '@/contexts/isLogin';
+import Avatar from '@mui/material/Avatar';
 
 export interface Employ {
   id: string;
   image: string;
+  avatar: string;
   name: string;
   position: string;
   department: string;
@@ -50,13 +52,13 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
       if (adminData) {
         try {
           const { token } = adminData;
-          const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/employees', {
+          const response = await axios.get('https://api-vehware-crm.vercel.app/api/global/data', {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
           });
-          setEmployData(response.data.data.employees.slice(0, 5));
+          setEmployData(response.data.data.recentEmployees.slice(0, 5));
           setLoading(false)
 
         } catch (error) {
@@ -73,7 +75,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
   if (userType === 'employee') return null;
 
   return (
-    <Card sx={sx} style={{ height: "auto" }}>
+    <Card sx={{ height: "auto", ...sx }}>
       <CardHeader title="Recent Join Employ" />
       <Divider />
       {loading ? (
@@ -92,14 +94,7 @@ export const LatestEmploy: React.FC<LatestEmployProps> = ({ employ = [], sx }) =
                     sx={{ borderRadius: 1, height: '48px', width: '48px' }}
                   />
                 ) : (
-                  <Box
-                    sx={{
-                      borderRadius: 1,
-                      backgroundColor: 'var(--mui-palette-neutral-200)',
-                      height: '48px',
-                      width: '48px',
-                    }}
-                  />
+                  <Avatar src={employee.avatar} />
                 )}
               </ListItemAvatar>
               <ListItemText

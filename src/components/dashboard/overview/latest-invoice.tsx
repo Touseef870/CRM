@@ -1,4 +1,6 @@
-import * as React from 'react';
+'use client'
+
+import React, { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -10,21 +12,24 @@ import type { SxProps } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
+import TableHead from '@mui/material/TableHead';  
 import TableRow from '@mui/material/TableRow';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import dayjs from 'dayjs';
 import Link from 'next/link';
+import { AppContext } from '@/contexts/isLogin';
+import axios from 'axios';
 
 const statusMap: Record<string, { label: string; color: 'default' | 'primary' | 'secondary' | 'error' }> = {
-  pending: { label: 'Pending', color: 'primary' },
-  delivered: { label: 'Delivered', color: 'secondary' },
+  PENDING: { label: 'PENDING', color: 'primary' },
+  PAID: { label: 'PAID', color: 'secondary' },
   refunded: { label: 'Refunded', color: 'error' },
 };
 
 interface Order {
-  id: string;
-  customer: { name: string };
+  _id: string;
+  orderTo: string;
+  title: string;
   amount: number;
   status: string;
   createdAt: Date;
@@ -37,8 +42,42 @@ export interface LatestOrdersProps {
 }
 
 export function LatestInvoice({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
+
+  const [invoiveData, setInvoiveData] = useState<Order[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { storedValue } = useContext(AppContext)!;
+
+
+  useEffect(() => {
+
+    const fetchEmployData = async () => {
+      const adminData = storedValue;
+      if (adminData) {
+        try {
+          const { token } = adminData;
+          const response = await axios.get('https://api-vehware-crm.vercel.app/api/global/data', {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setInvoiveData(response.data.data.recentOrder.slice(0, 6));
+          setLoading(false)
+
+        } catch (error) {
+          setLoading(false)
+          console.log('Error fetching employee data:', error);
+        }
+      }
+    };
+
+    fetchEmployData();
+  }, []);
+
+
   return (
-    <Card sx={sx}>
+    <Card sx={{ height: 'auto', ...sx }}>
+
       <CardHeader title="Latest invoice" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
@@ -52,13 +91,13 @@ export function LatestInvoice({ orders = [], sx }: LatestOrdersProps): React.JSX
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => {
+            {invoiveData.map((order) => {
               const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
 
               return (
-                <TableRow hover key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer.name}</TableCell>
+                <TableRow hover key={order._id}>
+                  <TableCell>{order.orderTo}</TableCell>
+                  <TableCell>{order.title}</TableCell>
                   <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
@@ -86,43 +125,43 @@ export function LatestInvoice({ orders = [], sx }: LatestOrdersProps): React.JSX
   );
 }
 
-export function Invoice({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
+// export function Invoice({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
 
-  return (
-    <Card sx={sx}>
-      <CardHeader title="Payment Invoice" />
-      <Divider />
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 800 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Order</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell sortDirection="desc">Date</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.map((order) => {
-              const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
+//   return (
+//     <Card sx={sx}>
+//       <CardHeader title="Payment Invoice" />
+//       <Divider />
+//       <Box sx={{ overflowX: 'auto' }}>
+//         <Table sx={{ minWidth: 800 }}>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Order</TableCell>
+//               <TableCell>Customer</TableCell>
+//               <TableCell sortDirection="desc">Date</TableCell>
+//               <TableCell>Status</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {orders.map((order) => {
+//               const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
 
-              return (
-                <TableRow hover key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer.name}</TableCell>
-                  <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
-                  <TableCell>
-                    <Chip color={color} label={label} size="small" />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
-      <Divider />
-    </Card>
-  );
-}
+//               return (
+//                 <TableRow hover key={order.id}>
+//                   <TableCell>{order.id}</TableCell>
+//                   <TableCell>{order.customer.name}</TableCell>
+//                   <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
+//                   <TableCell>
+//                     <Chip color={color} label={label} size="small" />
+//                   </TableCell>
+//                 </TableRow>
+//               );
+//             })}
+//           </TableBody>
+//         </Table>
+//       </Box>
+//       <Divider />
+//     </Card>
+//   );
+// }
 
 
