@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -7,7 +7,7 @@ import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/di
 
 interface CustomersFiltersProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onResetData?: () => void;  // Add a callback to reset data when input is cleared
+  onResetData?: () => void;
 }
 
 export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProps): React.JSX.Element {
@@ -21,12 +21,9 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
     }
   };
 
-  // Reset data when input is cleared
   React.useEffect(() => {
-    if (inputValue === "") {
-      if (onResetData) {
-        onResetData();  // Call the reset data function when input is cleared
-      }
+    if (inputValue === "" && onResetData) {
+      onResetData(); // Reset the employee list when input is cleared
     }
   }, [inputValue, onResetData]);
 
@@ -42,8 +39,7 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
         </InputAdornment>
       }
       sx={{
-        width: 'auto', // Adjust width to make it smaller
-        maxWidth: '250px', // Reduce the width of the search input
+        maxWidth: '250px',
         borderRadius: 1,
         '& .MuiOutlinedInput-root': {
           paddingLeft: 2,

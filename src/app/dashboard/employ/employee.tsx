@@ -15,10 +15,11 @@ export default function Employee(): React.JSX.Element {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [employ, setEmploy] = useState<Customer[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { storedValue } = useContext(AppContext)!;
-  const [searchQuery, setSearchQuery] = useState<string>(''); 
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchEmployee, setSearchEmployee] = useState<Customer[]>([]);
 
   const fetchEmployees = async (search: string = '') => {
     try {
@@ -36,6 +37,7 @@ export default function Employee(): React.JSX.Element {
         },
       });
 
+      setSearchEmployee(response.data.data);
       setEmploy(response.data.data.employees);
       setTotalEmployees(response.data.data.total);
     } catch (err) {
@@ -47,7 +49,7 @@ export default function Employee(): React.JSX.Element {
   };
 
   useEffect(() => {
-    fetchEmployees(searchQuery);  
+    fetchEmployees(searchQuery);
   }, [page, rowsPerPage, searchQuery, storedValue.token]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,17 +58,17 @@ export default function Employee(): React.JSX.Element {
   };
 
   const handleFilterEmploy = (value: string) => {
-    setSearchQuery(value); 
+    setSearchQuery(value);
     setPage(0);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage); 
+    setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); 
-    setPage(0); 
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
   return (
     <Stack spacing={3}>
@@ -77,17 +79,17 @@ export default function Employee(): React.JSX.Element {
         </Stack>
       </Stack>
 
-        <CustomersFilters
-        onChange={handleSearchChange}  
+      <CustomersFilters
+        onChange={handleSearchChange}
       />
 
 
       <CustomersTable
         count={totalEmployees}
         page={page}
-        rows={employ}
+        rows={searchQuery ? searchEmployee : employ}
         rowsPerPage={rowsPerPage}
-        loading={loading} 
+        loading={loading}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
