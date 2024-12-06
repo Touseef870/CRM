@@ -113,7 +113,12 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
     };
 
     if (formattedData.length === 0) {
-      Swal.fire("Error", "No valid data to send.", "error");
+      Swal.fire("Error", "No valid data to send.", "error", 
+        
+      );
+
+
+      
       return;
     }
 
@@ -160,55 +165,156 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
   
 
   return (
-    <Box sx={{ p: 3, position: "relative" }}>
-      <Typography variant="h4" gutterBottom>
-        Upload Excel File
-      </Typography>
-      <Button variant="contained" component="label" sx={{ mb: 2 }}>
-        Upload File
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          hidden
-          onChange={handleFileUpload}
-        />
-      </Button>
-
-      {jsonData.length > 0 && (
-        <>
+    
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          minHeight: "150vh",
+        }}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontWeight: "bold",
+            mb: 4, // Increased margin to create more gap between heading and button
+          }}
+        >
+          Upload Excel File
+        </Typography>
+  
+        <Button
+          variant="contained"
+          component="label"
+          sx={{
+            px: 4,
+            py: 2,
+            backgroundColor: "blue.800", // MUI's blue[800] color
+            color: "#fff",
+            borderRadius: "8px",
+            boxShadow: "0px 4px 12px rgba(0, 123, 255, 0.3)",
+            "&:hover": {
+              backgroundColor: "blue.900", // Slightly darker shade for hover
+            },
+            mb: 3,
+          }}
+        >
+          Upload File
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            hidden
+            onChange={handleFileUpload}
+          />
+        </Button>
+  
+        {/* Send Data Button */}
+        {jsonData.length > 0 && (
           <Button
             variant="contained"
-            color="primary"
+            color="success"
             onClick={handleSendData}
-            sx={{ position: "absolute", top: 16, right: 16 }}
+            sx={{
+              position: "fixed",
+              bottom: 16,
+              right: 16,
+              px: 3,
+              py: 1.5,
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 200, 83, 0.3)",
+              "&:hover": {
+                backgroundColor: "#2e7d32",
+              },
+            }}
           >
             Send Data
           </Button>
-
-          <Grid container spacing={3}>
+        )}
+  
+        {/* Data Grid */}
+        {jsonData.length > 0 && (
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              mt: 2,
+              justifyContent: "center",
+            }}
+          >
             {jsonData.map((row, rowIndex) => (
               <Grid item xs={12} sm={6} md={4} key={rowIndex}>
-                <Card>
+                <Card
+                  sx={{
+                    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.15)",
+                    borderRadius: "8px",
+                    border: "1px solid #e0e0e0",
+                    p: 3,
+                    backgroundColor: "#ffffff",
+                    transition: "transform 0.2s ease-in-out",
+                    width: "100%", // Full width on smaller screens
+                    maxWidth: "500px", // Increased card width for medium and larger screens
+                    "&:hover": {
+                      transform: "scale(1.02)", // Slight hover effect
+                    },
+                  }}
+                >
                   <CardContent>
                     {headers.map((header, colIndex) => (
-                      <Typography key={colIndex}>
-                        <strong>{header}:</strong>{" "}
-                        {header === "Date"
-                          ? formatExcelDate(row[colIndex])
-                          : header === "Check In Time" ||
-                            header === "Check Out Time"
-                          ? formatTime(row[colIndex])
-                          : row[colIndex] || "N/A"}
-                      </Typography>
+                      <Box
+                        key={colIndex}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          mb: 1.5,
+                          borderBottom: "1px solid #f0f0f0",
+                          pb: 0.7,
+                          gap: "2px", // Added a slightly larger gap between label and content
+                          flexDirection: { xs: "column", sm: "row" }, // Column for small screens, row for larger ones
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            fontWeight: "bold",
+                            fontSize: "0.9rem",
+                            color: "#555",
+                            minWidth: "100px", // Set a minimum width for the labels to ensure alignment
+                            textAlign: "left",
+                          }}
+                        >
+                          {header}:
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontSize: "0.85rem",
+                            color: "#333",
+                            textAlign: "right",
+                            flex: 2, // Allow content to take up the remaining space
+                          }}
+                        >
+                          {header === "Date"
+                            ? formatExcelDate(row[colIndex])
+                            : header === "Check In Time" || header === "Check Out Time"
+                            ? formatTime(row[colIndex])
+                            : row[colIndex] || "N/A"}
+                        </Typography>
+                      </Box>
                     ))}
                   </CardContent>
                 </Card>
               </Grid>
             ))}
           </Grid>
-        </>
-      )}
-    </Box>
+        )}
+      </Box>
+
+
+
   );
 };
 
