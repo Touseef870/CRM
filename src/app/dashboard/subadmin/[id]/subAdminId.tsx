@@ -31,40 +31,44 @@ const Container = styled(Box)(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '100vh',
-    padding: theme.spacing(2),
+    padding: theme.spacing(8),
     backgroundColor: '#f4f4f9',
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
     width: '100%',
-    maxWidth: 750, 
+    maxWidth: 900,
     borderRadius: '16px',
     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ffffff',
     padding: theme.spacing(3),
     transition: 'all 0.3s ease',
     marginBottom: theme.spacing(4),
-    position: 'relative',  
-    '&:hover': {
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
-        transform: 'scale(1.03)',
-    },
+    position: 'relative',
+
 }));
 
 const AvatarStyled = styled(Avatar)(({ theme }) => ({
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     marginBottom: theme.spacing(2),
-    border: '4px solid #00796b',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    border: '4px solid skyblue', // Sky blue border
+    backgroundColor: '#1976d2', // Existing background color
+    borderRadius: '50%', // Ensures it stays circular
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', // Adds a soft shadow for better emphasis
+    transition: 'transform 0.3s ease', // Adds smooth animation on hover
+    '&:hover': {
+        transform: 'scale(1.1)', // Slightly enlarges the avatar on hover
+    }
 }));
+
 
 const CardHeader = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between', 
-    marginBottom: theme.spacing(2),
+
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(5),
     textAlign: 'left',
 }));
 
@@ -73,7 +77,7 @@ const CardContentStyled = styled(CardContent)(({ theme }) => ({
 }));
 
 const TypographyStyled = styled(Typography)(({ theme }) => ({
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(3),
     fontWeight: 500,
     fontSize: '1rem',
     color: '#333',
@@ -223,46 +227,41 @@ function Page() {
     return (
         <>
 
-        <Box sx={{ position: "relative" }}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleback}
-                sx={{
-                    position: "absolute",
-                    top: 16, 
-                    left: 16,
-                    padding: "6px 12px",
-                    fontWeight: "bold",
-                    textTransform: "none", 
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", 
-                    "&:hover": {
-                        backgroundColor: "#005bb5", 
-                    },
-                }}
-            >
-                <ArrowBackIcon />
-            </Button>
+            <Box sx={{ position: "relative" }}>
+                <Button
+                    onClick={handleback}
+                    sx={{
+                        position: "absolute",
+                        top: 10,
+                        left: 2,
+                        padding: "12px 16px",  // Increase padding for bigger button size
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        color: "#1976d2",  // Default blue color for text
+                        fontSize: "22px",   // Increase font size for bigger text
+                        "&:hover": {
+                            color: "#005bb5", // Dark blue on hover for text color
+                        },
+                    }}
+                >
+                    <ArrowBackIcon sx={{ fontSize: "24px" }} />  {/* Increase icon size */}
+                </Button>
+
             </Box>
+
 
             <Container>
 
-
-
                 <StyledCard>
-
-
                     <CardHeader>
-
-
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <AvatarStyled
                                 src={subadmin.avatar || '/default-avatar.jpg'}
                                 alt={subadmin.name}
                             />
                             <Box sx={{ marginLeft: 2 }}>
-                                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#00796b' }}>
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
                                     {subadmin.name}
                                 </Typography>
                             </Box>
@@ -298,7 +297,7 @@ function Page() {
                 </StyledCard>
 
                 <StyledCard>
-                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#00796b' }}>
+                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#1976d2' }}>
                         Employee Attendance
                     </Typography>
                     <Divider />
@@ -307,6 +306,7 @@ function Page() {
                     </Box>
                 </StyledCard>
             </Container>
+
 
         </>
 
