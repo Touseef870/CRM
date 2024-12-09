@@ -6,6 +6,9 @@ import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlas
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import axios from "axios";
 import Swal from "sweetalert2";
+
+
+
 const validationRules = {
     email: {
         required: "Email is required",
@@ -69,6 +72,18 @@ const validationRules = {
         required: "Date of birth is required",
         validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",
     },
+    joiningDate: {
+        required: "Joining Date is required",
+        validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",
+    },
+    leavingDate: {
+        required: "Leaving Date is required",
+        validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",
+    },
+    position: {
+        required: "Position is required",
+    },
+
 };
 
 interface FormData {
@@ -81,6 +96,9 @@ interface FormData {
     salary: number;
     dob: string;
     type: "employee";
+    position: string;
+    joiningDate:string;
+    leavingDate:string;
     isDeleted?: boolean;
     addedBy: string;
 }
@@ -125,8 +143,10 @@ function AddEmployeeForm() {
                 })
 
             reset();
+            console.log(res);
         } catch (error) {
             console.log("Error submitting form:", error);
+            
         } finally {
             setIsSubmitting(false);
         }
@@ -138,7 +158,7 @@ function AddEmployeeForm() {
                 variant="h4"
                 sx={{
                     fontWeight: 'bold',
-                    fontSize: { xs: '1.8rem', sm: '3rem' }, // Adjust font size based on screen size
+                    fontSize: { xs: '1.8rem', sm: '3rem' }, 
                     textAlign: 'center',
                     letterSpacing: '0.5px',
                     lineHeight: 1.2,
@@ -241,7 +261,7 @@ function AddEmployeeForm() {
                             >
                                 <MenuItem value="male">Male</MenuItem>
                                 <MenuItem value="female">Female</MenuItem>
-                                <MenuItem value="custom">Custom</MenuItem>
+                                
                             </Select>
                             <FormHelperText>{errors.gender?.message}</FormHelperText>
                         </FormControl>
@@ -272,6 +292,32 @@ function AddEmployeeForm() {
                             InputLabelProps={{ shrink: true }}
                         />
                     </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Joining Date"
+                            type="date"
+                            fullWidth
+                            variant="outlined"
+                            {...register("joiningDate", validationRules.joiningDate)}
+                            error={Boolean(errors.joiningDate)}
+                            helperText={errors.joiningDate?.message}
+                            InputLabelProps={{ shrink: true }}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Position"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            {...register("position", validationRules.position)}
+                            error={Boolean(errors.position)}
+                            helperText={errors.position?.message}
+                        />
+                    </Grid>
+
+
+
 
                   
                     <Grid item xs={12}>
