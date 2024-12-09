@@ -62,14 +62,13 @@ export default function clientDetails() {
   const params = useParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id; // Ensure id is a string
 
-  console.log(id);
 
   const router = useRouter(); // To redirect after deletion
   const [deleteError, setDeleteError] = useState<string | null>(null); // For delete errors
   const [employee, setEmployee] = useState<Employee | null>(null);
+  const [brands, setBrands] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const [openModal, setOpenModal] = useState(false); // State to handle modal visibility
 
   const getData = localStorage.getItem("AdminloginData");
@@ -145,7 +144,6 @@ export default function clientDetails() {
       return;
     }
 
-    console.log(orderData);
 
     try {
       const response = await axios.post(
@@ -181,22 +179,44 @@ export default function clientDetails() {
 
 
 
+  useEffect(() => {
+    if (!id) {
+      setError("Employee ID is missing.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchEmployee = async () => {
+      try {
+        if (!token) {
+          throw new Error("Token is missing in admin login data");
+        }
+
+        const response = await axios.get(
+          `https://api-vehware-crm.vercel.app/api/brand/get`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setBrands(response.data.data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unexpected error occurred"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployee();
+  }, [id]);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  //Get Single CLient Data APi
   useEffect(() => {
     if (!id) {
       setError("Employee ID is missing.");
@@ -386,7 +406,7 @@ export default function clientDetails() {
             sx={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700,
-              color: blue[800], 
+              color: blue[800],
               textTransform: "uppercase",
               letterSpacing: "2px",
               fontSize: { xs: "1.5rem", sm: "2rem" },
@@ -409,7 +429,7 @@ export default function clientDetails() {
                   height: "100%",
                   boxShadow: 6,
                   borderRadius: 4,
-                  background: `linear-gradient(to bottom, ${blue[50]}, #fff)`, 
+                  background: `linear-gradient(to bottom, ${blue[50]}, #fff)`,
                   border: `1px solid ${grey[300]}`,
                   "&:hover": {
                     boxShadow: 10,
@@ -422,7 +442,7 @@ export default function clientDetails() {
                     width: { xs: 100, sm: 140 },
                     height: { xs: 100, sm: 140 },
                     mb: 2,
-                    bgcolor: blue[800], 
+                    bgcolor: blue[800],
                     color: "common.white",
                     fontSize: { xs: "2rem", sm: "2.5rem" },
                     fontWeight: "bold",
@@ -437,7 +457,7 @@ export default function clientDetails() {
                   sx={{
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 700,
-                    color: blue[800], 
+                    color: blue[800],
                     textTransform: "capitalize",
                     fontSize: { xs: "1.25rem", sm: "1.5rem" },
                   }}
@@ -552,9 +572,7 @@ export default function clientDetails() {
 
 
 
-
-
-
+      // Add Order Model
       <IconButton
         onClick={handleModalOpen}
         sx={{
@@ -673,9 +691,11 @@ export default function clientDetails() {
               label="Brand"
               error={!!formErrors.brandId}
             >
-              <MenuItem value={2002}>One</MenuItem>
-              <MenuItem value={2004}>Two</MenuItem>
-              <MenuItem value={2005}>Three</MenuItem>
+              {brands.map((brand: any) => (
+                <MenuItem key={brand._id} value={brand._id}>
+                  {brand.title}
+                </MenuItem>
+              ))}
             </Select>
             <FormHelperText>{formErrors.brandId}</FormHelperText>
           </FormControl>
@@ -712,31 +732,8 @@ export default function clientDetails() {
 
       <ClientOrders clientId={Array.isArray(id) ? id[0] : id ?? ''} orderData={orderData} />
 
-
-
-
-
-
-
-
     </Box>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   );
-
-
 
 }

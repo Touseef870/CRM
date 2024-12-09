@@ -40,14 +40,9 @@ const MainPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${storedValue.token}`,
-          },
-          params: {
-            skip: page * rowsPerPage,
-            limit: rowsPerPage,
-            search
-          },
+          }
         });
-
+        console.log(response.data, "<-----invoice")
 
         if (Array.isArray(response.data.data.orders)) {
           setOrders(response.data.data.orders);
