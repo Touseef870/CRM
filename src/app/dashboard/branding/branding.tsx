@@ -139,8 +139,8 @@ export default function BrandingPage(): React.JSX.Element {
           placeholder="Search by brand name"
           onChange={(e) => { handleBrandEmploy(e.target.value); }}
           style={{
-            width: '100%',
-            padding: '14px 20px 12px 40px',
+            width: '90%',
+            padding: '20px 25px 18px 40px',
             fontSize: '14px',
             borderRadius: '8px',
             border: '1px solid #ccc',

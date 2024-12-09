@@ -4,7 +4,7 @@ import { SaveAlt } from '@mui/icons-material';
 import { jsPDF } from 'jspdf';
 
 interface PDFDownloadUIProps {
-  selectedOrder: any; // Ensure to type this according to the structure of your order
+  selectedOrder: any; 
 }
 
 const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
@@ -13,25 +13,21 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
 
     const doc = new jsPDF();
 
-    // Page Setup
     doc.setFont('helvetica', 'normal');
     doc.setLineWidth(0.5);
 
-    // Add Title and Header
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
     doc.text('INVOICE', 14, 20);
 
-    // Add Invoice Number and Date
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.text(`Invoice Number: #${selectedOrder.id}`, 14, 30);
     const currentDate = new Date().toLocaleDateString();
     doc.text(`Date: ${currentDate}`, 14, 35);
 
-    // Add Company Info in a Box
-    doc.setFillColor(240, 240, 240); // Light gray background for the box
-    doc.rect(14, 40, 180, 50, 'F'); // Draw the box
+    doc.setFillColor(240, 240, 240); 
+    doc.rect(14, 40, 180, 50, 'F'); 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('Company Info', 14, 50);
@@ -42,8 +38,7 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     doc.text('Email: support@vehware.com', 14, 75);
     doc.text('Website: www.vehware.com', 14, 80);
 
-    // Add Order Details Section (With Box and Padding)
-    doc.setFillColor(255, 255, 255); // White background for this box
+    doc.setFillColor(255, 255, 255); 
     doc.rect(14, 90, 180, 60, 'F');
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
@@ -56,8 +51,7 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     doc.text(`Price: $${selectedOrder.price.toFixed(2)}`, 14, 125);
     doc.text(`Status: ${selectedOrder.status}`, 14, 130);
 
-    // Add Brand Info Section (With Box)
-    doc.setFillColor(240, 240, 240); // Light gray background for brand info box
+    doc.setFillColor(240, 240, 240); 
     doc.rect(14, 140, 180, 60, 'F');
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
@@ -67,30 +61,26 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     doc.text(`Brand: ${selectedOrder.brand.title}`, 14, 160);
     doc.text(`Brand Description: ${selectedOrder.brand.description}`, 14, 165);
 
-    // Add Brand Image if available
-    const imageYOffset = selectedOrder.brand.img ? 170 : 165; // Adjusting image position dynamically if image exists
+    
+    const imageYOffset = selectedOrder.brand.img ? 170 : 165; 
     if (selectedOrder.brand.img) {
-      doc.addImage(selectedOrder.brand.img, 'JPEG', 14, imageYOffset, 50, 50); // Adjust image size and position
+      doc.addImage(selectedOrder.brand.img, 'JPEG', 14, imageYOffset, 50, 50); 
     }
 
-    // Adjusting the start position of "Payment Details" below the image
-    const paymentDetailsY = imageYOffset + 60; // Adding space for the image and next section
+    const paymentDetailsY = imageYOffset + 60;
 
-    // Add a Horizontal Line to Separate Footer Section
-    doc.setDrawColor(0, 0, 0); // Black color
+    doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.5);
-    doc.line(14, paymentDetailsY, 195, paymentDetailsY); // Line below the content
+    doc.line(14, paymentDetailsY, 195, paymentDetailsY); 
 
-    // Footer Section (Total and Payment Info)
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Payment Details', 14, paymentDetailsY + 10); // Adjust position based on image
+    doc.text('Payment Details', 14, paymentDetailsY + 10); 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.text(`Total Amount: $${selectedOrder.price.toFixed(2)}`, 14, paymentDetailsY + 20);
     doc.text(`Payment Due: ${currentDate}`, 14, paymentDetailsY + 25);
 
-    // Save the PDF as a file
     doc.save(`${selectedOrder.title}-Invoice.pdf`);
   };
 
@@ -102,9 +92,10 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
       sx={{
         backgroundColor: '#3498DB',
         color: '#fff',
-        '&:hover': { backgroundColor: '#2980B9' },
+        '&:hover': {  backgroundColor: 'blue',  color: 'white' },
         fontWeight: 600,
-        padding: '10px 20px',
+        padding: '10px 10px',
+     
       }}
     >
       Download PDF
