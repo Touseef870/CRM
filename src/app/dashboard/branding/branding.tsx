@@ -13,23 +13,27 @@ import { BrandingCard, type Integration } from '@/components/dashboard/branding/
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Card, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
+import CloudinaryUpload from '@/components/cloudinary/cloudinary_upload';
+import AddBrand from '@/components/dashboard/branding/add-brand';
 
 
 export default function BrandingPage(): React.JSX.Element {
   const [brandingData, setBrandingData] = useState<Integration[]>([]);
   const [filteredBranding, setFilteredBranding] = useState<Integration[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openAddBrandModal, setOpenAddBrandModal] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    image: null as any, 
-    description: '',
-  });
 
-  console.log(brandingData)
+
+
+  const adminLoginData = localStorage.getItem('AdminloginData');
+  if (!adminLoginData) {
+    throw new Error('Admin login data is missing');
+  }
+
+  const parsedData = JSON.parse(adminLoginData);
 
   const itemsPerPage = 6;
 
@@ -39,12 +43,7 @@ export default function BrandingPage(): React.JSX.Element {
         setLoading(true);
         setError(null);
 
-        const adminLoginData = localStorage.getItem('AdminloginData');
-        if (!adminLoginData) {
-          throw new Error('Admin login data is missing');
-        }
 
-        const parsedData = JSON.parse(adminLoginData);
 
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/brand/get', {
           headers: {
@@ -57,9 +56,8 @@ export default function BrandingPage(): React.JSX.Element {
           id: item._id,
           title: item.title,
           description: item.description,
-          logo: item.img,
-          installs: 0,
-          updatedAt: new Date(), 
+          logo: item.imgUrl,
+          updatedAt: new Date(),
         }));
 
         setBrandingData(fetchedData);
@@ -74,6 +72,16 @@ export default function BrandingPage(): React.JSX.Element {
     fetchBrandingData();
   }, []);
 
+
+  const handleOpenAddBrandModal = () => {
+    setOpenAddBrandModal(true);
+  };
+
+  const handleCloseAddBrandModal = () => {
+    setOpenAddBrandModal(false);
+  };
+
+
   const handleBrandEmploy = (value: string) => {
     const filteredData = brandingData.filter((brand) =>
       brand.title.toLowerCase().includes(value.toLowerCase())
@@ -86,35 +94,14 @@ export default function BrandingPage(): React.JSX.Element {
     setCurrentPage(page);
   };
 
+
+
+
   const handleOpenModal = () => {
     setOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFormData({ ...formData, image: file });
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFormSubmit = () => {
-    console.log(formData); 
-    handleCloseModal(); 
-  };
 
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -127,7 +114,7 @@ export default function BrandingPage(): React.JSX.Element {
           <Typography variant="h4">Branding</Typography>
         </Stack>
         <div>
-          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenModal} >
+          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal} >
             Add
           </Button>
         </div>
@@ -165,7 +152,7 @@ export default function BrandingPage(): React.JSX.Element {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '80vh', 
+            height: '80vh',
           }}
         >
           <CircularProgress size={50} color="primary" />
@@ -181,7 +168,7 @@ export default function BrandingPage(): React.JSX.Element {
                   maxWidth: "100%",
                   boxShadow: 3,
                   borderRadius: 2,
-                  overflow: "hidden", 
+                  overflow: "hidden",
                   transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
 
                 }}
@@ -192,7 +179,7 @@ export default function BrandingPage(): React.JSX.Element {
                   image={branding.logo || "https://via.placeholder.com/300"}
                   alt={branding.title || "Brand Image"}
                   sx={{
-                    objectFit: "cover", 
+                    objectFit: "cover",
                   }}
                 />
                 <CardContent sx={{ padding: 3 }}>
@@ -202,8 +189,8 @@ export default function BrandingPage(): React.JSX.Element {
                     component="div"
                     sx={{
                       fontWeight: "bold",
-                      fontSize: "1.2rem", 
-                      color: "#333", 
+                      fontSize: "1.2rem",
+                      color: "#333",
                     }}
                   >
                     {branding.title || "Brand Title"}
@@ -213,7 +200,7 @@ export default function BrandingPage(): React.JSX.Element {
                     color="text.secondary"
                     sx={{
                       fontSize: "1rem",
-                      color: "#555", 
+                      color: "#555",
                       lineHeight: 1.6,
                       textOverflow: "ellipsis",
                       overflow: "hidden",
@@ -239,60 +226,11 @@ export default function BrandingPage(): React.JSX.Element {
         />
       </Box>
 
-      <Dialog open={open} onClose={handleCloseModal}>
-        <DialogTitle>Add Brand</DialogTitle>
-        <DialogContent>
-          <TextField
-            name="title"
-            label="Title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={formData.title}
-            onChange={handleFormChange}
-          />
-          <div style={{ marginBottom: '16px' }}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              id="image-upload"
-              style={{ display: 'none' }}
-            />
-            <label htmlFor="image-upload">
-              <Button
-                component="span"
-                startIcon={<CloudUploadIcon />}
-                variant="outlined"
-                fullWidth
-                sx={{ textAlign: 'center' }}
-              >
-                {formData.image ? 'Image Selected' : 'Select Image'}
-              </Button>
-            </label>
-            {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: '100%', marginTop: '16px' }} />}
-          </div>
-          <TextField
-            name="description"
-            label="Description"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            value={formData.description}
-            onChange={handleFormChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleFormSubmit} variant="contained" color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {openAddBrandModal && (
+        <AddBrand open={openAddBrandModal} handleClose={handleCloseAddBrandModal} />
+      )}
+
+
     </Stack>
   );
 }

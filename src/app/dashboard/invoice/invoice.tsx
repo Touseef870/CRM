@@ -42,7 +42,6 @@ const MainPage: React.FC = () => {
             Authorization: `Bearer ${storedValue.token}`,
           }
         });
-        console.log(response.data, "<-----invoice")
 
         if (Array.isArray(response.data.data.orders)) {
           setOrders(response.data.data.orders);
