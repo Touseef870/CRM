@@ -24,6 +24,10 @@ export interface Customer {
   phone: string;
   location: string;
   salary: string;
+  position: string;
+  joiningDate:string;
+  leavingDate:string;
+  
 }
 
 interface CustomersTableProps {
@@ -56,6 +60,8 @@ export function CustomersTable({
               <TableCell>Location</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Salary</TableCell>
+             <TableCell>Position</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -79,6 +85,7 @@ export function CustomersTable({
                     <TableCell>Pakistan</TableCell>
                     <TableCell>{row.phone}</TableCell>
                     <TableCell>{row.salary}</TableCell>
+                     <TableCell>{row.position}</TableCell> 
                   </TableRow>
                 </Link>
               ))

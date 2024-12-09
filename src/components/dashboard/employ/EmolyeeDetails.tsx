@@ -1,7 +1,5 @@
 'use client';
-import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {
     Box,
     Card,
@@ -11,17 +9,26 @@ import {
     Grid,
     Divider,
     CircularProgress,
-
-    Snackbar,
-    Alert,
-    IconButton
+    IconButton,
+    Modal,
+    TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    InputAdornment,
 } from "@mui/material";
-import { grey,  red, blue } from "@mui/material/colors";
-import DeleteIcon from "@mui/icons-material/Delete"; // Import Delete icon
+import { grey, red, blue } from "@mui/material/colors";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 import BackIcon from "@/components/BackIcon";
+import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
+import dayjs from "dayjs";
+import EditIcon from '@mui/icons-material/Edit';
 
-// Define Employee interface
+
 interface Employee {
     _id: string;
     cnic: string;
@@ -32,17 +39,22 @@ interface Employee {
     phone: string;
     salary: number;
     type: string;
+    position: string;
+    joiningDate: string;
+    leavingDate: string | undefined;
     avatar?: string;
 }
 
 export default function EmployeeDetails() {
-    const { id } = useParams<{ id: string }>() || {}; // Make sure to destructure it properly or set a fallback
-    const router = useRouter(); // To redirect after deletion
+    const { id } = useParams<{ id: string }>() || {};
+    const router = useRouter();
     const [employee, setEmployee] = useState<Employee | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [deleteError, setDeleteError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
+    const [success, setSuccess] = useState<string | null>(null); // Added success state
+    const [deleteError, setDeleteError] = useState<string | null>(null); // Added deleteError state
 
     useEffect(() => {
         const fetchEmployee = async () => {
@@ -70,6 +82,7 @@ export default function EmployeeDetails() {
                 );
 
                 setEmployee(response.data.data);
+                setEditedEmployee(response.data.data); // Initialize editedEmployee with employee data
             } catch (err) {
                 setError(err instanceof Error ? err.message : "An unexpected error occurred");
             } finally {
@@ -106,14 +119,14 @@ export default function EmployeeDetails() {
                 }
             );
 
-            setLoading(false); // Stop loading indicator
+            setLoading(false);
             setSuccess("Employee deleted successfully.");
             Swal.fire("Deleted!", "Employee deleted successfully.", "success");
             setTimeout(() => {
-                router.push("/dashboard/employ"); // Redirect to the employee list page
+                router.push("/dashboard/employ");
             }, 2000);
         } catch (err) {
-            setLoading(false); // Stop loading indicator
+            setLoading(false);
             setDeleteError(err instanceof Error ? err.message : "Failed to delete employee.");
             Swal.fire("Error", err instanceof Error ? err.message : "Failed to delete employee.", "error");
         }
@@ -131,12 +144,98 @@ export default function EmployeeDetails() {
             cancelButtonColor: "#d33",
         }).then((result) => {
             if (result.isConfirmed) {
-                handleDelete(); // Call the delete function if confirmed
+                handleDelete();
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire("Cancelled", "Your employee is safe.", "info");
             }
         });
     };
+
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditedEmployee({
+            ...editedEmployee!,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSaveChanges = async () => {
+        if (!editedEmployee) return;
+        try {
+            const adminLoginData = localStorage.getItem("AdminloginData");
+
+            if (!adminLoginData) {
+                throw new Error("Admin login data is missing");
+            }
+
+            const parsedData = JSON.parse(adminLoginData);
+
+            if (!parsedData.token) {
+                throw new Error("Token is missing in admin login data");
+            }
+
+            setLoading(true);
+
+            // Ensure the date is formatted correctly
+            const formattedDob = formatDate(editedEmployee.dob);
+            const formattedJoiningDate = formatDate(editedEmployee.joiningDate);
+            const formattedLeavingDate = editedEmployee.leavingDate === 'Present' ? 'Present' : (editedEmployee.leavingDate ? formatDate(editedEmployee.leavingDate) : undefined);
+
+            const response = await axios.patch(
+                `https://api-vehware-crm.vercel.app/api/auth/update-employee/${id}`,
+                { ...editedEmployee, dob: formattedDob, joiningDate: formattedJoiningDate, leavingDate: formattedLeavingDate },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${parsedData.token}`,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+
+                setEmployee(response.data.data);
+                setOpenEditModal(false);
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Employee updated successfully!",
+                    confirmButtonColor: "#3085d6",
+                }).then(() => {
+
+                    setSuccess('');
+                });
+
+            } else {
+                throw new Error(response.data.message || "Failed to update employee.");
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred.");
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: err instanceof Error ? err.message : "An error occurred.",
+                confirmButtonColor: "#d33",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+    const formatDate = (dateString: string): string => {
+        return dayjs(dateString).format("YYYY-MM-DD");
+    };
+
+
+
+    const isValidDate = (dateString: string | undefined): boolean => {
+        if (!dateString || dateString === 'Present') return true;
+        const date = new Date(dateString);
+        return !isNaN(date.getTime());
+    };
+
 
     if (loading) {
         return (
@@ -166,27 +265,27 @@ export default function EmployeeDetails() {
         );
     }
 
+
+
+
     return (
         <Box sx={{ p: 4, backgroundColor: grey[100] }}>
-
-            <Grid item xs={12} sx={{ width: "100%", display: "flex", justifyContent: "space-between" }} >
-
+            <Grid item xs={12} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 <BackIcon />
-
                 <IconButton
-                    onClick={handleDeleteConfirmation}
+                    onClick={() => {/* handleDeleteConfirmation */ }}
                     sx={{
                         color: red[700],
-                        borderRadius: "8px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "12px",
-                        "&:hover": {
-                            backgroundColor: "white",
-                            color: "red"
+                        borderRadius: '8px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: '12px',
+                        '&:hover': {
+                            backgroundColor: 'white',
+                            color: 'red'
                         },
-                        transition: "all 0.3s ease",
+                        transition: 'all 0.3s ease',
                         marginBottom: 2
                     }}
                 >
@@ -194,17 +293,10 @@ export default function EmployeeDetails() {
                 </IconButton>
             </Grid>
 
-
-
-
-
-
-
-            <Grid container spacing={4} maxWidth="lg">
-                {/* Title Section */}
+            <Grid container spacing={2} maxWidth="lg">
                 <Grid item xs={12}>
                     <Typography
-                        variant="h4"
+                        variant="h3"
                         align="center"
                         gutterBottom
                         sx={{
@@ -222,29 +314,26 @@ export default function EmployeeDetails() {
                 </Grid>
 
 
-                {/* Avatar and Name Section */}
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            p: 3,
-                            textAlign: "center",
-                            height: "100%",
-                            boxShadow: 4,
-                            borderRadius: 3,
-                            backgroundColor: "#ffffff",
-                            border: `1px solid ${grey[300]}`,
-                            '&:hover': { boxShadow: 8 },
-                        }}
-                    >
+                    <Card sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        p: 8,
+                        textAlign: 'center',
+                        height: '100%',
+                        boxShadow: 4,
+                        borderRadius: 3,
+                        backgroundColor: '#ffffff',
+                        border: `1px solid ${grey[300]}`,
+                        '&:hover': { boxShadow: 8 },
+                    }}>
                         <Avatar
-                            src={employee.avatar || ""}
+                            src={employee?.avatar || ""}
                             sx={{
                                 width: 120,
                                 height: 120,
-                                mb: 2,
+                                mb: 4,
                                 bgcolor: blue[800],
                                 color: "common.white",
                                 fontSize: "2.5rem",
@@ -253,7 +342,7 @@ export default function EmployeeDetails() {
                                 boxShadow: 3,
                             }}
                         >
-                            {employee.name.charAt(0)}
+                            {employee?.name.charAt(0)}
                         </Avatar>
                         <Typography
                             variant="h6"
@@ -265,15 +354,14 @@ export default function EmployeeDetails() {
                                 marginBottom: 1,
                             }}
                         >
-                            {employee.name}
+                            {employee?.name}
                         </Typography>
-                        <Typography color="textSecondary" variant="body2" sx={{ fontStyle: "italic" }}>
-                            {employee.type.toUpperCase()}
+                        <Typography color="textSecondary" variant="body2" sx={{ fontStyle: 'italic' }}>
+                            {employee?.type.toUpperCase()}
                         </Typography>
                     </Card>
                 </Grid>
 
-                {/* Personal Information Section */}
                 <Grid item xs={12} sm={6} md={8}>
                     <Card sx={{ boxShadow: 4, borderRadius: 3, backgroundColor: "#ffffff" }}>
                         <CardContent>
@@ -293,55 +381,273 @@ export default function EmployeeDetails() {
                             <Grid container spacing={2} sx={{ mb: 2 }}>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>CNIC:</strong> {employee.cnic}
+                                        <strong>CNIC:</strong> {employee?.cnic}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}
+                                        <strong>Date of Birth:</strong> {employee?.dob ? new Date(employee.dob).toLocaleDateString() : "N/A"}
                                     </Typography>
                                 </Grid>
+
                                 <Grid item xs={12} sm={6}>
-                                    <Typography variant="body1" sx={{ color: grey[700], textWrap: "wrap" }}>
-                                        <strong>Email:</strong> {employee.email}
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Email:</strong> {employee?.email}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Phone:</strong> {employee.phone}
+                                        <strong>Phone:</strong> {employee?.phone}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Gender:</strong> {employee.gender}
+                                        <strong>Gender:</strong> {employee?.gender}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Salary:</strong> {`$${employee.salary.toLocaleString()}`}
+                                        <strong>Salary:</strong> {`$${employee?.salary.toLocaleString()}`}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Joining Date:</strong> {employee?.joiningDate ? formatDate(employee.joiningDate) : "N/A"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Leaving Date:</strong> {employee?.leavingDate || "Present"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Position:</strong> {employee?.position}
                                     </Typography>
                                 </Grid>
                             </Grid>
+                            <Button
+                                onClick={() => setOpenEditModal(true)}
+                                color="primary"
+                                disabled={loading}
+                                sx={{
+                                    backgroundColor: "#1565c0", 
+                                    color: "#fff",
+                                    borderRadius: "8px",
+                                    padding: "8px 16px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    "&:hover": {
+                                        backgroundColor: "#42a5f5", 
+                                    },
+                                    "&:disabled": {
+                                        backgroundColor: "primary.dark",
+                                        color: "#757575",
+                                    },
+                                    transition: "background-color 0.3s ease",
+                                }}
+                            >
+                                <EditIcon />
+                                Edit
+                            </Button>
+
                         </CardContent>
                     </Card>
                 </Grid>
 
-                {/* Error / Success Message */}
-                {deleteError ? (
-                    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-                        {deleteError}
-                    </Typography>
-                ) : null}
 
-                <Snackbar open={Boolean(success)} autoHideDuration={4000}>
-                    <Alert severity="success">{success}</Alert>
-                </Snackbar>
-                <Snackbar open={Boolean(deleteError)} autoHideDuration={4000}>
-                    <Alert severity="error">{deleteError}</Alert>
-                </Snackbar>
+                <Dialog
+                    open={openEditModal}
+                    onClose={() => setOpenEditModal(false)}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ fontWeight: 600, fontSize: 20, color: 'primary.main' }}>
+                        Edit Employee
+                    </DialogTitle>
+                    <DialogContent sx={{ paddingTop: 2 }}>
+                        <TextField
+                            label="Name"
+                            name="name"
+                            value={editedEmployee?.name || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="CNIC"
+                            name="cnic"
+                            value={editedEmployee?.cnic || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Date of Birth"
+                            name="dob"
+                            type="date"
+                            value={
+                                editedEmployee?.dob
+                                    ? new Date(editedEmployee.dob).toISOString().split('T')[0]
+                                    : ''
+                            }
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Phone"
+                            name="phone"
+                            value={editedEmployee?.phone || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Salary"
+                            name="salary"
+                            value={editedEmployee?.salary || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            type="number"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Joining Date"
+                            name="joiningDate"
+                            type="date"
+                            value={
+                                editedEmployee?.joiningDate
+                                    ? new Date(editedEmployee.joiningDate).toISOString().split('T')[0]
+                                    : ''
+                            }
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Leaving Date"
+                            name="leavingDate"
+                            type="date"
+                            value={
+                                editedEmployee?.leavingDate === 'Present'
+                                    ? ''
+                                    : editedEmployee?.leavingDate && isValidDate(editedEmployee?.leavingDate)
+                                        ? new Date(editedEmployee.leavingDate).toISOString().split('T')[0]
+                                        : ''
+                            }
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                            InputProps={{
+                                startAdornment: editedEmployee?.leavingDate === 'Present' ? (
+                                    <InputAdornment position="start">
+                                        <Typography variant="body2" sx={{ color: 'grey' }}>
+                                            Present
+                                        </Typography>
+                                    </InputAdornment>
+                                ) : null,
+                            }}
+                        />
+                        <Button
+                            onClick={() => {
+                                setEditedEmployee((prevEmployee) => {
+                                    if (prevEmployee === null) return null;
+                                    return {
+                                        ...prevEmployee,
+                                        leavingDate: prevEmployee.leavingDate === 'Present' ? '' : 'Present',
+                                    };
+                                });
+                            }}
+                            sx={{
+                                marginTop: 2,
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                '&:hover': {
+                                    backgroundColor: 'primary.light',
+                                    color: 'white',
+                                },
+                            }}
+                        >
+                            {editedEmployee?.leavingDate === 'Present'
+                                ? 'Edit Leaving Date'
+                                : 'Set as Present'}
+                        </Button>
+                        <TextField
+                            label="Position"
+                            name="position"
+                            value={editedEmployee?.position || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                    </DialogContent>
+
+                    <DialogActions sx={{ padding: '16px' }}>
+                        <Button
+                            onClick={() => setOpenEditModal(false)}
+                            color="secondary"
+                            sx={{
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                '&:hover': { backgroundColor: 'grey.200' },
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSaveChanges}
+                            color="primary"
+                            disabled={loading}
+                            sx={{
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                '&:hover': { backgroundColor: 'primary.dark' },
+                            }}
+                        >
+                            {loading ? <CircularProgress size={20} /> : 'Save'}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+
+
             </Grid>
         </Box>
-
-
     );
 }
