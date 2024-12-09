@@ -6,6 +6,7 @@ import OrderDetailsDialog from '@/components/dashboard/invoice/OrderDetailsDialo
 import SearchBar from '@/components/dashboard/invoice/SearchBar';
 import { AppContext } from '@/contexts/isLogin';
 import { Grid, Typography } from '@mui/material';
+import Swal from 'sweetalert2';
 
 interface Order {
   _id: string;
@@ -73,16 +74,45 @@ const MainPage: React.FC = () => {
     setSelectedOrder(null);
   };
 
-  const handleDeleteOrder = async (orderId: string) => {
-    try {
-      const response = await axios.delete(`https://api-vehware-crm.vercel.app/api/orders/${orderId}`);
-      if (response.status === 200) {
-        setOrders(orders.filter((order) => order._id !== orderId));
+  const handleDeleteOrder = (orderId: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this order!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Use storedValue.token for Authorization header
+          const response = await axios.patch(
+            `https://api-vehware-crm.vercel.app/api/order/delete-order/${orderId}`,
+            {}, 
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${storedValue.token}`, 
+              },
+            }
+          );
+  
+          if (response.status === 200) {
+            setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+            setSearchInvoice((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+            Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
+          } else {
+            Swal.fire('Error!', 'There was an issue deleting the order.', 'error');
+          }
+        } catch (error) {
+          console.error('Error deleting order:', error);
+          Swal.fire('Error!', 'There was an issue deleting the order.', 'error');
+        }
       }
-    } catch (error) {
-      console.error('Error deleting order:', error);
-    }
+    });
   };
+  
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -95,7 +125,7 @@ const MainPage: React.FC = () => {
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0);  // Reset to the first page when rowsPerPage changes
+    setPage(0);  
   };
 
   const filteredOrders = orders.filter(
@@ -120,20 +150,11 @@ const MainPage: React.FC = () => {
         page={page}
         rowsPerPage={rowsPerPage}
         totalOrders={totalOrders}
-        handleChangePage={handleChangePage}        // Pass handleChangePage here
-        handleRowsPerPageChange={handleRowsPerPageChange}  // Pass handleRowsPerPageChange here
+        handleChangePage={handleChangePage}        
+        handleRowsPerPageChange={handleRowsPerPageChange}  
       />
 
 
-      {/* <TablePagination
-        component="div"
-        count={totalOrders}  // This ensures pagination shows the correct total count
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        rowsPerPageOptions={[5, 10, 25]} // Options for rows per page
-      /> */}
 
       <OrderDetailsDialog open={Boolean(selectedOrder)} onClose={handleCloseModal} selectedOrder={selectedOrder} />
     </div>
