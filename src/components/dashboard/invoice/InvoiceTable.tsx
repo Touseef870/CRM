@@ -127,7 +127,8 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                                 '&:hover': { backgroundColor: '#FFEBEE' },
                                             }}
                                         >
-                                            <Delete sx={{ fontSize: 24 }} />
+                                          <Delete sx={{ fontSize: 24, color: '#8B0000' }} />
+
                                         </IconButton>
                                     </Stack>
                                 </TableCell>
