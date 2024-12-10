@@ -23,7 +23,7 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         title: '',
-        imgUrl: null as any,
+        image: null as any,
         description: '',
     });
 
@@ -47,7 +47,7 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
 
     const handleUploadComplete = (url: string | null) => {
         setUploadedUrl(url);
-        setFormData({ ...formData, imgUrl: url });
+        setFormData({ ...formData, image: url });
         console.log("Uploaded Image URL:", url);
     };
 
@@ -63,7 +63,7 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
             handleClose();
             setFormData({
                 title: '',
-                imgUrl: null as any,
+                image: null as any,
                 description: '',
             });
         } catch (e) {
@@ -103,7 +103,7 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
                             fullWidth
                             sx={{ textAlign: 'center' }}
                         >
-                            {formData.imgUrl ? 'Image Selected' : 'Select Image'}
+                            {formData.image ? 'Image Selected' : 'Select Image'}
                         </Button>
                     </label>
                     {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: '100%', marginTop: '16px' }} />}
