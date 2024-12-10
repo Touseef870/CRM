@@ -15,7 +15,7 @@ interface Order {
         _id: string;
         title: string;
         description: string;
-        img: string;
+        image: string;
     };
 }
 
@@ -88,9 +88,9 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                 <TableCell>
                                     <Stack direction="row" spacing={2} alignItems="center">
                                         <img
-                                            src={order.brand.img}
+                                            src={order.brand.image}
                                             alt={order.brand.title}
-                                            style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #3498DB' }}
+                                            style={{ width: 50, height: 50, borderRadius: '50%', border: '2px solid #3498DB' }}
                                         />
                                         <Typography variant="body2" sx={{ color: '#34495E' }}>
                                             {order.brand.title}

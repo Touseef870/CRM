@@ -13,7 +13,7 @@ interface Order {
     _id: string;
     title: string;
     description: string;
-    img: string;
+    image: string;
   };
 }
 
@@ -61,7 +61,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
                 Description: {selectedOrder.brand.description}
               </Typography>
               <img
-                src={selectedOrder.brand.img}
+                src={selectedOrder.brand.image}
                 alt={selectedOrder.brand.title}
                 style={{
                   width: '94%',

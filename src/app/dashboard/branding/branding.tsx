@@ -56,7 +56,7 @@ export default function BrandingPage(): React.JSX.Element {
           id: item._id,
           title: item.title,
           description: item.description,
-          logo: item.imgUrl,
+          logo: item.image,
           updatedAt: new Date(),
         }));
 

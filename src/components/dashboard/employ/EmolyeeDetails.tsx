@@ -273,7 +273,7 @@ export default function EmployeeDetails() {
             <Grid item xs={12} sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 <BackIcon />
                 <IconButton
-                    onClick={() => {/* handleDeleteConfirmation */ }}
+                    onClick={handleDeleteConfirmation}
                     sx={{
                         color: red[700],
                         borderRadius: '8px',
