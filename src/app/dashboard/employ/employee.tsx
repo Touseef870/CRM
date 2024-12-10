@@ -37,8 +37,6 @@ export default function Employee(): React.JSX.Element {
         },
       });
 
-      console.log("employee", response.data)
-      console.log("searchQuery", searchQuery)
       setSearchEmployee(response.data.data);
       setEmploy(response.data.data.employees);
       setTotalEmployees(response.data.data.total);

@@ -97,11 +97,16 @@ interface FormData {
     dob: string;
     type: "employee";
     position: string;
-    joiningDate:string;
-    leavingDate:string;
+    joiningDate: string;
+    leavingDate: string;
     isDeleted?: boolean;
     addedBy: string;
+    officeTiming: {
+        startTime: string;
+        endTime: string;
+    };
 }
+
 
 function AddEmployeeForm() {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -111,13 +116,11 @@ function AddEmployeeForm() {
     const onSubmit = async (data: FormData) => {
         try {
             setIsSubmitting(true);
-            data.type = 'employee'
+            data.type = 'employee'; // Add type as 'employee'
 
-
-           
             console.log(data);
             const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-           
+
             const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,7 +149,7 @@ function AddEmployeeForm() {
             console.log(res);
         } catch (error) {
             console.log("Error submitting form:", error);
-            
+
         } finally {
             setIsSubmitting(false);
         }
@@ -158,7 +161,7 @@ function AddEmployeeForm() {
                 variant="h4"
                 sx={{
                     fontWeight: 'bold',
-                    fontSize: { xs: '1.8rem', sm: '3rem' }, 
+                    fontSize: { xs: '1.8rem', sm: '3rem' },
                     textAlign: 'center',
                     letterSpacing: '0.5px',
                     lineHeight: 1.2,
@@ -171,7 +174,8 @@ function AddEmployeeForm() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={3}>
-                  
+
+                    {/* Add Email */}
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Email"
@@ -183,11 +187,11 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                  
+                    {/* Add Password */}
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Password"
-                            type={showPassword ? "text" : "password"} // Toggle between 'text' and 'password'
+                            type={showPassword ? "text" : "password"}
                             fullWidth
                             variant="outlined"
                             {...register("password", validationRules.password)}
@@ -197,7 +201,7 @@ function AddEmployeeForm() {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
-                                            onClick={() => { setShowPassword(!showPassword); }} // Toggle visibility
+                                            onClick={() => { setShowPassword(!showPassword); }}
                                             edge="end"
                                             aria-label="toggle password visibility"
                                         >
@@ -213,7 +217,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                  
+                    {/* Add Name */}
                     <Grid item xs={12}>
                         <TextField
                             label="Name"
@@ -225,7 +229,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                 
+                    {/* Add Phone */}
                     <Grid item xs={12}>
                         <TextField
                             label="Phone"
@@ -238,7 +242,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                   
+                    {/* Add CNIC */}
                     <Grid item xs={12}>
                         <TextField
                             label="CNIC"
@@ -251,7 +255,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                  
+                    {/* Add Gender */}
                     <Grid item xs={12} sm={6}>
                         <FormControl fullWidth variant="outlined" error={Boolean(errors.gender)}>
                             <InputLabel>Gender</InputLabel>
@@ -261,12 +265,12 @@ function AddEmployeeForm() {
                             >
                                 <MenuItem value="male">Male</MenuItem>
                                 <MenuItem value="female">Female</MenuItem>
-                                
                             </Select>
                             <FormHelperText>{errors.gender?.message}</FormHelperText>
                         </FormControl>
                     </Grid>
 
+                    {/* Add Salary */}
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Salary"
@@ -279,7 +283,7 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
-                  
+                    {/* Add Date of Birth */}
                     <Grid item xs={12}>
                         <TextField
                             label="Date of Birth"
@@ -292,6 +296,8 @@ function AddEmployeeForm() {
                             InputLabelProps={{ shrink: true }}
                         />
                     </Grid>
+
+                    {/* Add Joining Date */}
                     <Grid item xs={12}>
                         <TextField
                             label="Joining Date"
@@ -304,6 +310,8 @@ function AddEmployeeForm() {
                             InputLabelProps={{ shrink: true }}
                         />
                     </Grid>
+
+                    {/* Add Position */}
                     <Grid item xs={12}>
                         <TextField
                             label="Position"
@@ -316,10 +324,35 @@ function AddEmployeeForm() {
                         />
                     </Grid>
 
+                    {/* Add Office Start Time */}
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Office Start Time"
+                            type="time"
+                            fullWidth
+                            variant="outlined"
+                            {...register("officeTiming.startTime", { required: "Start time is required" })}
+                            error={Boolean(errors.officeTiming?.startTime)}
+                            helperText={errors.officeTiming?.startTime?.message}
+                            InputLabelProps={{ shrink: true }}
+                        />
+                    </Grid>
 
+                    {/* Add Office End Time */}
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Office End Time"
+                            type="time"
+                            fullWidth
+                            variant="outlined"
+                            {...register("officeTiming.endTime", { required: "End time is required" })}
+                            error={Boolean(errors.officeTiming?.endTime)}
+                            helperText={errors.officeTiming?.endTime?.message}
+                            InputLabelProps={{ shrink: true }}
+                        />
+                    </Grid>
 
-
-                  
+                    {/* Submit Button */}
                     <Grid item xs={12}>
                         <Button
                             type="submit"
@@ -336,5 +369,6 @@ function AddEmployeeForm() {
         </Container>
     );
 }
+
 
 export default AddEmployeeForm;
