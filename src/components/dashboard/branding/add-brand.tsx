@@ -109,70 +109,81 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} style={{ zIndex: 1301 }} >
-            <DialogTitle>Add Brand</DialogTitle>
-            <DialogContent>
-                <TextField
-                    name="title"
-                    label="Title"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    error={!!errors.title}
-                    helperText={errors.title}
+        <Dialog open={open} onClose={handleClose} style={{ zIndex: 1301 }} maxWidth="sm" fullWidth>
+        <DialogTitle>Add Brand</DialogTitle>
+        <DialogContent>
+            <TextField
+                name="title"
+                label="Title"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={formData.title}
+                onChange={handleFormChange}
+                error={!!errors.title}
+                helperText={errors.title}
+            />
+            <div style={{ marginBottom: '6px' }}>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    id="image-upload"
+                    style={{ display: 'none' }}
                 />
-                <div style={{ marginBottom: '16px' }}>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        id="image-upload"
-                        style={{ display: 'none' }}
+                {file && (
+                    <CloudinaryUpload file={file} onUploadComplete={handleUploadComplete} />
+                )}
+                <label htmlFor="image-upload">
+                    <Button
+                        component="span"
+                        startIcon={<CloudUploadIcon />}
+                        variant="outlined"
+                        fullWidth
+                        sx={{ textAlign: 'center' }}
+                    >
+                        {formData.image ? 'Image Selected' : 'Select Image'}
+                    </Button>
+                </label>
+                {imagePreview && (
+                    <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        style={{
+                            width: '550px', 
+                            height: '200px', 
+                            objectFit: 'cover', 
+                            marginTop: '16px',
+                            borderRadius:'20px'
+                        }} 
                     />
-                    {file && (
-                        <CloudinaryUpload file={file} onUploadComplete={handleUploadComplete} />
-                    )}
-                    <label htmlFor="image-upload">
-                        <Button
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                            variant="outlined"
-                            fullWidth
-                            sx={{ textAlign: 'center' }}
-                        >
-                            {formData.image ? 'Image Selected' : 'Select Image'}
-                        </Button>
-                    </label>
-                    {imagePreview && (
-                        <img src={imagePreview} alt="Preview" style={{ width: '100%', marginTop: '16px' }} />
-                    )}
-                    {errors.image && <div style={{ color: 'red' }}>{errors.image}</div>}
-                </div>
-                <TextField
-                    name="description"
-                    label="Description"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={4}
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    error={!!errors.description}
-                    helperText={errors.description}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} color="secondary">
-                    Cancel
-                </Button>
-                <Button onClick={handleFormSubmit} variant="contained" color="primary">
-                    Submit
-                </Button>
-            </DialogActions>
-        </Dialog>
+                )}
+                {errors.image && <div style={{ color: 'red' }}>{errors.image}</div>}
+            </div>
+            <TextField
+                name="description"
+                label="Description"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                multiline
+                rows={4}
+                value={formData.description}
+                onChange={handleFormChange}
+                error={!!errors.description}
+                helperText={errors.description}
+            />
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleClose} color="secondary">
+                Cancel
+            </Button>
+            <Button onClick={handleFormSubmit} variant="contained" color="primary">
+                Submit
+            </Button>
+        </DialogActions>
+    </Dialog>
+    
     );
 }
 

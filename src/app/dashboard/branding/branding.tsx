@@ -23,7 +23,8 @@ export default function BrandingPage(): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
-
+  const [search, setSearch] = useState<any>('');
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
 
   const adminLoginData = localStorage.getItem('AdminloginData');
@@ -45,24 +46,27 @@ export default function BrandingPage(): React.JSX.Element {
         const limit = itemsPerPage;
 
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/brand/get', {
-          params: { skip, limit },
+          params: { skip, limit, search },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${parsedData.token}`,
           },
         });
 
-        const fetchedData = response.data.data.map((item: any) => ({
-          id: item._id,
-          title: item.title,
-          description: item.description,
-          logo: item.image,
-          updatedAt: new Date(),
-        }));
+        const resp = response.data.data
+        let fetchedData: any = []
+        if (Array.isArray(resp) && resp.length) {
+          fetchedData = resp.map((item: any) => ({
+            id: item._id,
+            title: item.title,
+            description: item.description,
+            logo: item.image,
+            updatedAt: new Date(),
+          }));
 
-        setBrandingData(fetchedData);
-        setFilteredBranding(fetchedData);
+        }
         setTotalItems(response.data.totalItems);
+        setFilteredBranding(fetchedData);
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unexpected error occurred');
@@ -71,7 +75,7 @@ export default function BrandingPage(): React.JSX.Element {
     };
 
     fetchBrandingData();
-  }, [currentPage]);
+  }, [currentPage, search]);
 
 
   const handleOpenAddBrandModal = () => {
@@ -84,17 +88,27 @@ export default function BrandingPage(): React.JSX.Element {
 
 
   const handleBrandEmploy = (value: string) => {
-    const filteredData = brandingData.filter((brand) =>
-      brand.title.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredBranding(filteredData);
-    setCurrentPage(1);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    const newTimeoutId = setTimeout(() => {
+      setSearch(value);
+      setCurrentPage(1);
+    }, 500);
+
+    setTimeoutId(newTimeoutId);
   };
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
+
+
+
   return (
+
+
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
@@ -110,7 +124,7 @@ export default function BrandingPage(): React.JSX.Element {
       <div style={{ position: 'relative', display: 'inline-block', width: '30%' }}>
         <input
           type="text"
-          placeholder="Search by brand name"
+          placeholder="Search here"
           onChange={(e) => { handleBrandEmploy(e.target.value); }}
           style={{
             width: '90%',
@@ -122,7 +136,7 @@ export default function BrandingPage(): React.JSX.Element {
           }}
         />
         <MagnifyingGlassIcon
-          size={20}
+          size={25}
           weight="bold"
           style={{
             position: 'absolute',
@@ -151,9 +165,9 @@ export default function BrandingPage(): React.JSX.Element {
         ) : (
           <Grid container spacing={4}>
             {
-              filteredBranding.length && filteredBranding.map((branding) => (
+              !!filteredBranding.length && filteredBranding.map((branding) => (
                 <Grid item key={branding.id} lg={4} md={6} xs={12}>
-                  <Link href={'/dashboard/branding/brandingDetails'}>
+                  <Link href={`/dashboard/branding/${branding.id}`}>
                     <Card
                       sx={{
                         maxWidth: "100%",
@@ -206,19 +220,36 @@ export default function BrandingPage(): React.JSX.Element {
               ))
             }
             {
-              !filteredBranding.length && <div>There is no data exist</div>
+              !filteredBranding.length && <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100vh',  // Full viewport height
+                  width: '100%',    // Full width of the screen
+                }}
+              >
+                <Typography variant="h5" color="error">
+                  There is no data available
+                </Typography>
+              </Box>
+
+
             }
           </Grid>
         )}
-
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Pagination
-          count={(totalItems / itemsPerPage)}
-          page={currentPage}
-          onChange={handlePageChange}
-          size="small"
-        />
-      </Box>
+      {
+        filteredBranding?.length > 0 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Pagination
+              count={(totalItems / itemsPerPage)}
+              page={currentPage}
+              onChange={handlePageChange}
+              size="small"
+            />
+          </Box>
+        )
+      }
 
       {openAddBrandModal && (
         <AddBrand open={openAddBrandModal} handleClose={handleCloseAddBrandModal} />
