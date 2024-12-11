@@ -2,27 +2,37 @@ import path from 'path';
 
 const nextConfig = {
   eslint: {
-    ignoreDuringBuilds: true, // Ignores ESLint errors during builds
+    ignoreDuringBuilds: true,
   },
+
   webpack: (config, { isServer }) => {
-    // Add custom CSS handling
     config.module.rules.push({
       test: /\.css$/,
       use: [
-        'style-loader',   // Injects styles into the DOM
-        'css-loader',     // Resolves CSS imports
-        'postcss-loader', // Processes CSS with PostCSS
+        'style-loader',
+        'css-loader',
+        'postcss-loader',
       ],
-      include: path.resolve('src/styles'), // Adjust the path to your CSS files
+      include: path.resolve(__dirname, 'src/styles'),
     });
 
-    // Optional: Resolve potential CSS handling issues in server-side rendering
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      fs: false, // Avoids "fs" module errors
+      fs: false,
     };
 
+    if (!isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        name: false,
+      };
+    }
+
     return config;
+  },
+
+  env: {
+    customKey: 'yourValue',
   },
 };
 
