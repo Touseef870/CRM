@@ -43,6 +43,10 @@ interface Employee {
     joiningDate: string;
     leavingDate: string | undefined;
     avatar?: string;
+     officeTiming: {
+        startTime: string;
+        endTime: string; 
+    };
 }
 
 export default function EmployeeDetails() {
@@ -423,6 +427,16 @@ export default function EmployeeDetails() {
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
                                         <strong>Position:</strong> {employee?.position}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Office Start Time:</strong> {employee?.officeTiming?.startTime}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body1" sx={{ color: grey[700] }}>
+                                        <strong>Office End Time:</strong> {employee?.officeTiming?.endTime}
                                     </Typography>
                                 </Grid>
                             </Grid>
