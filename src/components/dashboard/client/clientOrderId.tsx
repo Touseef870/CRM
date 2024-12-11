@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, AlertTitle, Box } from '@mui/material';
 
 interface Order {
   _id: string;
@@ -8,7 +8,9 @@ interface Order {
   description: string;
   price: number;
   clientId: string;
-  brandId: string;
+  brand: {
+    title: string
+  };
 }
 
 interface ClientOrdersProps {
@@ -32,7 +34,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
       try {
         const getData = localStorage.getItem("AdminloginData");
         const token = JSON.parse(getData!).token;
-  
+
         const response = await axios.get(
           `https://api-vehware-crm.vercel.app/api/order/client-order/${clientId}`,
           {
@@ -41,11 +43,13 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
             },
           }
         );
-        console.log(response.data);   
+        console.log(response.data.data);
 
-        // Check if the response data is an array before setting it
-        if (Array.isArray(response.data)) {
-          setOrders(response.data);
+        if (response.data.data.length == 0) {
+          setError("No order has been generated for this client.");
+        }
+        if (Array.isArray(response.data.data)) {
+          setOrders(response.data.data);
         } else {
           setError('Received data is not an array');
         }
@@ -55,7 +59,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
         setLoading(false);
       }
     };
-  
+
     fetchOrders();
   }, [clientId]);
 
@@ -64,7 +68,28 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          textAlign: 'center',
+          marginTop: '2rem'
+        }}
+      >
+        <Alert
+          severity="error"
+          sx={{
+            width: '100%',
+            maxWidth: '500px',
+          }}
+        >
+          <AlertTitle>Error</AlertTitle>
+          {error}
+        </Alert>
+      </Box>
+    );
   }
 
   return (
@@ -86,7 +111,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
               <TableCell>{order.title}</TableCell>
               <TableCell>{order.description}</TableCell>
               <TableCell>{order.price}</TableCell>
-              <TableCell>{order.brandId}</TableCell>
+              <TableCell>{order.brand.title}</TableCell>
             </TableRow>
           ))}
         </TableBody>
