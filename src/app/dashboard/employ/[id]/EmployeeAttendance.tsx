@@ -162,16 +162,7 @@ const AttendanceTable: React.FC = () => {
 
     }
   };
-  const formattedAttendanceData = attendanceData.map((row) => ({
-    ...row,
-    date: moment(row.date).format("DD-MM-YYYY"),
-    checkInTime: row.checkInTime
-      ? moment(row.checkInTime, "HH:mm").format("hh:mm A")
-      : "N/A", // Handle empty time
-    checkOutTime: row.checkOutTime
-      ? moment(row.checkOutTime, "HH:mm").format("hh:mm A")
-      : "N/A",
-  }));
+
 
 
   console.log(attendanceData, "attendanceData")
@@ -214,7 +205,7 @@ const AttendanceTable: React.FC = () => {
             </TableHead>
             <TableBody>
               {attendanceData && Array.isArray(attendanceData) && attendanceData.length > 0 ? (
-                formattedAttendanceData.map((data) => (
+                attendanceData.map((data) => (
                   <TableRow
                     key={data._id}
                     sx={{
