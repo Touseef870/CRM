@@ -9,22 +9,20 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react';
 import axios from 'axios';
-import { BrandingCard, type Integration } from '@/components/dashboard/branding/branding-card';
+import { type Integration } from '@/components/dashboard/branding/branding-card';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
-import { Card, CardContent, CardMedia, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@mui/material';
-import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
-import CloudinaryUpload from '@/components/cloudinary/cloudinary_upload';
+import { Card, CardContent, CardMedia, CircularProgress, Grid } from '@mui/material';
 import AddBrand from '@/components/dashboard/branding/add-brand';
-
+import Link from 'next/link';
 
 export default function BrandingPage(): React.JSX.Element {
   const [brandingData, setBrandingData] = useState<Integration[]>([]);
   const [filteredBranding, setFilteredBranding] = useState<Integration[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openAddBrandModal, setOpenAddBrandModal] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
 
 
@@ -35,7 +33,7 @@ export default function BrandingPage(): React.JSX.Element {
 
   const parsedData = JSON.parse(adminLoginData);
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 10; // Set to 10 items per page
 
   useEffect(() => {
     const fetchBrandingData = async () => {
@@ -43,9 +41,11 @@ export default function BrandingPage(): React.JSX.Element {
         setLoading(true);
         setError(null);
 
-
+        const skip = (currentPage - 1) * itemsPerPage;
+        const limit = itemsPerPage;
 
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/brand/get', {
+          params: { skip, limit },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${parsedData.token}`,
@@ -62,6 +62,7 @@ export default function BrandingPage(): React.JSX.Element {
 
         setBrandingData(fetchedData);
         setFilteredBranding(fetchedData);
+        setTotalItems(response.data.totalItems);
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unexpected error occurred');
@@ -70,7 +71,7 @@ export default function BrandingPage(): React.JSX.Element {
     };
 
     fetchBrandingData();
-  }, []);
+  }, [currentPage]);
 
 
   const handleOpenAddBrandModal = () => {
@@ -93,20 +94,6 @@ export default function BrandingPage(): React.JSX.Element {
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
-
-
-
-
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
-
-
-
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = filteredBranding.slice(startIndex, startIndex + itemsPerPage);
-
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
@@ -114,13 +101,13 @@ export default function BrandingPage(): React.JSX.Element {
           <Typography variant="h4">Branding</Typography>
         </Stack>
         <div>
-          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal} >
+          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal}>
             Add
           </Button>
         </div>
       </Stack>
 
-      <div style={{ position: 'relative', display: 'inline-block', width: '30%', }}>
+      <div style={{ position: 'relative', display: 'inline-block', width: '30%' }}>
         <input
           type="text"
           placeholder="Search by brand name"
@@ -146,80 +133,87 @@ export default function BrandingPage(): React.JSX.Element {
           }}
         />
       </div>
-      {loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '80vh',
-          }}
-        >
-          <CircularProgress size={50} color="primary" />
-        </Box>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        <Grid container spacing={4}>
-          {currentItems.map((branding) => (
-            <Grid item key={branding.id} lg={4} md={6} xs={12}>
-              <Card
-                sx={{
-                  maxWidth: "100%",
-                  boxShadow: 3,
-                  borderRadius: 2,
-                  overflow: "hidden",
-                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
 
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={branding.logo || "https://via.placeholder.com/300"}
-                  alt={branding.title || "Brand Image"}
-                  sx={{
-                    objectFit: "cover",
-                  }}
-                />
-                <CardContent sx={{ padding: 3 }}>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "1.2rem",
-                      color: "#333",
-                    }}
-                  >
-                    {branding.title || "Brand Title"}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      fontSize: "1rem",
-                      color: "#555",
-                      lineHeight: 1.6,
-                      textOverflow: "ellipsis",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {branding.description || "Brand description goes here."}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-      )}
+      {
+        loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '80vh',
+            }}
+          >
+            <CircularProgress size={50} color="primary" />
+          </Box>
+        ) : error ? (
+          <Typography color="error">{error}</Typography>
+        ) : (
+          <Grid container spacing={4}>
+            {
+              filteredBranding.length && filteredBranding.map((branding) => (
+                <Grid item key={branding.id} lg={4} md={6} xs={12}>
+                  <Link href={'/dashboard/branding/brandingDetails'}>
+                    <Card
+                      sx={{
+                        maxWidth: "100%",
+                        boxShadow: 3,
+                        borderRadius: 2,
+                        overflow: "hidden",
+                        transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={branding.logo || "https://via.placeholder.com/300"}
+                        alt={branding.title || "Brand Image"}
+                        sx={{
+                          objectFit: "cover",
+                        }}
+                      />
+                      <CardContent sx={{ padding: 3 }}>
+                        <Typography
+                          gutterBottom
+                          variant="h5"
+                          component="div"
+                          sx={{
+                            fontWeight: "bold",
+                            fontSize: "1.2rem",
+                            color: "#333",
+                          }}
+                        >
+                          {branding.title || "Brand Title"}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            fontSize: "1rem",
+                            color: "#555",
+                            lineHeight: 1.6,
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {branding.description || "Brand description goes here."}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </Grid>
+              ))
+            }
+            {
+              !filteredBranding.length && <div>There is no data exist</div>
+            }
+          </Grid>
+        )}
 
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Pagination
-          count={Math.ceil(filteredBranding.length / itemsPerPage)}
+          count={(totalItems / itemsPerPage)}
           page={currentPage}
           onChange={handlePageChange}
           size="small"
@@ -229,8 +223,6 @@ export default function BrandingPage(): React.JSX.Element {
       {openAddBrandModal && (
         <AddBrand open={openAddBrandModal} handleClose={handleCloseAddBrandModal} />
       )}
-
-
     </Stack>
   );
 }
