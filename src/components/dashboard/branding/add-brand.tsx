@@ -79,28 +79,26 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
                 },
             });
 
-            console.log(response, "response");
+            let resp  : any = response.data
 
-          
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Brand added successfully!',
-                confirmButtonText: 'OK',
-            }).then(() => {
-               
-                handleClose();
-                
-               
+            if (resp.status === 200) {
                 setFormData({
                     title: '',
                     image: null as any,
                     description: '',
                 });
-            });
-        } catch (e) {
-            console.log(e);
+                handleClose();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Brand added successfully!',
+                    confirmButtonText: 'OK',
+                }).then(() => {
+                    console.log('here okay click logic')
+                });
+            }
           
+        } catch (e) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
