@@ -23,24 +23,24 @@ import {
 import { useParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
 import { Edit, Schedule } from "@mui/icons-material";
 
 interface AttendanceRow {
-  date: string; 
-  checkInTime: string; 
-  checkOutTime: string; 
-  present: string; 
+  date: string;
+  checkInTime: string;
+  checkOutTime: string;
+  present: string;
   _id: string;
 }
 
 const AttendanceTable: React.FC = () => {
   const { id } = useParams<{ id: string | undefined }>();
-  const [loading, setLoading] = useState<boolean>(true); 
+  const [loading, setLoading] = useState<boolean>(true);
   const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [editingRow, setEditingRow] = useState<AttendanceRow | null>(null);
-  const [editedCheckIn, setEditedCheckIn] = useState<string>(""); 
+  const [editedCheckIn, setEditedCheckIn] = useState<string>("");
   const [editedCheckOut, setEditedCheckOut] = useState<string>("");
   const getData = localStorage.getItem("AdminloginData");
   const token = JSON.parse(getData!).token;
@@ -63,7 +63,7 @@ const AttendanceTable: React.FC = () => {
         } catch (err) {
           console.log("Error fetching attendance data:", err);
         } finally {
-          setLoading(false); 
+          setLoading(false);
         }
       };
 
@@ -74,10 +74,10 @@ const AttendanceTable: React.FC = () => {
   }, [id, token]);
 
   const handleEdit = (row: AttendanceRow) => {
-    setEditingRow(row); 
-    setEditedCheckIn(moment(row.checkInTime).format("HH:mm")); 
+    setEditingRow(row);
+    setEditedCheckIn(moment(row.checkInTime).format("HH:mm"));
     setEditedCheckOut(moment(row.checkOutTime).format("HH:mm"));
-    setOpenModal(true); 
+    setOpenModal(true);
   };
 
   const handleSave = async () => {
@@ -148,12 +148,12 @@ const AttendanceTable: React.FC = () => {
         confirmButtonText: 'OK',
         confirmButtonColor: '#d33',
         customClass: {
-          popup: 'swal2-popup', 
+          popup: 'swal2-popup',
         },
         didOpen: () => {
           const swalPopup = document.querySelector('.swal2-popup');
           if (swalPopup) {
-            (swalPopup as HTMLElement).style.zIndex = '9999'; 
+            (swalPopup as HTMLElement).style.zIndex = '9999';
           }
         },
       });
@@ -162,23 +162,16 @@ const AttendanceTable: React.FC = () => {
 
     }
   };
-  const formattedAttendanceData = attendanceData.map((row) => ({
-    ...row,
-    date: moment(row.date).format("DD-MM-YYYY"), 
-    checkInTime: row.checkInTime
-      ? moment(row.checkInTime, "HH:mm").format("hh:mm A")
-      : "N/A", // Handle empty time
-    checkOutTime: row.checkOutTime
-      ? moment(row.checkOutTime, "HH:mm").format("hh:mm A")
-      : "N/A",
-  }));
 
+
+
+  console.log(attendanceData, "attendanceData")
 
   return (
 
     <Box sx={{ margin: "30px" }}>
 
-     
+
       {loading ? (
         <Box sx={{ textAlign: "center", padding: "40px" }}>
           <CircularProgress />
@@ -187,7 +180,7 @@ const AttendanceTable: React.FC = () => {
         <TableContainer
           component={Paper}
           sx={{
-           
+
             overflow: "hidden",
             boxShadow: 3,
             padding: "16px",
@@ -212,7 +205,7 @@ const AttendanceTable: React.FC = () => {
             </TableHead>
             <TableBody>
               {attendanceData && Array.isArray(attendanceData) && attendanceData.length > 0 ? (
-                formattedAttendanceData.map((data) => (
+                attendanceData.map((data) => (
                   <TableRow
                     key={data._id}
                     sx={{

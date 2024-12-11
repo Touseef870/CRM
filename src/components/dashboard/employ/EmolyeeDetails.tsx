@@ -43,9 +43,9 @@ interface Employee {
     joiningDate: string;
     leavingDate: string | undefined;
     avatar?: string;
-     officeTiming: {
+    officeTiming: {
         startTime: string;
-        endTime: string; 
+        endTime: string;
     };
 }
 
@@ -431,21 +431,21 @@ export default function EmployeeDetails() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Office Start Time:</strong> {employee?.officeTiming?.startTime}
+                                        <strong>Office Time:</strong> {employee?.officeTiming?.startTime} To <br />  {employee?.officeTiming?.endTime}
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                {/* <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
                                         <strong>Office End Time:</strong> {employee?.officeTiming?.endTime}
                                     </Typography>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Button
                                 onClick={() => setOpenEditModal(true)}
                                 color="primary"
                                 disabled={loading}
                                 sx={{
-                                    backgroundColor: "#1565c0", 
+                                    backgroundColor: "#1565c0",
                                     color: "#fff",
                                     borderRadius: "8px",
                                     padding: "8px 16px",
@@ -453,7 +453,7 @@ export default function EmployeeDetails() {
                                     alignItems: "center",
                                     gap: "8px",
                                     "&:hover": {
-                                        backgroundColor: "#42a5f5", 
+                                        backgroundColor: "#42a5f5",
                                     },
                                     "&:disabled": {
                                         backgroundColor: "primary.dark",
@@ -582,6 +582,7 @@ export default function EmployeeDetails() {
                                 '& .MuiInputLabel-root': { fontWeight: 500 },
                                 '& .MuiInputBase-root': { borderRadius: '8px' },
                             }}
+                            InputLabelProps={{ shrink: true }}
                             InputProps={{
                                 startAdornment: editedEmployee?.leavingDate === 'Present' ? (
                                     <InputAdornment position="start">

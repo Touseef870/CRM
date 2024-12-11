@@ -572,7 +572,7 @@ export default function clientDetails() {
 
 
 
-      // Add Order Model
+      {/* // Add Order Model */}
       <IconButton
         onClick={handleModalOpen}
         sx={{

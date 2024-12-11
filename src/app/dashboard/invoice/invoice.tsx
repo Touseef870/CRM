@@ -19,15 +19,15 @@ interface Order {
     _id: string;
     title: string;
     description: string;
-    img: string;
+    image: string;
   };
 }
 
 const MainPage: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);  // Default to an empty array
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [SearchInvoice, setSearchInvoice] = useState<Order[]>([]);
-  const [searchQuery, setSearchQuery] = useState<any>('');
+  const [searchInvoice, setSearchInvoice] = useState<Order[]>([]);  // Renamed for consistency
+  const [searchQuery, setSearchQuery] = useState<string>('');  // Specify type as string
   const [page, setPage] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const { storedValue } = useContext(AppContext)!;
@@ -40,14 +40,14 @@ const MainPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${storedValue.token}`,
-          }
+          },
         });
 
         if (Array.isArray(response.data.data.orders)) {
           setOrders(response.data.data.orders);
           setTotalOrders(response.data.data.total);
         } else if (Array.isArray(response.data.data)) {
-          setSearchInvoice(response.data.data)
+          setSearchInvoice(response.data.data);
         } else {
           console.error('Fetched data is not an array:', response.data);
         }
@@ -58,7 +58,6 @@ const MainPage: React.FC = () => {
 
     fetchOrders(searchQuery);
   }, [page, rowsPerPage, storedValue.token, searchQuery]);
-
 
   const handleOpenModal = (order: Order) => {
     setSelectedOrder(order);
@@ -80,18 +79,17 @@ const MainPage: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Use storedValue.token for Authorization header
           const response = await axios.patch(
             `https://api-vehware-crm.vercel.app/api/order/delete-order/${orderId}`,
-            {}, 
+            {},
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${storedValue.token}`, 
+                Authorization: `Bearer ${storedValue.token}`,
               },
             }
           );
-  
+
           if (response.status === 200) {
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
             setSearchInvoice((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
@@ -106,7 +104,6 @@ const MainPage: React.FC = () => {
       }
     });
   };
-  
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -119,7 +116,7 @@ const MainPage: React.FC = () => {
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0);  
+    setPage(0);
   };
 
   const filteredOrders = orders.filter(
@@ -127,7 +124,6 @@ const MainPage: React.FC = () => {
       order.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
 
   return (
     <div>
@@ -138,19 +134,19 @@ const MainPage: React.FC = () => {
       <SearchBar onSearch={handleSearch} />
 
       <InvoiceTable
-        orders={searchQuery ? SearchInvoice : orders}
+        orders={searchQuery ? searchInvoice : orders}
         onOpenModal={handleOpenModal}
         onDeleteOrder={handleDeleteOrder}
         page={page}
         rowsPerPage={rowsPerPage}
         totalOrders={totalOrders}
-        handleChangePage={handleChangePage}        
-        handleRowsPerPageChange={handleRowsPerPageChange}  
+        handleChangePage={handleChangePage}
+        handleRowsPerPageChange={handleRowsPerPageChange}
       />
 
-
-
-      <OrderDetailsDialog open={Boolean(selectedOrder)} onClose={handleCloseModal} selectedOrder={selectedOrder} />
+      {selectedOrder && (
+        <OrderDetailsDialog open={Boolean(selectedOrder)} onClose={handleCloseModal} selectedOrder={selectedOrder} />
+      )}
     </div>
   );
 };
