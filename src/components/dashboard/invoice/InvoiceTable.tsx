@@ -88,21 +88,22 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                 <TableCell>
                                     <Stack direction="row" spacing={2} alignItems="center">
                                         <img
-                                            src={order.brand.image}
-                                            alt={order.brand.title}
+                                            src={order.brand ? order.brand.image : '/default-image.png'}
+                                            alt={order.brand ? order.brand.title : 'Default Brand'}
                                             style={{ width: 50, height: 50, borderRadius: '50%', border: '2px solid #3498DB' }}
                                         />
                                         <Typography variant="body2" sx={{ color: '#34495E' }}>
-                                            {order.brand.title}
+                                            {order.brand ? order.brand.title : 'Default Brand'}
                                         </Typography>
                                     </Stack>
                                 </TableCell>
+
                                 <TableCell sx={{ fontWeight: 500, color: '#34495E' }}>{order.title}</TableCell>
                                 <TableCell sx={{ fontSize: 14, color: '#7F8C8D' }}>
                                     {order.description.split(' ').slice(0, 5).join(' ') +
                                         (order.description.split(' ').length > 5 ? '...' : '')}
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: 500, color: '#E74C3C', textAlign: 'center'  }}>{order.discountPrice === 0 ? '-' : order.discountPrice}</TableCell>
+                                <TableCell sx={{ fontWeight: 500, color: '#E74C3C', textAlign: 'center' }}>{order.discountPrice === 0 ? '-' : order.discountPrice}</TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>{order.price}</TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: '#3498DB' }}>{order.status}</TableCell>
                                 <TableCell>
@@ -127,7 +128,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                                 '&:hover': { backgroundColor: '#FFEBEE' },
                                             }}
                                         >
-                                          <Delete sx={{ fontSize: 24, color: '#8B0000' }} />
+                                            <Delete sx={{ fontSize: 24, color: '#8B0000' }} />
 
                                         </IconButton>
                                     </Stack>
