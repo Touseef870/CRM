@@ -164,208 +164,194 @@ function AddEmployeeForm() {
                     fontSize: { xs: '1.8rem', sm: '3rem' },
                     textAlign: 'center',
                     letterSpacing: '0.5px',
-                    lineHeight: 1.2,
-                    paddingBottom: 2,
-                    mb: 3,
+                    lineHeight: 0.5,
+                    paddingTop: 2,
+                    mb: 6,
                 }}
             >
                 Add Employee
             </Typography>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Grid container spacing={3}>
+  <Grid container spacing={3}>
+    {/* First Row - 6 Inputs */}
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Email"
+        fullWidth
+        variant="outlined"
+        {...register("email", validationRules.email)}
+        error={Boolean(errors.email)}
+        helperText={errors.email?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Password"
+        type={showPassword ? "text" : "password"}
+        fullWidth
+        variant="outlined"
+        {...register("password", validationRules.password)}
+        error={Boolean(errors.password)}
+        helperText={errors.password?.message}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => {
+                  setShowPassword(!showPassword);
+                }}
+                edge="end"
+                aria-label="toggle password visibility"
+              >
+                {showPassword ? (
+                  <EyeSlashIcon fontSize="small" />
+                ) : (
+                  <EyeIcon fontSize="small" />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Name"
+        fullWidth
+        variant="outlined"
+        {...register("name", validationRules.name)}
+        error={Boolean(errors.name)}
+        helperText={errors.name?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Phone"
+        type="number"
+        fullWidth
+        variant="outlined"
+        {...register("phone", validationRules.phone)}
+        error={Boolean(errors.phone)}
+        helperText={errors.phone?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="CNIC"
+        type="number"
+        fullWidth
+        variant="outlined"
+        {...register("cnic", validationRules.cnic)}
+        error={Boolean(errors.cnic)}
+        helperText={errors.cnic?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <FormControl fullWidth variant="outlined" error={Boolean(errors.gender)}>
+        <InputLabel>Gender</InputLabel>
+        <Select
+          label="Gender"
+          {...register("gender", validationRules.gender)}
+        >
+          <MenuItem value="male">Male</MenuItem>
+          <MenuItem value="female">Female</MenuItem>
+        </Select>
+        <FormHelperText>{errors.gender?.message}</FormHelperText>
+      </FormControl>
+    </Grid>
 
-                    {/* Add Email */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Email"
-                            fullWidth
-                            variant="outlined"
-                            {...register("email", validationRules.email)}
-                            error={Boolean(errors.email)}
-                            helperText={errors.email?.message}
-                        />
-                    </Grid>
+    {/* Second Row - 6 Inputs */}
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Salary"
+        type="number"
+        fullWidth
+        variant="outlined"
+        {...register("salary", validationRules.salary)}
+        error={Boolean(errors.salary)}
+        helperText={errors.salary?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Date of Birth"
+        type="date"
+        fullWidth
+        variant="outlined"
+        {...register("dob", validationRules.dob)}
+        error={Boolean(errors.dob)}
+        helperText={errors.dob?.message}
+        InputLabelProps={{ shrink: true }}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Joining Date"
+        type="date"
+        fullWidth
+        variant="outlined"
+        {...register("joiningDate", validationRules.joiningDate)}
+        error={Boolean(errors.joiningDate)}
+        helperText={errors.joiningDate?.message}
+        InputLabelProps={{ shrink: true }}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Position"
+        type="text"
+        fullWidth
+        variant="outlined"
+        {...register("position", validationRules.position)}
+        error={Boolean(errors.position)}
+        helperText={errors.position?.message}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Office Start Time"
+        type="time"
+        fullWidth
+        variant="outlined"
+        {...register("officeTiming.startTime", {
+          required: "Start time is required",
+        })}
+        error={Boolean(errors.officeTiming?.startTime)}
+        helperText={errors.officeTiming?.startTime?.message}
+        InputLabelProps={{ shrink: true }}
+      />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <TextField
+        label="Office End Time"
+        type="time"
+        fullWidth
+        variant="outlined"
+        {...register("officeTiming.endTime", {
+          required: "End time is required",
+        })}
+        error={Boolean(errors.officeTiming?.endTime)}
+        helperText={errors.officeTiming?.endTime?.message}
+        InputLabelProps={{ shrink: true }}
+      />
+    </Grid>
 
-                    {/* Add Password */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Password"
-                            type={showPassword ? "text" : "password"}
-                            fullWidth
-                            variant="outlined"
-                            {...register("password", validationRules.password)}
-                            error={Boolean(errors.password)}
-                            helperText={errors.password?.message}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => { setShowPassword(!showPassword); }}
-                                            edge="end"
-                                            aria-label="toggle password visibility"
-                                        >
-                                            {showPassword ? (
-                                                <EyeSlashIcon fontSize="small" />
-                                            ) : (
-                                                <EyeIcon fontSize="small" />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    </Grid>
+    {/* Submit Button */}
+    <Grid item xs={12}>
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Submitting..." : "Add Employee"}
+      </Button>
+    </Grid>
+  </Grid>
+</form>
 
-                    {/* Add Name */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Name"
-                            fullWidth
-                            variant="outlined"
-                            {...register("name", validationRules.name)}
-                            error={Boolean(errors.name)}
-                            helperText={errors.name?.message}
-                        />
-                    </Grid>
-
-                    {/* Add Phone */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Phone"
-                            type="number"
-                            fullWidth
-                            variant="outlined"
-                            {...register("phone", validationRules.phone)}
-                            error={Boolean(errors.phone)}
-                            helperText={errors.phone?.message}
-                        />
-                    </Grid>
-
-                    {/* Add CNIC */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="CNIC"
-                            type="number"
-                            fullWidth
-                            variant="outlined"
-                            {...register("cnic", validationRules.cnic)}
-                            error={Boolean(errors.cnic)}
-                            helperText={errors.cnic?.message}
-                        />
-                    </Grid>
-
-                    {/* Add Gender */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined" error={Boolean(errors.gender)}>
-                            <InputLabel>Gender</InputLabel>
-                            <Select
-                                label="Gender"
-                                {...register("gender", validationRules.gender)}
-                            >
-                                <MenuItem value="male">Male</MenuItem>
-                                <MenuItem value="female">Female</MenuItem>
-                            </Select>
-                            <FormHelperText>{errors.gender?.message}</FormHelperText>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Add Salary */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Salary"
-                            type="number"
-                            fullWidth
-                            variant="outlined"
-                            {...register("salary", validationRules.salary)}
-                            error={Boolean(errors.salary)}
-                            helperText={errors.salary?.message}
-                        />
-                    </Grid>
-
-                    {/* Add Date of Birth */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Date of Birth"
-                            type="date"
-                            fullWidth
-                            variant="outlined"
-                            {...register("dob", validationRules.dob)}
-                            error={Boolean(errors.dob)}
-                            helperText={errors.dob?.message}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
-
-                    {/* Add Joining Date */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Joining Date"
-                            type="date"
-                            fullWidth
-                            variant="outlined"
-                            {...register("joiningDate", validationRules.joiningDate)}
-                            error={Boolean(errors.joiningDate)}
-                            helperText={errors.joiningDate?.message}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
-
-                    {/* Add Position */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Position"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            {...register("position", validationRules.position)}
-                            error={Boolean(errors.position)}
-                            helperText={errors.position?.message}
-                        />
-                    </Grid>
-
-                    {/* Add Office Start Time */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Office Start Time"
-                            type="time"
-                            fullWidth
-                            variant="outlined"
-                            {...register("officeTiming.startTime", { required: "Start time is required" })}
-                            error={Boolean(errors.officeTiming?.startTime)}
-                            helperText={errors.officeTiming?.startTime?.message}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
-
-                    {/* Add Office End Time */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Office End Time"
-                            type="time"
-                            fullWidth
-                            variant="outlined"
-                            {...register("officeTiming.endTime", { required: "End time is required" })}
-                            error={Boolean(errors.officeTiming?.endTime)}
-                            helperText={errors.officeTiming?.endTime?.message}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
-
-                    {/* Submit Button */}
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Submitting..." : "Add Employee"}
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
         </Container>
     );
 }

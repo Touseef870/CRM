@@ -141,38 +141,6 @@ export function AccountDetailsForm(): React.JSX.Element {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
 
 
@@ -204,10 +172,6 @@ export function AccountDetailsForm(): React.JSX.Element {
       console.log("No ID provided");
     }
   }, [ID, token]);
-
-
-
-
 
   return (
     <div>
@@ -336,25 +300,6 @@ export function AccountDetailsForm(): React.JSX.Element {
           </CardActions>
         </Card>
       </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

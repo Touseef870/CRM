@@ -73,6 +73,43 @@ const AttendanceTable: React.FC = () => {
     }
   }, [id, token]);
 
+
+  useEffect(() => {
+    if (id) {
+      const fetchAttendanceData = async () => {
+        try {
+          const response = await axios.get(
+            `https://api-vehware-crm.vercel.app/api/attendance/get/single/${id}`,
+            //  // Adjust API endpoint
+            { 
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setAttendanceData(response.data.data); // Expecting a single record
+        } catch (err) {
+          console.log("Error fetching attendance data:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchAttendanceData();
+    } else {
+      console.log("No ID provided");
+    }
+  }, [id, token]);
+
+
+
+
+
+
+
+
   const handleEdit = (row: AttendanceRow) => {
     setEditingRow(row);
     setEditedCheckIn(moment(row.checkInTime).format("HH:mm"));
