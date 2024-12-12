@@ -111,10 +111,12 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId, orderData }) => {
               <TableCell>{order.title}</TableCell>
               <TableCell>{order.description}</TableCell>
               <TableCell>{order.price}</TableCell>
-              <TableCell>{order.brand.title}</TableCell>
+              {/* Check if order.brand is not null or undefined */}
+              <TableCell>{order.brand ? order.brand.title : 'N/A'}</TableCell>
             </TableRow>
           ))}
         </TableBody>
+
       </Table>
     </TableContainer>
   );
