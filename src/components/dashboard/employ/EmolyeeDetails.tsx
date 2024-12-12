@@ -27,6 +27,8 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import dayjs from "dayjs";
 import EditIcon from '@mui/icons-material/Edit';
+import AttendanceModal from "./singleEmployeeAttendance";
+import moment from "moment";
 
 
 interface Employee {
@@ -56,8 +58,12 @@ export default function EmployeeDetails() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
-    const [attendaneToMark, setAttendaneToMark] = useState<any>(null);
+    const [editedEmployee, setEditedEmployee] = useState<any>(null);
+    const [attendaneToMark, setAttendaneToMark] = useState<any>({
+        date: '',
+        checkIn: '',
+        checkOut: '',
+    });
     const [success, setSuccess] = useState<string | null>(null); // Added success state
     const [deleteError, setDeleteError] = useState<string | null>(null); // Added deleteError state
     const [isModalOpen, setIsModalOpen] = useState<any>(false);
@@ -65,6 +71,8 @@ export default function EmployeeDetails() {
     const getData = localStorage.getItem("AdminloginData");
     const token = JSON.parse(getData!).token;
 
+
+    // Get Single Employee Detail Api Calling
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
@@ -170,12 +178,13 @@ export default function EmployeeDetails() {
     };
 
 
-    const handleAttendanceValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAttendaneToMark({
-            ...attendaneToMark!,
-            [e.target.name]: e.target.value,
-        });
-    };
+    // const handleAttendanceValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value } = e.target;
+    //     setAttendaneToMark(prevState => ({
+    //         ...prevState,
+    //         [name]: value,
+    //     }));
+    // };
 
 
 
@@ -210,6 +219,11 @@ export default function EmployeeDetails() {
             const formattedDob = formatDate(editedEmployee.dob);
             const formattedJoiningDate = formatDate(editedEmployee.joiningDate);
             const formattedLeavingDate = editedEmployee.leavingDate === 'Present' ? 'Present' : (editedEmployee.leavingDate ? formatDate(editedEmployee.leavingDate) : undefined);
+
+
+            // let data = { ...editedEmployee, dob: formattedDob, joiningDate: formattedJoiningDate, leavingDate: formattedLeavingDate }
+
+            // console.log(data)
 
             const response = await axios.patch(
                 `https://api-vehware-crm.vercel.app/api/auth/update-employee/${id}`,
@@ -270,63 +284,6 @@ export default function EmployeeDetails() {
 
 
 
-    const handleMarkAttendance = async () => {
-        // alert(id)
-
-        if (!isModalOpen) {
-            setIsModalOpen(true);
-            return;
-        }
-
-        try {
-            console.log("Attendance data to be sent:", {
-                type: "user",
-                date: attendaneToMark?.date,
-                checkInTime: attendaneToMark?.checkIn,
-                checkOutTime: attendaneToMark?.checkOut,
-            });
-
-            const response = await axios.post(
-                `https://api-vehware-crm.vercel.app/api/attendance/single-add/${id}`,
-                {
-                    type: "user",
-                    date: attendaneToMark?.date,
-                    checkInTime: attendaneToMark?.checkIn,
-                    checkOutTime: attendaneToMark?.checkOut,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            console.log("API Response:", response.data.data);
-
-            if (response.status === 200) {
-                Swal.fire({
-                    title: "Successfully Marked Attendance",
-                    text: "",
-                    icon: "success",
-                }).then(() => {
-                    setIsModalOpen(false);
-                });
-                setIsModalOpen(false);
-            }
-        } catch (error: any) {
-            console.error("API Error:", error.response?.data);
-            setIsModalOpen(false);
-            Swal.fire({
-                title: "Error",
-                text: error.response?.data?.message || 'Something went wrong, please try again.',
-                icon: 'error',
-            });
-        } finally {
-            setIsModalOpen(false);
-        }
-    };
-
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -383,10 +340,12 @@ export default function EmployeeDetails() {
                 </IconButton>
             </Grid>
 
+            {isModalOpen && <AttendanceModal id={id} token={token} modalOpen={isModalOpen} setModalOpen={setIsModalOpen} />}
+
             <Grid container spacing={2} maxWidth="lg">
                 <Grid item xs={2}>
                     <Button
-                        onClick={handleMarkAttendance}
+                        onClick={() => setIsModalOpen(!isModalOpen)}
                         sx={{
                             backgroundColor: "#1565c0",
                             color: "#fff",
@@ -705,7 +664,7 @@ export default function EmployeeDetails() {
                         />
                         <Button
                             onClick={() => {
-                                setEditedEmployee((prevEmployee) => {
+                                setEditedEmployee((prevEmployee : any) => {
                                     if (prevEmployee === null) return null;
                                     return {
                                         ...prevEmployee,
@@ -741,95 +700,60 @@ export default function EmployeeDetails() {
                                 '& .MuiInputBase-root': { borderRadius: '8px' },
                             }}
                         />
-                    </DialogContent>
-
-                    <DialogActions sx={{ padding: '16px' }}>
-                        <Button
-                            onClick={() => setOpenEditModal(false)}
-                            color="secondary"
-                            sx={{
-                                fontWeight: 600,
-                                textTransform: 'none',
-                                '&:hover': { backgroundColor: 'grey.200' },
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleSaveChanges}
-                            color="primary"
-                            disabled={loading}
-                            sx={{
-                                fontWeight: 600,
-                                textTransform: 'none',
-                                '&:hover': { backgroundColor: 'primary.dark' },
-                            }}
-                        >
-                            {loading ? <CircularProgress size={20} /> : 'Save'}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-
-                {/* Modal to mark single attendance  */}
-
-                <Dialog
-                    open={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <DialogTitle sx={{ fontWeight: 600, fontSize: 20, color: 'primary.main' }}>
-                        Mark Attendance
-                    </DialogTitle>
-                    <DialogContent sx={{ paddingTop: 2 }}>
                         <TextField
-                            label="Date"
-                            name="date"
-                            type="date"
+                            label="Office Start Time"
+                            name="startTime"
                             value={
-                                attendaneToMark?.date
-                                    ? new Date(attendaneToMark?.date).toISOString().split('T')[0]
+                                editedEmployee?.officeTiming?.startTime
+                                    ? moment(editedEmployee?.officeTiming?.startTime, "hh:mm A").format("HH:mm")
                                     : ''
                             }
-                            onChange={handleAttendanceValueChange}
+                            onChange={(e) => {
+                                // Format the time entered by user and update it
+                                setEditedEmployee({
+                                    ...editedEmployee!,
+                                    officeTiming: {
+                                        ...editedEmployee?.officeTiming,
+                                        startTime: moment(e.target.value, "HH:mm").format("hh:mm A") // Save in 12-hour format
+                                    }
+                                });
+                            }}
                             fullWidth
+                            type="time"
                             margin="normal"
                             sx={{
                                 '& .MuiInputLabel-root': { fontWeight: 500 },
                                 '& .MuiInputBase-root': { borderRadius: '8px' },
                             }}
+                            InputLabelProps={{ shrink: true }}
                         />
 
                         <TextField
-                            label="Check-in"
-                            name="checkIn"
-                            type="time"
-                            value={attendaneToMark?.checkIn || ''}
-                            onChange={handleAttendanceValueChange}
-                            fullWidth
-                            margin="normal"
-                            sx={{
-                                '& .MuiInputLabel-root': { fontWeight: 500 },
-                                '& .MuiInputBase-root': { borderRadius: '8px' },
-                            }}
-                        />
-                        <TextField
-                            label="Check-out"
-                            name="checkOut"
-                            type="time"
+                            label="Office End Time"
+                            name="endTime"
                             value={
-                                attendaneToMark?.checkOut
+                                editedEmployee?.officeTiming?.endTime
+                                    ? moment(editedEmployee?.officeTiming?.endTime, "hh:mm A").format("HH:mm")
+                                    : ''
                             }
-                            onChange={handleAttendanceValueChange}
+                            onChange={(e) => {
+                                setEditedEmployee({
+                                    ...editedEmployee!,
+                                    officeTiming: {
+                                        ...editedEmployee?.officeTiming,
+                                        endTime: moment(e.target.value, "HH:mm").format("hh:mm A") // Save in 12-hour format
+                                    }
+                                });
+                            }}
                             fullWidth
+                            type="time"
                             margin="normal"
                             sx={{
                                 '& .MuiInputLabel-root': { fontWeight: 500 },
                                 '& .MuiInputBase-root': { borderRadius: '8px' },
                             }}
+                            InputLabelProps={{ shrink: true }}
                         />
-
 
                     </DialogContent>
 
@@ -859,6 +783,9 @@ export default function EmployeeDetails() {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+
+
 
             </Grid>
         </Box>

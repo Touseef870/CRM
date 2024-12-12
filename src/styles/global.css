@@ -36,3 +36,9 @@ body {
 a {
   text-decoration: none;
 }
+
+/* This will ensure the Swal modal appears above the Material UI Dialog */
+.swal-popup {
+  z-index: 999999 !important;
+  /* Adjust this number if necessary */
+}
