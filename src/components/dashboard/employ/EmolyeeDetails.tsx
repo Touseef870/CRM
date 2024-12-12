@@ -57,8 +57,13 @@ export default function EmployeeDetails() {
     const [error, setError] = useState<string | null>(null);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
+    const [attendaneToMark, setAttendaneToMark] = useState<any>(null);
     const [success, setSuccess] = useState<string | null>(null); // Added success state
     const [deleteError, setDeleteError] = useState<string | null>(null); // Added deleteError state
+    const [isModalOpen, setIsModalOpen] = useState<Boolean>(false);
+
+    const getData = localStorage.getItem("AdminloginData");
+    const token = JSON.parse(getData!).token;
 
     useEffect(() => {
         const fetchEmployee = async () => {
@@ -155,12 +160,34 @@ export default function EmployeeDetails() {
         });
     };
 
+
+
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedEmployee({
             ...editedEmployee!,
             [e.target.name]: e.target.value,
         });
     };
+
+
+    const handleAttendanceValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAttendaneToMark({
+            ...attendaneToMark!,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+
+
+    const convertToAmPm = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12;
+        const formattedTime = `${formattedHours}:${minutes.toString().padStart(2, '0')} ${suffix}`;
+        return formattedTime;
+    };
+
+
 
     const handleSaveChanges = async () => {
         if (!editedEmployee) return;
@@ -241,6 +268,56 @@ export default function EmployeeDetails() {
     };
 
 
+
+
+    const handleMarkAttendance = async () => {
+        // alert(id)
+
+        if (!isModalOpen) {
+            setIsModalOpen(true)
+            return;
+        }
+
+        try {
+            const response = await axios.post(
+                `https://api-vehware-crm.vercel.app/api/attendance/single-add/${id}`,
+                {
+                    type: "user",
+                    date: attendaneToMark?.date,
+                    checkInTime: attendaneToMark?.checkIn,
+                    checkOutTime: attendaneToMark?.checkOut,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                Swal.fire({
+                    title: "Successfully Marked Attendance",
+                    text: "",
+                    icon: "success",
+                }).then(() => {
+                    setIsModalOpen(false)
+                });
+                setIsModalOpen(false)
+            }
+        } catch (error: any) {
+            setIsModalOpen(false)
+            Swal.fire({
+                title: "Error",
+                text: error.response?.data?.message || 'Something went wrong, please try again.',
+                icon: 'error',
+            });
+        } finally {
+            setIsModalOpen(false)
+        }
+    }
+
+
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -298,7 +375,31 @@ export default function EmployeeDetails() {
             </Grid>
 
             <Grid container spacing={2} maxWidth="lg">
-                <Grid item xs={12}>
+                <Grid item xs={2}>
+                    <Button
+                        onClick={handleMarkAttendance}
+                        sx={{
+                            backgroundColor: "#1565c0",
+                            color: "#fff",
+                            borderRadius: "8px",
+                            padding: "8px 16px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            "&:hover": {
+                                backgroundColor: "#42a5f5",
+                            },
+                            "&:disabled": {
+                                backgroundColor: "primary.dark",
+                                color: "#757575",
+                            },
+                            transition: "background-color 0.3s ease",
+                        }}
+                    >
+                        Mark Attendance
+                    </Button>
+                </Grid>
+                <Grid item xs={10}>
                     <Typography
                         variant="h3"
                         align="center"
@@ -661,6 +762,94 @@ export default function EmployeeDetails() {
                 </Dialog>
 
 
+                {/* Modal to mark single attendance  */}
+
+                <Dialog
+                    open={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ fontWeight: 600, fontSize: 20, color: 'primary.main' }}>
+                        Mark Attendance
+                    </DialogTitle>
+                    <DialogContent sx={{ paddingTop: 2 }}>
+                        <TextField
+                            label="Date"
+                            name="date"
+                            type="date"
+                            value={attendaneToMark?.date || ''}
+                            value={
+                                attendaneToMark?.date
+                                    ? new Date(attendaneToMark?.date).toISOString().split('T')[0]
+                                    : ''
+                            }
+                            onChange={handleAttendanceValueChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Check-in"
+                            name="checkIn"
+                            type="time"
+                            value={attendaneToMark?.checkIn || ''}
+                            onChange={handleAttendanceValueChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+                        <TextField
+                            label="Check-out"
+                            name="checkOut"
+                            type="time"
+                            value={
+                                attendaneToMark?.checkOut
+                            }
+                            onChange={handleAttendanceValueChange}
+                            fullWidth
+                            margin="normal"
+                            sx={{
+                                '& .MuiInputLabel-root': { fontWeight: 500 },
+                                '& .MuiInputBase-root': { borderRadius: '8px' },
+                            }}
+                        />
+
+
+                    </DialogContent>
+
+                    <DialogActions sx={{ padding: '16px' }}>
+                        <Button
+                            onClick={() => setOpenEditModal(false)}
+                            color="secondary"
+                            sx={{
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                '&:hover': { backgroundColor: 'grey.200' },
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSaveChanges}
+                            color="primary"
+                            disabled={loading}
+                            sx={{
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                '&:hover': { backgroundColor: 'primary.dark' },
+                            }}
+                        >
+                            {loading ? <CircularProgress size={20} /> : 'Save'}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
             </Grid>
         </Box>
