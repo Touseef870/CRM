@@ -60,7 +60,7 @@ export default function EmployeeDetails() {
     const [attendaneToMark, setAttendaneToMark] = useState<any>(null);
     const [success, setSuccess] = useState<string | null>(null); // Added success state
     const [deleteError, setDeleteError] = useState<string | null>(null); // Added deleteError state
-    const [isModalOpen, setIsModalOpen] = useState<Boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState<any>(false);
 
     const getData = localStorage.getItem("AdminloginData");
     const token = JSON.parse(getData!).token;
@@ -274,11 +274,18 @@ export default function EmployeeDetails() {
         // alert(id)
 
         if (!isModalOpen) {
-            setIsModalOpen(true)
+            setIsModalOpen(true);
             return;
         }
 
         try {
+            console.log("Attendance data to be sent:", {
+                type: "user",
+                date: attendaneToMark?.date,
+                checkInTime: attendaneToMark?.checkIn,
+                checkOutTime: attendaneToMark?.checkOut,
+            });
+
             const response = await axios.post(
                 `https://api-vehware-crm.vercel.app/api/attendance/single-add/${id}`,
                 {
@@ -295,28 +302,30 @@ export default function EmployeeDetails() {
                 }
             );
 
+            console.log("API Response:", response.data.data);
+
             if (response.status === 200) {
                 Swal.fire({
                     title: "Successfully Marked Attendance",
                     text: "",
                     icon: "success",
                 }).then(() => {
-                    setIsModalOpen(false)
+                    setIsModalOpen(false);
                 });
-                setIsModalOpen(false)
+                setIsModalOpen(false);
             }
         } catch (error: any) {
-            setIsModalOpen(false)
+            console.error("API Error:", error.response?.data);
+            setIsModalOpen(false);
             Swal.fire({
                 title: "Error",
                 text: error.response?.data?.message || 'Something went wrong, please try again.',
                 icon: 'error',
             });
         } finally {
-            setIsModalOpen(false)
+            setIsModalOpen(false);
         }
-    }
-
+    };
 
     if (loading) {
         return (
@@ -532,14 +541,14 @@ export default function EmployeeDetails() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Office Time:</strong> {employee?.officeTiming?.startTime} To <br />  {employee?.officeTiming?.endTime}
+                                        <strong>Office Start Time:</strong> {employee?.officeTiming?.startTime}
                                     </Typography>
                                 </Grid>
-                                {/* <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
                                         <strong>Office End Time:</strong> {employee?.officeTiming?.endTime}
                                     </Typography>
-                                </Grid> */}
+                                </Grid>
                             </Grid>
                             <Button
                                 onClick={() => setOpenEditModal(true)}
@@ -778,7 +787,6 @@ export default function EmployeeDetails() {
                             label="Date"
                             name="date"
                             type="date"
-                            value={attendaneToMark?.date || ''}
                             value={
                                 attendaneToMark?.date
                                     ? new Date(attendaneToMark?.date).toISOString().split('T')[0]
@@ -792,6 +800,7 @@ export default function EmployeeDetails() {
                                 '& .MuiInputBase-root': { borderRadius: '8px' },
                             }}
                         />
+
                         <TextField
                             label="Check-in"
                             name="checkIn"
