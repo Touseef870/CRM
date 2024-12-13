@@ -55,6 +55,7 @@ interface OrderData {
   title: string;
   description: string;
   price: string;
+  discountPrice: string;
 }
 
 
@@ -80,13 +81,17 @@ export default function clientDetails() {
     title: '',
     description: '',
     price: '',
+    discountPrice: '',
+    
   }); // State to hold order form data
 
   const [formErrors, setFormErrors] = useState({
     title: '',
     price: '',
+    discountPrice: '',
     description: '',
     brandId: '',
+    
   });
 
   const handleModalClose = () => {
@@ -113,6 +118,7 @@ export default function clientDetails() {
     let errors = {
       title: '',
       price: '',
+      discountPrice: '',
       description: '',
       brandId: '',
     };
@@ -124,6 +130,7 @@ export default function clientDetails() {
     if (!orderData.price) {
       errors.price = 'Price is required';
     }
+    
 
     if (!orderData.description) {
       errors.description = 'Description is required';
@@ -668,6 +675,20 @@ export default function clientDetails() {
             error={!!formErrors.price}
             helperText={formErrors.price}
           />
+           <TextField
+            label="discountPrice"
+            name="discountPrice"
+            value={orderData.discountPrice}
+            onChange={handleOrderChange}
+            fullWidth
+            margin="normal"
+            required
+            type="number"
+            variant="outlined"
+            sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }}
+            error={!!formErrors.price}
+            helperText={formErrors.price}
+          />
           <TextField
             label="Description"
             name="description"
@@ -730,7 +751,7 @@ export default function clientDetails() {
 
 
 
-      <ClientOrders clientId={Array.isArray(id) ? id[0] : id ?? ''} orderData={orderData} />
+      <ClientOrders clientId={Array.isArray(id) ? id[0] : id ?? ''}  />
 
     </Box>
 

@@ -21,9 +21,13 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { useParams } from "next/navigation";
-import { Delete as DeleteIcon } from "@mui/icons-material";
+import { Delete as DeleteIcon, Visibility as VisibilityIcon } from "@mui/icons-material";
 import Swal from "sweetalert2";
 
 // Define Params type
@@ -41,6 +45,11 @@ const BrandingDetails = (): React.JSX.Element | null => {
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<boolean>(false);
   const [deleted, setDeleted] = useState<boolean>(false);
+
+  const [openModal, setOpenModal] = useState<boolean>(false); // For modal visibility
+  const [selectedOrder, setSelectedOrder] = useState<any>(null); // Store selected order details for the modal
+  const [selectedOrderIndex, setSelectedOrderIndex] = useState<number>(-1); // Initialize with -1
+
 
   const adminLoginData = localStorage.getItem("AdminloginData");
   if (!adminLoginData) {
@@ -93,6 +102,22 @@ const BrandingDetails = (): React.JSX.Element | null => {
     fetchDetails();
   }, [id, deleted]);
 
+
+
+  const handleOpenModal = (order: any, index: number) => {
+    setSelectedOrder(order);
+    setSelectedOrderIndex(index); // Save the index for modal use
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedOrder(null);
+    setSelectedOrderIndex(-1); // Reset to -1 instead of null
+  };
+
+
+
   const handleDelete = async () => {
     if (!id) {
       console.error("ID is missing");
@@ -142,6 +167,17 @@ const BrandingDetails = (): React.JSX.Element | null => {
         Swal.fire("Cancelled", "The brand was not deleted.", "info");
       }
     });
+  };
+
+
+
+
+  // Helper function to truncate text
+  const truncateText = (text: string, wordLimit: number): string => {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
   };
 
   if (loading) {
@@ -235,19 +271,21 @@ const BrandingDetails = (): React.JSX.Element | null => {
                       backgroundColor: "rgba(0, 0, 0, 0.08)", // Hover effect
                     },
                     backgroundColor: index % 2 === 0 ? "rgba(255, 255, 255, 0.8)" : "transparent", // Zebra striping
+                    borderBottom: "1px solid #e0e0e0", // Adding bottom border for better visual separation
                   }}
                 >
-                  <TableCell sx={{ textAlign: "center" }}>{index + 1}</TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
+                  <TableCell sx={{ textAlign: "center", padding: "16px" }}>{index + 1}</TableCell>
+                  <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {order?.title || "No title available"}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
-                    {order?.description || "No description available"}
+                  <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
+                    {truncateText(order?.description || "No description available", 15)}
                   </TableCell>
                   <TableCell
                     sx={{
                       textAlign: "center",
                       fontWeight: "500",
+                      padding: "16px",
                       color: order?.status === "PENDING" ? "warning.main" :
                         order?.status === "SUCCESS" ? "success.main" :
                           order?.status === "FAILED" ? "error.main" :
@@ -257,18 +295,23 @@ const BrandingDetails = (): React.JSX.Element | null => {
                   >
                     {order?.status || "No status available"}
                   </TableCell>
-
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
+                  <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {order?.price || 0}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
-                    {order?.discountPrice || 0}
+                  <TableCell sx={{ textAlign: "center", fontWeight: "900", padding: "16px",color: order.discountPrice === 0 ? 'red' : 'green' }}>
+                    {order.discountPrice === 0 ? '--' : order.discountPrice.toFixed(2)}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
+
+                  <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {order?.clientId || "N/A"}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "500" }}>
+                  <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {new Date(order?.createdAt).toLocaleString() || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "16px" }}>
+                    <IconButton onClick={() => handleOpenModal(order, index)} sx={{ color: "primary.main" }}>
+                      <VisibilityIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -278,6 +321,153 @@ const BrandingDetails = (): React.JSX.Element | null => {
       ) : (
         <Typography variant="body2" color="text.secondary">No orders found</Typography>
       )}
+
+      {/* Modal for Viewing Order Details */}
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          '& .MuiPaper-root': { borderRadius: '16px' },
+          '& .MuiDialogContent-root': { padding: '24px 32px' },
+          '& .MuiDialogActions-root': { padding: '16px 24px' },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: "1.5rem",
+            fontWeight: "600",
+            color: "primary.main",
+            paddingBottom: "16px",
+            borderBottom: "2px solid #eee",
+            textAlign: 'left', // Left-aligned title
+            marginBottom: '16px', // Proper spacing from the content
+          }}
+        >
+          Order Details
+        </DialogTitle>
+
+        <DialogContent sx={{ paddingTop: "16px", paddingBottom: "24px" }}>
+          {selectedOrder ? (
+            <>
+              {/* Order # */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Order #:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
+                  {selectedOrderIndex >= 0 ? selectedOrderIndex + 1 : "N/A"}
+                </Typography>
+              </Box>
+
+              {/* Title */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Title:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
+                  {selectedOrder.title}
+                </Typography>
+              </Box>
+
+              {/* Description */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Description:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary", flex: 1 }}>
+                  {selectedOrder.description}
+                </Typography>
+              </Box>
+
+              {/* Status */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Status:</strong>
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: "400",
+                    color: selectedOrder.status === "PENDING" ? "orange" :
+                      selectedOrder.status === "SUCCESS" ? "green" :
+                        selectedOrder.status === "FAILED" ? "red" : "gray"
+                  }}
+                >
+                  {selectedOrder.status}
+                </Typography>
+              </Box>
+
+              {/* Price */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Price:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
+                  {selectedOrder.price?.toFixed(2)}
+                </Typography>
+              </Box>
+
+              {/* Discounted Price */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Discounted Price:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "900", textAlign: "center",  color: selectedOrder.discountPrice === 0 ? 'red' : 'green' }}>
+                  {selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice.toFixed(2)}
+                </Typography>
+
+              </Box>
+
+              {/* Client ID */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Client ID:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
+                  {selectedOrder.clientId || "N/A"}
+                </Typography>
+              </Box>
+
+              {/* Created At */}
+              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
+                  <strong>Created At:</strong>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
+                  {new Date(selectedOrder.createdAt).toLocaleString()}
+                </Typography>
+              </Box>
+            </>
+          ) : (
+            <CircularProgress sx={{ display: 'block', margin: '0 auto' }} />
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: "center" }}>
+          <Button
+            onClick={handleCloseModal}
+            color="primary"
+            variant="contained"
+            sx={{
+              fontWeight: 600,
+              textTransform: "none",
+              borderRadius: "10px",
+              padding: "8px 20px",
+
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              '&:hover': {
+                backgroundColor: "primary.dark",
+                boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)"
+              }
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 

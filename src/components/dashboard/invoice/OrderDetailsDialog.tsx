@@ -109,11 +109,11 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
               </Typography>
               <Typography
                 variant="body1"
-                sx={{ fontSize: 16, color: '#E74C3C' }}
+                sx={{ fontSize: 16, color: selectedOrder.discountPrice === 0 ? 'red' : 'green' }}
               >
                 {selectedOrder.discountPrice !== 0
                   ? selectedOrder.discountPrice
-                  : '-'}
+                  : '--'}
               </Typography>
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
 
