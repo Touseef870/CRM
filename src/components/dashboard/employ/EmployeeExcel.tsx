@@ -28,8 +28,12 @@ interface Employee {
     gender: string;
     salary: number;
     type: string;
-    dob: string;
-    password: string
+    dob: Date;
+    password: string;
+    position: string;
+    joiningDate: Date;
+    startTime: any;
+    endTime: any;
 }
 
 const EmployeeExcel: React.FC = () => {
@@ -51,7 +55,36 @@ const EmployeeExcel: React.FC = () => {
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const parsedData: Employee[] = XLSX.utils.sheet_to_json(sheet);
-            setEmployeeData(parsedData);
+
+            let hasError = false;
+
+            const updatedData = parsedData.map((employee) => {
+                const formattedEmployee = { ...employee };
+
+                // Validate and format date fields (DOB and Joining Date)
+                formattedEmployee.dob = validateAndFormatDate(employee.dob);
+                formattedEmployee.joiningDate = validateAndFormatDate(employee.joiningDate);
+
+                // If any date is invalid, flag the error
+                if (!formattedEmployee.dob || !formattedEmployee.joiningDate) {
+                    hasError = true;
+                }
+                console.log(formattedEmployee, "formattedEmployee")
+                return formattedEmployee;
+            });
+
+            if (hasError) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Excel data contains invalid date(s). Please check and upload again.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
+                return; // Stop further processing if dates are invalid
+            }
+
+
+            setEmployeeData(updatedData);
             setOpen(true); // Open modal to show data
 
             // Clear the file input value
@@ -63,14 +96,63 @@ const EmployeeExcel: React.FC = () => {
         reader.readAsArrayBuffer(file);
     };
 
-    // Function to handle modal close
+
+
     const handleClose = () => {
         setOpen(false);
+    };
+    const validateAndFormatDate = (date: any) => {
+        if (typeof date === 'number') {
+            console.log(date, "date");
+
+            const parsedDate = XLSX.SSF.parse_date_code(date);
+            console.log(parsedDate, "parsedDate");
+
+
+            if (parsedDate && parsedDate.y && parsedDate.m && parsedDate.d) {
+                const constructedDate = new Date(parsedDate.y, parsedDate.m - 1, parsedDate.d);
+                console.log(constructedDate, "constructedDate")
+                if (!isNaN(constructedDate.getTime())) {
+                    return constructedDate.toISOString().split('T')[0];
+                }
+            }
+
+            return '';
+        }
+
+        return date;
     };
 
 
     const handleSend = async () => {
-        // Convert employee data into the desired format
+        // let hasError = false;
+
+        // const updatedData = employeeData.map((employee) => {
+        //     const formattedEmployee = { ...employee };
+
+        //     // Validate and format date fields (DOB and Joining Date)
+        //     formattedEmployee.dob = validateAndFormatDate(employee.dob);
+        //     formattedEmployee.joiningDate = validateAndFormatDate(employee.joiningDate);
+
+        //     // If any date is invalid, flag the error
+        //     if (!formattedEmployee.dob || !formattedEmployee.joiningDate) {
+        //         hasError = true;
+        //     }
+
+        //     return formattedEmployee;
+        // });
+
+        // if (hasError) {
+        //     Swal.fire({
+        //         title: "Error",
+        //         text: "Excel data contains invalid date(s). Please check and upload again.",
+        //         icon: "error",
+        //         confirmButtonText: "OK",
+        //     });
+        //     return; // Stop further processing if dates are invalid
+        // }
+
+        // Prepare data for API call
         const formattedData = {
             employeeArr: employeeData.map(employee => ({
                 name: employee.name,
@@ -80,46 +162,44 @@ const EmployeeExcel: React.FC = () => {
                 cnic: employee.cnic.toString(), // Ensure CNIC is a string
                 salary: employee.salary,
                 type: employee.type,
-                dob: new Date(employee.dob).toISOString().split('T')[0], // Format DOB as YYYY-MM-DD
-                gender: employee.gender
+                dob: new Date(employee.dob).toISOString().split('T')[0], // Already formatted
+                gender: employee.gender,
+                position: employee.position,
+                joiningDate: new Date(employee.joiningDate).toISOString().split('T')[0], // Already formatted
+                officeTiming: {
+                    startTime: employee.startTime,
+                    endTime: employee.endTime,
+                }
             }))
         };
 
-        console.log('Formatted Employee Data:', formattedData);
-
+        console.log(formattedData, "<----formattedData")
         try {
-            const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', formattedData, {
+            const res = await axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', formattedData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${storedValue.token}`,
                 },
-            })
-                .then((res) => {
-                    console.log(res.data)
-                    Swal.fire({
-                        title: "Success",
-                        text: "Employee added successfully",
-                        icon: "success",
-                        confirmButtonText: "OK",
-                    });
-                }).catch((e) => {
-                    console.log(e.response.data)
-                    Swal.fire({
-                        title: "Error",
-                        text: e.response.data.error,
-                        icon: "error",
-                        confirmButtonText: "OK",
-                    })
-                })
+            });
+
+            Swal.fire({
+                title: "Success",
+                text: "Employee added successfully",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
         } catch (error) {
-            console.log('Error sending data:', error);
-            Swal.fire('Error', 'There was an issue sending the data', 'error');
+            console.error('Error sending data:', error);
+            Swal.fire({
+                title: "Error",
+                text: 'There was an issue sending the data.',
+                icon: "error",
+                confirmButtonText: "OK",
+            });
         }
 
         setOpen(false); // Close modal after sending
     };
-
-
 
     return (
         <div>
@@ -151,6 +231,10 @@ const EmployeeExcel: React.FC = () => {
                                     <TableCell>Type</TableCell>
                                     <TableCell>Date of Birth</TableCell>
                                     <TableCell>Password</TableCell>
+                                    <TableCell>Position</TableCell>
+                                    <TableCell>Joining Date</TableCell>
+                                    <TableCell>Start Time</TableCell>
+                                    <TableCell>End Time</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -165,6 +249,10 @@ const EmployeeExcel: React.FC = () => {
                                         <TableCell>{employee.type}</TableCell>
                                         <TableCell>{new Date(employee.dob).toLocaleDateString()}</TableCell>
                                         <TableCell>{employee.password}</TableCell>
+                                        <TableCell>{employee.position}</TableCell>
+                                        <TableCell>{new Date(employee.joiningDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{employee.startTime}</TableCell>
+                                        <TableCell>{employee.endTime}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -181,3 +269,4 @@ const EmployeeExcel: React.FC = () => {
 };
 
 export default EmployeeExcel;
+
