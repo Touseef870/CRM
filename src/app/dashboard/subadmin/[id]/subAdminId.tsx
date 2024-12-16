@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, CircularProgress, Box, CardActions, IconButton, Divider, Avatar, Grid, Button } from '@mui/material';
+import { Card, CardContent, Typography, CircularProgress, Box, CardActions, IconButton, Divider, Avatar, Grid, Button, Container, CardHeader } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
 import Swal from 'sweetalert2';
@@ -23,83 +23,73 @@ interface Subadmin {
     avatar?: string;
     amount?: number;
     serviceType: string;
+    position: string;
+    joiningDate: string;
+    leavingDate: string;
+    officeTiming: {
+        startTime: string;
+        endTime: string;
+    };
 }
 
-const Container = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    padding: theme.spacing(8),
-    backgroundColor: '#f4f4f9',
-}));
+// const Container = styled(Box)(({ theme }) => ({
+//     display: "flex",
+//     flexDirection: "column",
+//     alignItems: "center",
+//     justifyContent: "center",
+//     minHeight: "100vh",
+//     padding: theme.spacing(8),
+//     backgroundColor: "#f4f6f8",
+//   }));
 
-const StyledCard = styled(Card)(({ theme }) => ({
-    width: '100%',
-    maxWidth: 900,
-    borderRadius: '16px',
-    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
-    padding: theme.spacing(3),
-    transition: 'all 0.3s ease',
-    marginBottom: theme.spacing(4),
-    position: 'relative',
+//   const StyledCard = styled(Card)(({ theme }) => ({
+//     width: "100%",
+//     maxWidth: 1000,
+//     borderRadius: "16px",
+//     boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+//     backgroundColor: "#ffffff",
+//     padding: theme.spacing(5),
+//     transition: "all 0.3s ease",
+//     marginBottom: theme.spacing(6),
+//   }));
 
-}));
+//   const AvatarStyled = styled(Avatar)(({ theme }) => ({
+//     width: 120,
+//     height: 120,
+//     border: "4px solid skyblue",
+//     backgroundColor: "#1976d2",
+//     borderRadius: "50%",
+//     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+//     transition: "transform 0.3s ease",
+//     "&:hover": {
+//       transform: "scale(1.1)",
+//     },
+//   }));
 
-const AvatarStyled = styled(Avatar)(({ theme }) => ({
-    width: 120,
-    height: 120,
-    marginBottom: theme.spacing(2),
-    border: '4px solid skyblue', // Sky blue border
-    backgroundColor: '#1976d2', // Existing background color
-    borderRadius: '50%', // Ensures it stays circular
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', // Adds a soft shadow for better emphasis
-    transition: 'transform 0.3s ease', // Adds smooth animation on hover
-    '&:hover': {
-        transform: 'scale(1.1)', // Slightly enlarges the avatar on hover
-    }
-}));
+//   const CardHeader = styled(Box)(({ theme }) => ({
+//     display: "flex",
+//     justifyContent: "space-between",
+//     marginBottom: theme.spacing(4),
+//     textAlign: "left",
+//   }));
 
+//   const CardContentStyled = styled(CardContent)(({ theme }) => ({
+//     padding: theme.spacing(2),
+//   }));
 
-const CardHeader = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'row',
+//   const TypographyStyled = styled(Typography)(({ theme }) => ({
+//     marginBottom: theme.spacing(3),
+//     fontWeight: 500,
+//     fontSize: "1rem",
+//     color: "#333",
+//   }));
 
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(5),
-    textAlign: 'left',
-}));
-
-const CardContentStyled = styled(CardContent)(({ theme }) => ({
-    padding: theme.spacing(2),
-}));
-
-const TypographyStyled = styled(Typography)(({ theme }) => ({
-    marginBottom: theme.spacing(3),
-    fontWeight: 500,
-    fontSize: '1rem',
-    color: '#333',
-}));
-
-const CardActionsStyled = styled(CardActions)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    padding: theme.spacing(2),
-}));
-
-const DeleteButton = styled(IconButton)(({ theme }) => ({
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    color: '#d32f2f',
-    fontSize: '1.8rem',
-    '&:hover': {
-        color: '#b71c1c',
-    },
-}));
-
+//   const DeleteButton = styled(IconButton)(({ theme }) => ({
+//     color: "#d32f2f",
+//     "&:hover": {
+//       color: "#b71c1c",
+//     },
+//   }));
 
 
 
@@ -142,6 +132,8 @@ function Page() {
                     }
                 );
                 setSubAdmins(response.data.data);
+                console.log(response.data.data)
+
             } catch (err) {
                 setError(err instanceof Error ? err.message : "An unexpected error occurred");
             } finally {
@@ -150,7 +142,9 @@ function Page() {
         };
 
         fetchSubadmin();
+
     }, [id]);
+
 
     const handleDelete = async () => {
         Swal.fire({
@@ -202,9 +196,9 @@ function Page() {
 
     if (loading) {
         return (
-            <Container>
-                <CircularProgress size={60} color="primary" />
-            </Container>
+           <Grid container justifyContent="center" alignItems="center" sx={{ height: '96vh' }}>
+                           <CircularProgress />
+                       </Grid>
         );
     }
 
@@ -227,84 +221,111 @@ function Page() {
     return (
         <>
 
-            <Box sx={{ position: "relative" }}>
-                <Button
-                    onClick={handleback}
-                    sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 2,
-                        padding: "12px 16px",  // Increase padding for bigger button size
-                        fontWeight: "bold",
-                        textTransform: "none",
-                        borderRadius: "8px",
-                        color: "#1976d2",  // Default blue color for text
-                        fontSize: "22px",   // Increase font size for bigger text
-                        "&:hover": {
-                            color: "#005bb5", // Dark blue on hover for text color
-                        },
-                    }}
-                >
-                    <ArrowBackIcon sx={{ fontSize: "24px" }} />  {/* Increase icon size */}
-                </Button>
 
-            </Box>
+            <Container sx={{ padding: '20px', backgroundColor: '#f4f6f8', minHeight: '100vh', borderRadius: 6 }}>
+                {/* Back Button */}
+                <Box sx={{ position: 'relative', marginBottom: 4 }}>
+                    <Button
+                        onClick={handleback}
+                        sx={{
+                            position: 'absolute',
+                            top: 10,
+                            left: -10,
+                            padding: '12px 16px',
+                            fontWeight: 'bold',
+                            textTransform: 'none',
+                            borderRadius: '8px',
+                            color: '#273f73',
+                            fontSize: '22px',
+                            '&:hover': {
+                                color: '#005bb5',
+                            },
+                        }}
+                    >
+                        <ArrowBackIcon sx={{ fontSize: '34px' }} />
+                    </Button>
+                </Box>
 
-
-            <Container>
-
-                <StyledCard>
-                    <CardHeader>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <AvatarStyled
+                {/* User Info Card */}
+                <Card sx={{ maxWidth: 1000, margin: 'auto', borderRadius: 4, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)', backgroundColor: '#ffffff', padding: 3 }}>
+                    <CardHeader
+                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }} 
+                        avatar={
+                            <Avatar
                                 src={subadmin.avatar || '/default-avatar.jpg'}
                                 alt={subadmin.name}
+                                sx={{ width: 100, height: 100, border: '4px solidrgb(23, 57, 91)', backgroundColor: '#273f73', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)' }}
                             />
-                            <Box sx={{ marginLeft: 2 }}>
-                                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                                    {subadmin.name}
-                                </Typography>
-                            </Box>
-                        </Box>
-                        <DeleteButton onClick={handleDelete}>
-                            <DeleteIcon />
-                        </DeleteButton>
-                    </CardHeader>
+                        }
+                        title={<Typography variant="h4" sx={{ fontWeight: 'bold', color: '#273f73' }}>{subadmin.name}</Typography>}
+                        action={
+                            <IconButton onClick={handleDelete} sx={{ color: '#d32f2f', '&:hover': { color: '#b71c1c' } }}>
+                                <DeleteIcon />
+                            </IconButton>
+                        }
+                    />
                     <Divider sx={{ marginBottom: 2 }} />
-                    <CardContentStyled>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
-                                <TypographyStyled>
+                    <CardContent>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
                                     <strong>Email:</strong> {subadmin.email}
-                                </TypographyStyled>
-                                <TypographyStyled>
-                                    <strong>Gender:</strong> {subadmin.gender}
-                                </TypographyStyled>
-                                <TypographyStyled>
-                                    <strong>Phone:</strong> {subadmin.phone}
-                                </TypographyStyled>
+                                </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TypographyStyled>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Gender:</strong> {subadmin.gender}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Phone:</strong> {subadmin.phone}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
                                     <strong>Salary:</strong> ${subadmin.salary}
-                                </TypographyStyled>
-                                <TypographyStyled>
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Position:</strong> {subadmin.position}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
                                     <strong>Date of Birth:</strong> {new Date(subadmin.dob).toLocaleDateString()}
-                                </TypographyStyled>
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Joining Date:</strong> {new Date(subadmin.joiningDate).toLocaleDateString()}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Office Start Time:</strong> {subadmin.officeTiming?.startTime}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                                    <strong>Office End Time:</strong> {subadmin.officeTiming?.endTime}
+                                </Typography>
                             </Grid>
                         </Grid>
-                    </CardContentStyled>
-                </StyledCard>
+                    </CardContent>
+                </Card>
 
-                <StyledCard>
-                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#1976d2' }}>
+                {/* Employee Attendance Section */}
+                <Card sx={{ maxWidth: 1000, margin: 'auto', marginTop: 4, borderRadius: 4, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)', backgroundColor: '#ffffff', padding: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#273f73' }}>
                         Employee Attendance
                     </Typography>
                     <Divider />
                     <Box mt={2}>
                         <EmolyeeAttendace />
                     </Box>
-                </StyledCard>
+                </Card>
             </Container>
 
 

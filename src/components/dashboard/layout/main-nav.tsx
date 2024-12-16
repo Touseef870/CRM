@@ -52,7 +52,7 @@ export function MainNav(): React.JSX.Element {
               sx={{
                 display: 'inline-flex', 
                 alignItems: 'center', 
-                backgroundColor: 'blue', 
+                backgroundColor: '#273f73', // Dark navy blue background
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '4px',
@@ -61,9 +61,9 @@ export function MainNav(): React.JSX.Element {
                 textDecoration: 'none', 
                 textAlign: 'center', 
                 transition: 'all 0.3s ease', 
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
+
                 '&:hover': {
-                  backgroundColor: '#0039cb', 
+                  backgroundColor: '#254ca1', 
                   transform: 'scale(1.05)', 
                   boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)',
                 },
