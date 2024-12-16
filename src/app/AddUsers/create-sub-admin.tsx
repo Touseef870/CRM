@@ -18,7 +18,14 @@ interface FormData {
     salary: number;
     dob: string;  
     addedBy: string;
-    type: string;
+    type: "sub-admin";
+    position: string;
+    joiningDate: string;
+    leavingDate: string;
+    officeTiming: {
+        startTime: string;
+        endTime: string;
+    };
 }
 
 const UserForm: React.FC = () => {
@@ -38,6 +45,9 @@ const UserForm: React.FC = () => {
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
     
         data.type = "sub-admin";
+
+
+
     
         axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
             headers: {
@@ -192,7 +202,6 @@ const UserForm: React.FC = () => {
                                     <Select {...field} label="Gender">
                                         <MenuItem value="male">Male</MenuItem>
                                         <MenuItem value="female">Female</MenuItem>
-                                        <MenuItem value="custom">Custom</MenuItem>
                                     </Select>
                                     {errors.gender ? <FormHelperText>{errors.gender?.message}</FormHelperText> : null}
                                 </FormControl>
@@ -263,6 +272,25 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
+                    
+                    <Grid item xs={12} md={6}>
+                        <Controller
+                            name="position"
+                            control={control}
+                            rules={{ required: 'Position is required' }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Position"
+                                    fullWidth
+                                    variant="outlined"
+                                    type="text"
+                                    error={Boolean(errors.position)}
+                                    helperText={errors.position?.message}
+                                />
+                            )}
+                        />
+                    </Grid>
 
                     <Grid item xs={12} md={6}>
                         <Controller
@@ -283,22 +311,74 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
-
                     <Grid item xs={12} md={6}>
                         <Controller
-                            name="type"
+                            name="joiningDate"
                             control={control}
-                            defaultValue="sub-admin" // Default value set to "sub-admin"
+                            rules={{ required:  "Joining Date is required",
+                                validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",}}
                             render={({ field }) => (
-                                <FormControl fullWidth>
-                                    <InputLabel>Type</InputLabel>
-                                    <Select {...field} label="Type" disabled> {/* Dropdown disabled */}
-                                        <MenuItem value="sub-admin">Sub Admin</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <TextField
+                                    {...field}
+                                    label="Joining Date"
+                                    fullWidth
+                                    variant="outlined"
+                                    type="date"
+                                    error={Boolean(errors.joiningDate)}
+                                    helperText={errors.joiningDate?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                />
                             )}
                         />
                     </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Controller
+                            name="officeTiming.startTime"
+                            control={control}
+                            rules={{ required: 'Office Start Timing is required' }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Office Start Timing "
+                                    fullWidth
+                                    variant="outlined"
+                                    type="time"
+                                    error={Boolean(errors.officeTiming?.startTime)}
+                                    helperText={errors.officeTiming?.startTime?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Controller
+                            name="officeTiming.endTime"
+                            control={control}
+                            rules={{ required: 'Office End Timing is required' }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Office End Time"
+                                    fullWidth
+                                    variant="outlined"
+                                    type="time"
+                                    error={Boolean(errors.officeTiming?.endTime)}
+                                    helperText={errors.officeTiming?.endTime?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                            )}
+                        />
+                    </Grid>
+                    
+                    
+
+                  
+
+
+
+
+
+
 
                     <Grid item xs={12}>
                         <Button type="submit" fullWidth variant="contained" color="primary">

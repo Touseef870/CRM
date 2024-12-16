@@ -170,11 +170,10 @@ function SubAdminPage() {
                 p: 2,
                 backgroundColor: 'background.paper',
                 borderRadius: '8px',
-                boxShadow: 2,
             }}
         >
             <TextField
-                label="Search SubAdmins"
+                label="Search here"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -194,7 +193,7 @@ function SubAdminPage() {
             />
         </Stack>
     
-        <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 2 }}>
+        <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 10 }}>
             <Table>
                 <TableHead sx={{ backgroundColor: 'primary.main' }}>
                     <TableRow>
