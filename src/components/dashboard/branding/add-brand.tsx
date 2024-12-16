@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
-import CloudinaryUpload from '@/components/cloudinary/cloudinary_upload';
 import { AppContext } from '@/contexts/isLogin';
 import Swal from 'sweetalert2';
 
@@ -18,7 +17,6 @@ interface AddBrandProps {
 export default function AddBrand({ open, handleClose }: AddBrandProps) {
     const { storedValue } = useContext(AppContext)!;
     const [file, setFile] = useState<File | null>(null);
-    const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         title: '',
@@ -35,6 +33,7 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result as string);
+                setFormData({ ...formData, image: file });
             };
             reader.readAsDataURL(file);
         }
@@ -43,12 +42,6 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-    };
-
-    const handleUploadComplete = (url: string | null) => {
-        setUploadedUrl(url);
-        setFormData({ ...formData, image: url });
-        console.log("Uploaded Image URL:", url);
     };
 
     const handleFormSubmit = async () => {
@@ -72,14 +65,19 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
         }
 
         try {
-            const response = await axios.post('https://api-vehware-crm.vercel.app/api/brand/add', formData, {
+            // Create FormData for sending file data
+            const data = new FormData();
+            data.append('title', formData.title);
+            data.append('image', formData.image);
+            data.append('description', formData.description);
+
+            const response = await axios.post('https://api-vehware-crm.vercel.app/api/brand/add', data, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${storedValue.token}`,
                 },
             });
 
-            let resp  : any = response.data
+            let resp: any = response.data;
 
             if (resp.status === 200) {
                 setFormData({
@@ -87,6 +85,8 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
                     image: null as any,
                     description: '',
                 });
+                setFile(null);
+                setImagePreview(null);
                 handleClose();
                 Swal.fire({
                     icon: 'success',
@@ -94,10 +94,9 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
                     text: 'Brand added successfully!',
                     confirmButtonText: 'OK',
                 }).then(() => {
-                    console.log('here okay click logic')
+                    console.log('Form submitted successfully');
                 });
             }
-          
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -110,122 +109,86 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
 
     return (
         <Dialog
-        open={open}
-        onClose={handleClose}
-        style={{ zIndex: 1301 }}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Add Brand</DialogTitle>
-        <DialogContent>
-          <TextField
-            name="title"
-            label="Title"
-            variant="outlined"
+            open={open}
+            onClose={handleClose}
+            style={{ zIndex: 1301 }}
+            maxWidth="sm"
             fullWidth
-            margin="normal"
-            value={formData.title}
-            onChange={handleFormChange}
-            error={!!errors.title}
-            helperText={errors.title}
-            sx={{
-              '& .MuiInputBase-root': {
-                padding: '10px', // Consistent padding
-              },
-            }}
-          />
-      
-          <div style={{ marginBottom: '16px' }}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              id="image-upload"
-              style={{ display: 'none' }}
-            />
-            {file && (
-              <CloudinaryUpload
-                file={file}
-                onUploadComplete={handleUploadComplete}
-              />
-            )}
-            <label htmlFor="image-upload">
-              <Button
-                component="span"
-                startIcon={<CloudUploadIcon />}
-                variant="outlined"
-                fullWidth
-                sx={{
-                  textAlign: 'center',
-                  marginBottom: '12px', // Better spacing for mobile view
-                  padding: '10px', // Consistent padding
-                }}
-              >
-                {formData.image ? 'Image Selected' : 'Select Image'}
-              </Button>
-            </label>
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{
-                  maxWidth: '100%', // Make image responsive
-                  height: 'auto',
-                  objectFit: 'cover',
-                  marginTop: '16px',
-                  borderRadius: '20px',
-                }}
-              />
-            )}
-            {errors.image && (
-              <div style={{ color: 'red', marginTop: '8px' }}>{errors.image}</div>
-            )}
-          </div>
-      
-          <TextField
-            name="description"
-            label="Description"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            value={formData.description}
-            onChange={handleFormChange}
-            error={!!errors.description}
-            helperText={errors.description}
-            sx={{
-              '& .MuiInputBase-root': {
-                padding: '10px',
-              },
-            }}
-          />
-        </DialogContent>
-      
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            color="secondary"
-            sx={{
-              padding: '8px 16px', // Adjust button padding
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleFormSubmit}
-            variant="contained"
-            color="primary"
-            sx={{
-              padding: '8px 16px',
-            }}
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      
-    
+        >
+            <DialogTitle>Add Brand</DialogTitle>
+            <DialogContent>
+                <TextField
+                    name="title"
+                    label="Title"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={formData.title}
+                    onChange={handleFormChange}
+                    error={!!errors.title}
+                    helperText={errors.title}
+                />
+
+                <div style={{ marginBottom: '16px' }}>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        id="image-upload"
+                        style={{ display: 'none' }}
+                    />
+                    <label htmlFor="image-upload">
+                        <Button
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                            variant="outlined"
+                            fullWidth
+                        >
+                            {file ? 'Image Selected' : 'Select Image'}
+                        </Button>
+                    </label>
+                    {imagePreview && (
+                        <img
+                            src={imagePreview}
+                            alt="Preview"
+                            style={{
+                                maxWidth: '100%',
+                                height: 'auto',
+                                objectFit: 'cover',
+                                marginTop: '16px',
+                                borderRadius: '20px',
+                            }}
+                        />
+                    )}
+                    {errors.image && (
+                        <div style={{ color: 'red', marginTop: '8px' }}>{errors.image}</div>
+                    )}
+                </div>
+
+                <TextField
+                    name="description"
+                    label="Description"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    rows={4}
+                    value={formData.description}
+                    onChange={handleFormChange}
+                    error={!!errors.description}
+                    helperText={errors.description}
+                />
+            </DialogContent>
+
+            <DialogActions>
+                <Button onClick={handleClose} color="secondary">
+                    Cancel
+                </Button>
+                <Button onClick={handleFormSubmit} variant="contained" color="primary">
+                    Submit
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 }
 
