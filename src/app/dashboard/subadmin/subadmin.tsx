@@ -38,13 +38,13 @@ interface SubAdmin {
 }
 
 function SubAdminPage() {
-    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]); // Data for subadmins
-    const [loading, setLoading] = useState<boolean>(true); // Initial loading state
+    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]); 
+    const [loading, setLoading] = useState<boolean>(true); 
     const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(0); // Current page
-    const [rowsPerPage, setRowsPerPage] = useState(5); // Items per page
-    const [searchTerm, setSearchTerm] = useState<string>(''); // Search term
-    const [totalSubAdmins, setTotalSubAdmins] = useState<number>(0); // Total number of subadmins
+    const [page, setPage] = useState(0); 
+    const [rowsPerPage, setRowsPerPage] = useState(5); 
+    const [searchTerm, setSearchTerm] = useState<string>(''); 
+    const [totalSubAdmins, setTotalSubAdmins] = useState<number>(0);
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -55,8 +55,8 @@ function SubAdminPage() {
                 const adminLoginData: string | null = localStorage.getItem('AdminloginData');
                 if (adminLoginData) {
                     const token = JSON.parse(adminLoginData).token;
-                    const skip = page * rowsPerPage; // Calculate skip value
-                    const limit = rowsPerPage; // Items per page
+                    const skip = page * rowsPerPage;
+                    const limit = rowsPerPage; 
 
                     const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/admins', {
                         params: { skip, limit },
@@ -68,7 +68,7 @@ function SubAdminPage() {
 
                     if (response.status === 200) {
                         setSubAdmins(response.data.data.admins);
-                        setTotalSubAdmins(response.data.data.total); // Set the total count for pagination
+                        setTotalSubAdmins(response.data.data.total); 
                     }
                 } else {
                     setError('Admin login data is missing.');
@@ -76,12 +76,12 @@ function SubAdminPage() {
             } catch (err) {
                 setError('Failed to fetch data.');
             } finally {
-                setLoading(false); // Stop the loader once data is fetched
+                setLoading(false); 
             }
         };
 
         fetchSubAdmins();
-    }, [page, rowsPerPage]); // Fetch new data when page or rowsPerPage changes
+    }, [page, rowsPerPage]); 
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -129,7 +129,7 @@ function SubAdminPage() {
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); // Reset to first page when rows per page changes
+        setPage(0); 
     };
 
     const formatDate = (dateString: string) => {
@@ -210,51 +210,106 @@ function SubAdminPage() {
                 </TableHead>
                 <TableBody>
                     {filteredSubAdmins.map((subAdmin) => (
-                        <TableRow
-                            key={subAdmin._id}
-                            sx={{
-                                '&:hover': { backgroundColor: '#f0f0f0' },
-                                '&:nth-of-type(even)': { backgroundColor: '#fafafa' },
-                            }}
-                        >
-                            <TableCell>
-                                <Link
-                                    href={`/dashboard/subadmin/${subAdmin._id}`}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        display: 'block',
-                                    }}
-                                >
-                                    {subAdmin.name}
-                                </Link>
-                            </TableCell>
-    
-                            <TableCell>{subAdmin.email}</TableCell>
-                            {!isSmallScreen && <TableCell>{subAdmin.phone}</TableCell>}
-                            {!isSmallScreen && <TableCell>{formatDate(subAdmin.dob)}</TableCell>}
-                            <TableCell>{subAdmin.cnic}</TableCell>
-                            <TableCell>{subAdmin.salary}</TableCell>
-                            <TableCell align="right">
-                                <IconButton
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelete(subAdmin._id);
-                                    }}
-                                    color="error"
-                                    sx={{
-                                        padding: isSmallScreen ? '6px' : '12px',
-                                        color: red[800],
-                                        '&:hover': {
-                                            backgroundColor: 'white',
-                                            color: red[500], // Change the color on hover
-                                        },
-                                    }}
-                                >
-                                    <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
-                                </IconButton>
-                            </TableCell>
-                        </TableRow>
+                   <TableRow
+                   key={subAdmin._id}
+                   sx={{
+                       '&:hover': { backgroundColor: '#f0f0f0' },
+                       '&:nth-of-type(even)': { backgroundColor: '#fafafa' },
+                   }}
+               >
+                   <TableCell sx={{  maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {subAdmin.name}
+                       </Link>
+                   </TableCell>
+                   <TableCell sx={{  maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {subAdmin.email}
+                       </Link>
+                   </TableCell>
+                   {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {subAdmin.phone}
+                       </Link>
+                   </TableCell>}
+                   {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {formatDate(subAdmin.dob)}
+                       </Link>
+                   </TableCell>}
+                   <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {subAdmin.cnic}
+                       </Link>
+                   </TableCell>
+                   <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                       <Link
+                           href={`/dashboard/subadmin/${subAdmin._id}`}
+                           style={{
+                               textDecoration: 'none',
+                               color: 'inherit',
+                               display: 'block',
+                           }}
+                       >
+                           {subAdmin.salary}
+                       </Link>
+                   </TableCell>
+                   <TableCell align="right">
+                       <IconButton
+                           onClick={(e) => {
+                               e.stopPropagation();
+                               handleDelete(subAdmin._id);
+                           }}
+                           color="error"
+                           sx={{
+                               padding: isSmallScreen ? '6px' : '12px',
+                               color: red[800],
+                               '&:hover': {
+                                   backgroundColor: 'white',
+                                   color: red[500],
+                               },
+                           }}
+                       >
+                           <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
+                       </IconButton>
+                   </TableCell>
+               </TableRow>
+               
                     ))}
                 </TableBody>
             </Table>
@@ -263,7 +318,7 @@ function SubAdminPage() {
         <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={totalSubAdmins} // Total number of subadmins in the system
+            count={totalSubAdmins} 
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
