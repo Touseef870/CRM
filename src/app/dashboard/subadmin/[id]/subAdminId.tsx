@@ -32,64 +32,7 @@ interface Subadmin {
     };
 }
 
-// const Container = styled(Box)(({ theme }) => ({
-//     display: "flex",
-//     flexDirection: "column",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     minHeight: "100vh",
-//     padding: theme.spacing(8),
-//     backgroundColor: "#f4f6f8",
-//   }));
 
-//   const StyledCard = styled(Card)(({ theme }) => ({
-//     width: "100%",
-//     maxWidth: 1000,
-//     borderRadius: "16px",
-//     boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-//     backgroundColor: "#ffffff",
-//     padding: theme.spacing(5),
-//     transition: "all 0.3s ease",
-//     marginBottom: theme.spacing(6),
-//   }));
-
-//   const AvatarStyled = styled(Avatar)(({ theme }) => ({
-//     width: 120,
-//     height: 120,
-//     border: "4px solid skyblue",
-//     backgroundColor: "#1976d2",
-//     borderRadius: "50%",
-//     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
-//     transition: "transform 0.3s ease",
-//     "&:hover": {
-//       transform: "scale(1.1)",
-//     },
-//   }));
-
-//   const CardHeader = styled(Box)(({ theme }) => ({
-//     display: "flex",
-//     justifyContent: "space-between",
-//     marginBottom: theme.spacing(4),
-//     textAlign: "left",
-//   }));
-
-//   const CardContentStyled = styled(CardContent)(({ theme }) => ({
-//     padding: theme.spacing(2),
-//   }));
-
-//   const TypographyStyled = styled(Typography)(({ theme }) => ({
-//     marginBottom: theme.spacing(3),
-//     fontWeight: 500,
-//     fontSize: "1rem",
-//     color: "#333",
-//   }));
-
-//   const DeleteButton = styled(IconButton)(({ theme }) => ({
-//     color: "#d32f2f",
-//     "&:hover": {
-//       color: "#b71c1c",
-//     },
-//   }));
 
 
 
@@ -223,7 +166,7 @@ function Page() {
 
 
             <Container sx={{ padding: '20px', backgroundColor: '#f4f6f8', minHeight: '100vh', borderRadius: 6 }}>
-                {/* Back Button */}
+
                 <Box sx={{ position: 'relative', marginBottom: 4 }}>
                     <Button
                         onClick={handleback}
@@ -231,22 +174,18 @@ function Page() {
                             position: 'absolute',
                             top: 10,
                             left: -10,
-                            padding: '12px 16px',
+                           
                             fontWeight: 'bold',
                             textTransform: 'none',
-                            borderRadius: '8px',
                             color: '#273f73',
                             fontSize: '22px',
-                            '&:hover': {
-                                color: '#005bb5',
-                            },
+                           
                         }}
                     >
                         <ArrowBackIcon sx={{ fontSize: '34px' }} />
                     </Button>
                 </Box>
 
-                {/* User Info Card */}
                 <Card sx={{ maxWidth: 1000, margin: 'auto', borderRadius: 4, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)', backgroundColor: '#ffffff', padding: 3 }}>
                     <CardHeader
                         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }} 
@@ -316,7 +255,6 @@ function Page() {
                     </CardContent>
                 </Card>
 
-                {/* Employee Attendance Section */}
                 <Card sx={{ maxWidth: 1000, margin: 'auto', marginTop: 4, borderRadius: 4, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)', backgroundColor: '#ffffff', padding: 3 }}>
                     <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#273f73' }}>
                         Employee Attendance

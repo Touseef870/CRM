@@ -23,7 +23,7 @@ export function CustomersFilters({ onChange, onResetData }: CustomersFiltersProp
 
   React.useEffect(() => {
     if (inputValue === "" && onResetData) {
-      onResetData(); // Reset the employee list when input is cleared
+      onResetData();
     }
   }, [inputValue, onResetData]);
 

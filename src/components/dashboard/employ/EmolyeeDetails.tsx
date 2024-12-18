@@ -64,15 +64,14 @@ export default function EmployeeDetails() {
         checkIn: '',
         checkOut: '',
     });
-    const [success, setSuccess] = useState<string | null>(null); // Added success state
-    const [deleteError, setDeleteError] = useState<string | null>(null); // Added deleteError state
+    const [success, setSuccess] = useState<string | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null); 
     const [isModalOpen, setIsModalOpen] = useState<any>(false);
 
     const getData = localStorage.getItem("AdminloginData");
     const token = JSON.parse(getData!).token;
 
 
-    // Get Single Employee Detail Api Calling
     useEffect(() => {
         const fetchEmployee = async () => {
             try {

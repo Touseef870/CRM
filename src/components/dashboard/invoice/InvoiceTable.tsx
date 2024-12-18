@@ -150,12 +150,12 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
             </Table>
             <TablePagination
                 component="div"
-                count={totalOrders}  // This ensures pagination shows the correct total count
+                count={totalOrders}  
                 page={page}
-                onPageChange={handleChangePage}  // Use the received handler
+                onPageChange={handleChangePage}  
                 rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleRowsPerPageChange}  // Use the received handler
-                rowsPerPageOptions={[5, 10, 25]} // Options for rows per page
+                onRowsPerPageChange={handleRowsPerPageChange}
+                rowsPerPageOptions={[5, 10, 25]} 
             />
 
         </TableContainer>
