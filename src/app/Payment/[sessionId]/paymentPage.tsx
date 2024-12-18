@@ -19,13 +19,8 @@ export default function PaymentPage() {
     useEffect(() => {
         const fetchPaymentDetails = async () => {
             try {
-                const response = await axios.get(`https://api-vehware-crm.vercel.app/api/payment/get-payment-details/${sessionId}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${storedValue.token}`,
-                    },
-                });
-
+                const response = await axios.get(`http://localhost:4000/api/payment/get-payment-details/${sessionId}`);
+                
                 setPaymentDetails(response.data.data);
             } catch (error) {
                 Swal.fire({
@@ -90,16 +85,7 @@ export default function PaymentPage() {
                 });
 
                 try {
-                    await axios.post(
-                        `https://api-vehware-crm.vercel.app/api/payment/create-payment/${sessionId}`,
-                        {},
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${storedValue.token}`,
-                            },
-                        }
-                    );
+                    const res = await axios.post(`http://localhost:4000/api/payment/create-payment/${sessionId}`);
 
                     // Swal.fire({
                     //     icon: 'success',
@@ -125,6 +111,7 @@ export default function PaymentPage() {
         }
     };
 
+    console.log(paymentDetails, "payment")
 
     return (
         <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
