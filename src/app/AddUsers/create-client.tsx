@@ -49,32 +49,55 @@ const ClientForm: React.FC = () => {
         mode: 'onBlur',  
     });
 
-    const onSubmit = (data: IFormInputs) => {
-        const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-        const res = axios.post('https://api-vehware-crm.vercel.app/api/auth/create-client', data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
-            },
-        })
-            .then((res) => {
-                console.log(res.data)
+    const onSubmit = async (data: IFormInputs) => {
+        try {
+            const adminLoginData: string | null = localStorage.getItem('AdminloginData');
+            const token = adminLoginData ? JSON.parse(adminLoginData).token : null;
+    
+            if (!token) {
                 Swal.fire({
-                    title: "Client Added Successfully",
-                    icon: "success",
-                    confirmButtonText: "OK",
-                });
-                reset();  
-            }).catch((e) => {
-                console.log(e.response.data)
-                Swal.fire({
-                    title: `${e.response.data.error}`,
+                    title: "Error",
+                    text: "Authorization token is missing",
                     icon: "error",
                     confirmButtonText: "OK",
                 });
-            })
+                return;
+            }
+    
+            console.log("Data sent to server:", data);
+    
+            const response = await axios.post(
+                'https://api-vehware-crm.vercel.app/api/auth/create-client',
+                data,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+    
+            console.log("Server response:", response.data);
+    
+            Swal.fire({
+                title: "Client Added Successfully",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
+    
+            reset();
+        } catch (error: any) {
+            console.error("Error:", error);
+    
+            Swal.fire({
+                title: "Error",
+                text: error.response?.data?.message || "Internal Server Error",
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+        }
     };
-
+    
     return (
         <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 4 } }}>
             <Typography

@@ -6,22 +6,21 @@ import { Box, Button, Typography, Grid, Card, CardContent } from "@mui/material"
 import axios from "axios";
 import Swal from "sweetalert2";
 
-// Define the interface for a single formatted row
 interface FormattedData {
-  userId: string | number; // Assuming userId is either string or number
-  userType: string; // Assuming userType is a string
-  date: string; // Formatted date string
-  checkInTime: number; // Decimal value for check-in time
-  checkOutTime: number; // Decimal value for check-out time
+  userId: string | number; 
+  userType: string; 
+  date: string; 
+  checkInTime: number; 
+  checkOutTime: number; 
 }
 
 interface UploadAndDisplayProps {
-  onFileUpload: (data: any) => void; // Define the prop to send data back to parent
+  onFileUpload: (data: any) => void;
 }
 
 const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => {
-  const [jsonData, setJsonData] = useState<any[]>([]); // Store parsed data
-  const [headers, setHeaders] = useState<string[]>([]); // Store column headers
+  const [jsonData, setJsonData] = useState<any[]>([]); 
+  const [headers, setHeaders] = useState<string[]>([]); 
   const getData = localStorage.getItem("AdminloginData");
   const token = JSON.parse(getData!).token;
 
@@ -34,8 +33,8 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         const workbook = XLSX.read(data, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }); // Parse data as 2D array
-        const [headerRow, ...rows] = parsedData; // Separate headers from rows
+        const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }); 
+        const [headerRow, ...rows] = parsedData; 
 
         const validRows = rows.filter((row: any) => {
           const userId = row[0];
@@ -73,11 +72,11 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
 
   const formatTime = (decimal: number): string => {
     if (isNaN(decimal) || decimal < 0) {
-      // Return a default value or handle invalid data
+   
       return "Invalid Time";
     }
 
-    const totalMinutes = decimal * 1440; // 1440 minutes in a day
+    const totalMinutes = decimal * 1440; 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = Math.floor(totalMinutes % 60);
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -102,10 +101,10 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
         checkInTime,
         checkOutTime,
       };
-    }).filter(item => item.date !== "Invalid Date"); // Filter out invalid rows
+    }).filter(item => item.date !== "Invalid Date"); 
 
     const dataToSend = {
-      date: formattedData[0]?.date, // Ensure this doesn't break if formattedData is empty
+      date: formattedData[0]?.date, 
       dailyRecords: formattedData.map((item) => {
         const { date, ...rest } = item;
         return rest;
@@ -181,7 +180,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           gutterBottom
           sx={{
             fontWeight: "bold",
-            mb: 4, // Increased margin to create more gap between heading and button
+            mb: 4, 
           }}
         >
           Upload Excel File
@@ -193,12 +192,12 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           sx={{
             px: 4,
             py: 2,
-            backgroundColor: "blue.800", // MUI's blue[800] color
+            backgroundColor: "blue.800",
             color: "#fff",
             borderRadius: "8px",
             boxShadow: "0px 4px 12px rgba(0, 123, 255, 0.3)",
             "&:hover": {
-              backgroundColor: "blue.900", // Slightly darker shade for hover
+              backgroundColor: "blue.900",
             },
             mb: 3,
           }}
@@ -212,7 +211,6 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           />
         </Button>
   
-        {/* Send Data Button */}
         {jsonData.length > 0 && (
           <Button
             variant="contained"
@@ -235,7 +233,6 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
           </Button>
         )}
   
-        {/* Data Grid */}
         {jsonData.length > 0 && (
           <Grid
             container
@@ -255,10 +252,10 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
                     p: 3,
                     backgroundColor: "#ffffff",
                     transition: "transform 0.2s ease-in-out",
-                    width: "100%", // Full width on smaller screens
-                    maxWidth: "500px", // Increased card width for medium and larger screens
+                    width: "100%", 
+                    maxWidth: "500px", 
                     "&:hover": {
-                      transform: "scale(1.02)", // Slight hover effect
+                      transform: "scale(1.02)",
                     },
                   }}
                 >
@@ -272,8 +269,8 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
                           mb: 1.5,
                           borderBottom: "1px solid #f0f0f0",
                           pb: 0.7,
-                          gap: "2px", // Added a slightly larger gap between label and content
-                          flexDirection: { xs: "column", sm: "row" }, // Column for small screens, row for larger ones
+                          gap: "2px",
+                          flexDirection: { xs: "column", sm: "row" }, 
                         }}
                       >
                         <Typography
@@ -282,7 +279,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
                             fontWeight: "bold",
                             fontSize: "0.9rem",
                             color: "#555",
-                            minWidth: "100px", // Set a minimum width for the labels to ensure alignment
+                            minWidth: "100px", 
                             textAlign: "left",
                           }}
                         >
@@ -294,7 +291,7 @@ const UploadAndDisplay: React.FC<UploadAndDisplayProps> = ({ onFileUpload }) => 
                             fontSize: "0.85rem",
                             color: "#333",
                             textAlign: "right",
-                            flex: 2, // Allow content to take up the remaining space
+                            flex: 2, 
                           }}
                         >
                           {header === "Date"

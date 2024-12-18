@@ -35,7 +35,7 @@ interface CustomersTableProps {
   rows: Customer[];
   page: number;
   rowsPerPage: number;
-  loading: boolean; // Add this line
+  loading: boolean;
   onPageChange: (event: unknown, newPage: number) => void;
   onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

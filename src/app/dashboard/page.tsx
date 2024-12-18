@@ -14,7 +14,7 @@ import { TotalCustomers } from '@/components/dashboard/overview/total-customers'
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
 import { Traffic } from '@/components/dashboard/overview/traffic';
 
-export const metadata = { title: `Veh-ware | Dashboard | ${config.site.name}` } satisfies Metadata;
+export const metadata = { title: `Vehware | Dashboard ` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
 

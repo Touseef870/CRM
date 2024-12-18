@@ -134,16 +134,16 @@ export default function PaymentPage() {
                     <CardMedia
                         component="img"
                         height="200"
-                        image={paymentDetails.productDetails.brand_image}
-                        alt={paymentDetails.productDetails.product_title}
+                        image={paymentDetails.productDetails?.brand_image}
+                        alt={paymentDetails.productDetails?.product_title}
                         sx={{ borderRadius: '4px 4px 0 0' }}
                     />
                     <CardContent>
                         <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            {paymentDetails.productDetails.product_title}
+                            {paymentDetails.productDetails?.product_title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
-                            {paymentDetails.productDetails.product_description}
+                            {paymentDetails.productDetails?.product_description}
                         </Typography>
                         <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
                             ${paymentDetails.amount}

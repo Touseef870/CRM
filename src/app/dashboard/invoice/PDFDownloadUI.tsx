@@ -91,10 +91,14 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
       startIcon={<SaveAlt />}
       sx={{
         backgroundColor: '#3498DB',
-        color: '#fff',
-        '&:hover': {  backgroundColor: 'blue',  color: 'white' },
+        color: '#fff',  
         fontWeight: 600,
-        padding: '10px 10px',
+        padding: '8px 8px',
+        marginRight: '20px',
+        '&:hover': {
+              backgroundColor: '#85C1E9', 
+              color: 'white',
+            },
      
       }}
     >

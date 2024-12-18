@@ -354,10 +354,11 @@ export default function clientDetails() {
   return (
     <Box
       sx={{
-        p: { xs: 2, sm: 4 },
+        p: { xs: 4, sm: 6 },
         backgroundColor: grey[100],
         minHeight: "100vh",
         position: "relative",
+        borderRadius: '20px',
       }}
     >
       <Grid
@@ -366,7 +367,7 @@ export default function clientDetails() {
         sx={{
           position: "absolute",
           top: -50,
-          left: 6,
+          left: 2,
           zIndex: 30,
         }}
       >
