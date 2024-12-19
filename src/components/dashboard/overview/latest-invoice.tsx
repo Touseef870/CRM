@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 import { AppContext } from '@/contexts/isLogin';
 import axios from 'axios';
+import { CircularProgress } from '@mui/material';
 
 const statusMap: Record<string, { label: string; color: 'default' | 'primary' | 'secondary' | 'error' }> = {
   PENDING: { label: 'PENDING', color: 'primary' },
@@ -76,92 +77,67 @@ export function LatestInvoice({ orders = [], sx }: LatestOrdersProps): React.JSX
 
 
   return (
-    <Card sx={{ height: 'auto', ...sx }}>
+<Card sx={{ height: "auto", ...sx }}>
+  <CardHeader title="Latest invoice" />
+  <Divider />
+  <Box sx={{ maxHeight: 'auto', overflowY: 'auto' }}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Order</TableCell>
+          <TableCell>Customer</TableCell>
+          <TableCell sortDirection="desc">Date</TableCell>
+          <TableCell>Status</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {loading ? (
+          <Box sx={{
+            marginLeft: '400px',
+          
+            height: '200px', 
+            padding: '120px 0px'
+          }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          invoiveData.map((order) => {
+            const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
 
-      <CardHeader title="Latest invoice" />
-      <Divider />
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 800 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Order</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell sortDirection="desc">Date</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {invoiveData.map((order) => {
-              const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
+            return (
+              <TableRow hover key={order._id}>
+                <TableCell>{order.orderTo}</TableCell>
+                <TableCell>{order.title}</TableCell>
+                <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
+                <TableCell>
+                  <Chip color={color} label={label} size="small" />
+                </TableCell>
+              </TableRow>
+            );
+          })
+        )}
+      </TableBody>
+    </Table>
+  </Box>
+  <Divider />
+  <CardActions sx={{ justifyContent: 'flex-end' }}>
+    <Link href="/dashboard/invoice">
+      <Button
+        color="inherit"
+        endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
+        size="small"
+        variant="text"
+      >
+        View all
+      </Button>
+    </Link>
+  </CardActions>
+</Card>
 
-              return (
-                <TableRow hover key={order._id}>
-                  <TableCell>{order.orderTo}</TableCell>
-                  <TableCell>{order.title}</TableCell>
-                  <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
-                  <TableCell>
-                    <Chip color={color} label={label} size="small" />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
-      <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Link href="/dashboard/invoice">
-          <Button
-            color="inherit"
-            endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
-            size="small"
-            variant="text"
-          >
-            View all
-          </Button>
-        </Link>
-      </CardActions>
-    </Card>
+
+
+  
   );
 }
-
-// export function Invoice({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
-
-//   return (
-//     <Card sx={sx}>
-//       <CardHeader title="Payment Invoice" />
-//       <Divider />
-//       <Box sx={{ overflowX: 'auto' }}>
-//         <Table sx={{ minWidth: 800 }}>
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>Order</TableCell>
-//               <TableCell>Customer</TableCell>
-//               <TableCell sortDirection="desc">Date</TableCell>
-//               <TableCell>Status</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {orders.map((order) => {
-//               const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
-
-//               return (
-//                 <TableRow hover key={order.id}>
-//                   <TableCell>{order.id}</TableCell>
-//                   <TableCell>{order.customer.name}</TableCell>
-//                   <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
-//                   <TableCell>
-//                     <Chip color={color} label={label} size="small" />
-//                   </TableCell>
-//                 </TableRow>
-//               );
-//             })}
-//           </TableBody>
-//         </Table>
-//       </Box>
-//       <Divider />
-//     </Card>
-//   );
-// }
 
 
