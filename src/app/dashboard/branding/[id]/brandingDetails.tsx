@@ -214,7 +214,7 @@ const BrandingDetails = (): React.JSX.Element | null => {
           height="300"
           image={branding?.image || "https://via.placeholder.com/300"}
           alt={branding?.title || "Brand Image"}
-          sx={{ objectFit: "cover" }}
+          sx={{ objectFit: "cover", backgroundColor: "black" }}
         />
         <CardContent>
           <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", textAlign: "center" }}>

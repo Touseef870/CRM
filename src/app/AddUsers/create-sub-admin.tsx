@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState } from 'react';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography , IconButton, InputAdornment } from '@mui/material';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Container, Typography, IconButton, InputAdornment, Snackbar, Alert } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
@@ -16,7 +15,7 @@ interface FormData {
     cnic: number;
     phone: number;
     salary: number;
-    dob: string;  
+    dob: string;
     addedBy: string;
     type: "sub-admin";
     position: string;
@@ -32,6 +31,10 @@ const UserForm: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
         mode: 'onBlur',
     });
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -39,48 +42,42 @@ const UserForm: React.FC = () => {
         setShowPassword(!showPassword);
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     const onSubmit = (data: FormData) => {
-        console.log(data); 
-    
+        console.log(data);
+
         const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-    
+
         data.type = "sub-admin";
 
 
 
-    
+
         axios.post('https://api-vehware-crm.vercel.app/api/auth/signup', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${JSON.parse(adminLoginData!).token}`,
             },
         })
-        .then((res) => {
-            console.log(res.data);
-            Swal.fire({
-                title: "Success",
-                text: "Sub-Admin added successfully",
-                icon: "success",
-                confirmButtonText: "OK",
-            }).then(() => {
-             
-                reset();
+            .then((res) => {
+                console.log(res.data);
+
+                setSnackbarMessage('Admin Added Successfully');
+                setSnackbarSeverity('success');
+                setSnackbarOpen(true);
+            })
+            .catch((error: any) => {
+                // console.log(e);
+
+                setSnackbarMessage((error.response?.data?.error || "Internal Server Error"));
+                setSnackbarSeverity('error');
+                setSnackbarOpen(true);
             });
-        })
-        .catch((e) => {
-            console.log(e);
-            Swal.fire({
-                title: "Error",
-                text: e.response?.data?.error || "An error occurred",
-                icon: "error",
-                confirmButtonText: "OK",
-            }).then(() => {
-                
-                reset();
-            });
-        });
     };
-    
+
 
     return (
         <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 8 } }}>
@@ -173,7 +170,7 @@ const UserForm: React.FC = () => {
                                         label="Password"
                                         fullWidth
                                         variant="outlined"
-                                        type={showPassword ? "text" : "password"} 
+                                        type={showPassword ? "text" : "password"}
                                         error={Boolean(errors.password)}
                                         helperText={errors.password?.message}
                                         InputProps={{
@@ -272,7 +269,7 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
-                    
+
                     <Grid item xs={12} md={6}>
                         <Controller
                             name="position"
@@ -315,8 +312,10 @@ const UserForm: React.FC = () => {
                         <Controller
                             name="joiningDate"
                             control={control}
-                            rules={{ required:  "Joining Date is required",
-                                validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",}}
+                            rules={{
+                                required: "Joining Date is required",
+                                validate: (value: string) => value !== "" || "Invalid date format (yyyy-mm-dd)",
+                            }}
                             render={({ field }) => (
                                 <TextField
                                     {...field}
@@ -369,15 +368,6 @@ const UserForm: React.FC = () => {
                             )}
                         />
                     </Grid>
-                    
-                    
-
-                  
-
-
-
-
-
 
 
                     <Grid item xs={12}>
@@ -387,6 +377,22 @@ const UserForm: React.FC = () => {
                     </Grid>
                 </Grid>
             </form>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbarSeverity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
         </Container>
     );
 };

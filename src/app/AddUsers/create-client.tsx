@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Typography } from '@mui/material';
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Typography,  Snackbar, Alert } from '@mui/material';
 import { Container } from '@mui/system';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 interface IFormInputs {
     email: string;
     name: string;
     phone: number;
     country: string;
-   
+
     serviceType: string;
     dob: string;
 }
@@ -29,12 +28,12 @@ const validationRules = {
     },
     phone: {
         required: "Phone number is required",
-       
+
     },
     country: {
         required: "Country is required",
     },
-   
+
     serviceType: {
         required: "Service type is required",
     },
@@ -45,27 +44,32 @@ const validationRules = {
 };
 
 const ClientForm: React.FC = () => {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm<IFormInputs>({
-        mode: 'onBlur',  
+        mode: 'onBlur',
     });
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
 
     const onSubmit = async (data: IFormInputs) => {
         try {
             const adminLoginData: string | null = localStorage.getItem('AdminloginData');
             const token = adminLoginData ? JSON.parse(adminLoginData).token : null;
-    
+
             if (!token) {
-                Swal.fire({
-                    title: "Error",
-                    text: "Authorization token is missing",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                });
+                setSnackbarMessage('Authorization token is missing');
+                setSnackbarSeverity('error');
+                setSnackbarOpen(true);
                 return;
             }
-    
+
             console.log("Data sent to server:", data);
-    
+
             const response = await axios.post(
                 'https://api-vehware-crm.vercel.app/api/auth/create-client',
                 data,
@@ -76,28 +80,25 @@ const ClientForm: React.FC = () => {
                     },
                 }
             );
-    
+
             console.log("Server response:", response.data);
-    
-            Swal.fire({
-                title: "Client Added Successfully",
-                icon: "success",
-                confirmButtonText: "OK",
-            });
-    
+
+        
+            setSnackbarMessage('Client Added Successfully');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
+
             reset();
         } catch (error: any) {
             console.error("Error:", error);
-    
-            Swal.fire({
-                title: "Error",
-                text: error.response?.data?.message || "Internal Server Error",
-                icon: "error",
-                confirmButtonText: "OK",
-            });
+
+            setSnackbarMessage((error.response?.data?.error || "Internal Server Error"));
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+
         }
     };
-    
+
     return (
         <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 4 } }}>
             <Typography
@@ -115,7 +116,7 @@ const ClientForm: React.FC = () => {
                 Add Client
             </Typography>
 
-            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%',  display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <Controller
                     name="email"
                     control={control}
@@ -180,7 +181,7 @@ const ClientForm: React.FC = () => {
                     )}
                 />
 
-                
+
 
                 <FormControl fullWidth>
                     <InputLabel>Service Type</InputLabel>
@@ -226,6 +227,23 @@ const ClientForm: React.FC = () => {
                     Submit
                 </Button>
             </form>
+
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbarSeverity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
         </Container>
     );
 };

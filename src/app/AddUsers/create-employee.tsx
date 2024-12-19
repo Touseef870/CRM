@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Typography, InputAdornment, IconButton } from "@mui/material";
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, FormHelperText, Grid, Typography, InputAdornment, IconButton, Snackbar, Alert } from "@mui/material";
 import { Container } from "@mui/system";
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
@@ -112,6 +112,13 @@ function AddEmployeeForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -129,26 +136,26 @@ function AddEmployeeForm() {
       })
         .then((res) => {
           console.log(res.data)
-          Swal.fire({
-            title: "Success",
-            text: "Employee added successfully",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-        }).catch((e) => {
-          console.log(e.response.data)
-          Swal.fire({
-            title: "Error",
-            text: e.response.data.error,
-            icon: "error",
-            confirmButtonText: "OK",
-          })
+
+          setSnackbarMessage('Employee Added Successfully');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+
+        }).catch((error: any) => {
+          console.log(error.response.data)
+
+          setSnackbarMessage((error.response?.data?.error || "Internal Server Error"));
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         })
 
       reset();
       console.log(res);
     } catch (error) {
       console.log("Error submitting form:", error);
+      setSnackbarMessage("Error submitting form");
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
 
     } finally {
       setIsSubmitting(false);
@@ -351,6 +358,22 @@ function AddEmployeeForm() {
           </Grid>
         </Grid>
       </form>
+
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
     </Container>
   );

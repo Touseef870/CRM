@@ -184,6 +184,7 @@ export default function BrandingPage(): React.JSX.Element {
                         alt={branding.title || "Brand Image"}
                         sx={{
                           objectFit: "cover",
+                          backgroundColor: "black"
                         }}
                       />
                       <CardContent sx={{ padding: 3 }}>
