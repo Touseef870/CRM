@@ -19,7 +19,7 @@ export default function PaymentPage() {
     useEffect(() => {
         const fetchPaymentDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/api/payment/get-payment-details/${sessionId}`);
+                const response = await axios.get(`https://api-vehware-crm.vercel.app/api/payment/get-payment-details/${sessionId}`);
                 
                 setPaymentDetails(response.data.data);
             } catch (error) {
@@ -85,7 +85,7 @@ export default function PaymentPage() {
                 });
 
                 try {
-                    const res = await axios.post(`http://localhost:4000/api/payment/create-payment/${sessionId}`);
+                    const res = await axios.post(`https://api-vehware-crm.vercel.app/api/payment/create-payment/${sessionId}`);
 
                     // Swal.fire({
                     //     icon: 'success',
