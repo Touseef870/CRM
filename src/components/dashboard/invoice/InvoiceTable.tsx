@@ -90,7 +90,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                         <img
                                             src={order.brand ? order.brand.image : '/default-image.png'}
                                             alt={order.brand ? order.brand.title : 'Default Brand'}
-                                            style={{ width: 50, height: 50, borderRadius: '50%', border: '2px solid #3498DB' }}
+                                            style={{ width: 50, height: 50, borderRadius: '50%', border: '2px solid #3498DB', backgroundColor: 'black' }}
                                         />
                                         <Typography variant="body2" sx={{ color: '#34495E' }}>
                                             {order.brand ? order.brand.title : 'Default Brand'}
