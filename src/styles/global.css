@@ -13,6 +13,10 @@
 @import '~@fontsource/plus-jakarta-sans/600.css';
 @import '~@fontsource/plus-jakarta-sans/700.css';
 @import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 
 /* Variables */
