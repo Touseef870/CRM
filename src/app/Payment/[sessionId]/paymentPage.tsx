@@ -248,7 +248,7 @@ export default function PaymentPage() {
                 )}
             </Box>
 
-            {/* Snackbar for showing messages */}
+      
             <Snackbar
                 open={openSnackbar}
                 autoHideDuration={6000}

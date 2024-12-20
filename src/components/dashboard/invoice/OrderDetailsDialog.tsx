@@ -43,7 +43,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
       return;
     }
 
-    const paymentLink = `${window.location.origin}/Payment/${selectedOrder.sessionId}`;
+    const paymentLink = `${window.location.origin}/Payments/${selectedOrder.sessionId}`;
 
     navigator.clipboard
       .writeText(paymentLink)
