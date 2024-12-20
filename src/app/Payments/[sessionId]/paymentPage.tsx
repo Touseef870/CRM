@@ -1,15 +1,14 @@
-'use client'
-import { useParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+'use client';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
-import { Box, Button, Card, CardContent, CardMedia, Typography, CircularProgress, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
-import { AppContext } from "@/contexts/isLogin";
+import { Alert, Snackbar } from '@mui/material';
 
 export default function PaymentPage() {
     const [paymentDetails, setPaymentDetails] = useState<any>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarMessage, setSnackbarMessage] = useState('');
     const { sessionId } = useParams<any>();
     const stripe = useStripe();
     const elements = useElements();
@@ -17,10 +16,12 @@ export default function PaymentPage() {
     useEffect(() => {
         const fetchPaymentDetails = async () => {
             try {
-                const response = await axios.get(`https://api-vehware-crm.vercel.app/api/payment/get-payment-details/${sessionId}`);
+                const response = await axios.get(
+                    `https://api-vehware-crm.vercel.app/api/payment/get-payment-details/${sessionId}`
+                );
                 setPaymentDetails(response.data.data);
             } catch (error) {
-                setSnackbarMessage("Unable to fetch payment details.");
+                setSnackbarMessage('Unable to fetch payment details.');
                 setOpenSnackbar(true);
             }
         };
@@ -32,7 +33,7 @@ export default function PaymentPage() {
         e.preventDefault();
 
         if (!stripe || !elements) {
-            setSnackbarMessage("Stripe has not loaded yet. Please try again.");
+            setSnackbarMessage('Stripe has not loaded yet. Please try again.');
             setOpenSnackbar(true);
             return;
         }
@@ -42,7 +43,7 @@ export default function PaymentPage() {
         const cardCvcElement = elements.getElement(CardCvcElement);
 
         if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
-            setSnackbarMessage("Please fill out your card details.");
+            setSnackbarMessage('Please fill out your card details.');
             setOpenSnackbar(true);
             return;
         }
@@ -53,7 +54,7 @@ export default function PaymentPage() {
                     card: cardNumberElement,
                     billing_details: {
                         address: {
-                            postal_code: "85400",
+                            postal_code: '85400',
                         },
                     },
                 },
@@ -69,195 +70,122 @@ export default function PaymentPage() {
                 try {
                     await axios.post(`https://api-vehware-crm.vercel.app/api/payment/create-payment/${sessionId}`);
                 } catch (error) {
-                    console.log("Order status update failed", error);
+                    console.log('Order status update failed', error);
                 }
             }
         } catch (err) {
-            setSnackbarMessage("An unexpected error occurred during payment.");
+            setSnackbarMessage('An unexpected error occurred during payment.');
             setOpenSnackbar(true);
         }
     };
 
     return (
-        <Box sx={{ maxWidth: '100%', mx: 'auto', p: 0, display: 'flex', height: '100vh', flexDirection: { xs: 'column', sm: 'row' } }}>
-            {/* Left Side: Random Wallpaper */}
-            <Box sx={{ flex: 1, display: { xs: 'none', sm: 'flex' }, flexDirection: 'column' }}>
-                <CardMedia
-                    component="img"
-                    height="100%" // Full height of the container
-                    image="https://img.freepik.com/premium-vector/payment-concept-blue-background-invoice-money-bill-discount-icons_159242-6366.jpg" // Wallpaper image
-                    alt="Wallpaper"
-                    sx={{
-                        objectFit: 'cover',
-                        width: '100%', // Full width
-                        height: '100vh', // Full height
-                    }}
-                />
-            </Box>
 
-            {/* Right Side: Payment Details */}
-            <Box sx={{
-                flex: 1.5,
-                display: 'flex',
-                flexDirection: 'column',
-                padding: 12,
-                borderRadius: '12px',
-                height: '100vh', // Ensures full height for the payment section
-                overflowY: 'auto', // To avoid overflow if content is too long
-                backgroundColor: '#fff',
-            }}>
-                {paymentDetails ? (
-                    <Card sx={{
-                        display: 'flex',
-                        boxShadow: 10,
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        margin: 'auto',
-                        width: '100%',
-                        backgroundColor: '#fff',
-                    }}>
-                        {/* Left Side: Product Details */}
-                        <Box sx={{
-                            flex: 5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            borderRight: '1px solid #e0e0e0',
-                        }}>
-                            <CardMedia
-                                component="img"
-                                height="350"
-                                image={paymentDetails.productDetails?.brand_image}
-                                alt={paymentDetails.productDetails?.product_title}
-                                sx={{
-                                    objectFit: 'cover',
-                                    borderRadius: '12px 0 0 12px',
-                                    backgroundColor: 'black',
-                                }}
-                            />
-                            <CardContent sx={{ padding: '32px', backgroundColor: '#f8f8f8' }}>
-                                <Typography
-                                    variant="h5"
-                                    fontWeight="bold"
-                                    gutterBottom
-                                    sx={{ color: '#333', fontFamily: "'Roboto', sans-serif" }}
-                                >
-                                    {paymentDetails.productDetails?.product_title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#666' }}>
-                                    {paymentDetails.productDetails?.product_description}
-                                </Typography>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mt: 2, color: '#333' }}>
-                                    ${paymentDetails.amount}
-                                </Typography>
-                            </CardContent>
-                        </Box>
+    
+<div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-white p-4 justify-center items-center">
 
-                        {/* Right Side: Payment Form */}
-                        <Box sx={{
-                            flex: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            p: 8,
-                            backgroundColor: '#ffffff',
-                            borderRadius: '0 12px 12px 0',
-                        }}>
-                            <Typography variant="h6" fontWeight="bold" sx={{ mb: 6, color: '#333' }}>
-                                Payment Information
-                            </Typography>
+<div className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl w-full max-w-screen-xl p-4 sm:p-6 space-y-8 md:space-y-0 md:space-x-8 lg:w-11/12 xl:w-11/12">
 
-                            <Box component="form" onSubmit={handlePayment} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                <Box>
-                                    <Typography variant="body1" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
-                                        Card Number
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            p: 1.5,
-                                            border: '1px solid #ccc',
-                                            borderRadius: '8px',
-                                            backgroundColor: '#fafafa',
-                                            boxShadow: 1,
-                                        }}
-                                    >
-                                        <CardNumberElement />
-                                    </Box>
-                                </Box>
+  {/* Left Side: Payment Form */}
+  <div className="flex-1 bg-gray-50 rounded-lg p-4 sm:p-6 space-y-6 shadow-xl">
+    <h4 className="text-xl sm:text-2xl font-semibold text-gray-800">Complete Your Payment</h4>
+    <p className="text-gray-600 text-sm sm:text-base">Enter your card details to proceed with the payment for the product.</p>
 
-                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                    <Box sx={{ flex: 1 }}>
-                                        <Typography variant="body1" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
-                                            Expiry Date
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                p: 1.5,
-                                                border: '1px solid #ccc',
-                                                borderRadius: '8px',
-                                                backgroundColor: '#fafafa',
-                                                boxShadow: 1,
-                                            }}
-                                        >
-                                            <CardExpiryElement />
-                                        </Box>
-                                    </Box>
+    <form onSubmit={handlePayment} className="space-y-4">
+      <div>
+        <label className="block text-sm sm:text-base font-semibold text-gray-700">Card Number</label>
+        <div className="p-4 border-2 border-gray-300 rounded-lg bg-white shadow-md focus-within:border-blue-500">
+          <CardNumberElement />
+        </div>
+      </div>
 
-                                    <Box sx={{ flex: 1 }}>
-                                        <Typography variant="body1" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
-                                            CVC
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                p: 1.5,
-                                                border: '1px solid #ccc',
-                                                borderRadius: '8px',
-                                                backgroundColor: '#fafafa',
-                                                boxShadow: 1,
-                                            }}
-                                        >
-                                            <CardCvcElement />
-                                        </Box>
-                                    </Box>
-                                </Box>
+      <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex-1">
+          <label className="block text-sm sm:text-base font-semibold text-gray-700">Expiry Date</label>
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-white shadow-md focus-within:border-blue-500">
+            <CardExpiryElement />
+          </div>
+        </div>
 
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                    sx={{
-                                        py: 1.5,
-                                        mt: 2,
-                                        borderRadius: '8px',
-                                        fontWeight: 'bold',
-                                        textTransform: 'none',
-                                        backgroundColor: '#1976d2',
-                                        '&:hover': {
-                                            backgroundColor: '#1565c0',
-                                        },
-                                    }}
-                                >
-                                    Pay Now
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Card>
-                ) : (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                        <CircularProgress color="primary" />
-                    </Box>
-                )}
-            </Box>
+        <div className="flex-1">
+          <label className="block text-sm sm:text-base font-semibold text-gray-700">CVC</label>
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-white shadow-md focus-within:border-blue-500">
+            <CardCvcElement />
+          </div>
+        </div>
+      </div>
 
-      
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={() => setOpenSnackbar(false)}
-            >
-                <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: '100%' }}>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
-        </Box>
+      <button
+        type="submit"
+        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300"
+      >
+        Pay Now
+      </button>
+    </form>
+
+    <div className="space-y-4 mt-8 p-4 border-t-2 border-gray-300">
+      <h5 className="text-xl sm:text-2xl font-semibold text-gray-800">Order Summary</h5>
+      <div className="flex justify-between">
+        <span className="text-gray-600">Total Price:</span>
+        <span className="font-bold text-lg text-blue-600">${paymentDetails.amount}</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-gray-600">Shipping:</span>
+        <span className="font-semibold text-gray-600">Free</span>
+      </div>
+      <img
+        src="https://cdn.shopify.com/s/files/1/2005/6615/files/Webp.net-resizeimage_large.png?v=1501670750"
+        alt="Visa"
+        className="w-full h-16 sm:h-24 object-contain mt-4"
+      />
+    </div>
+  </div>
+
+  {/* Right Side: Product Information & Details */}
+  <div className="flex-1 space-y-6 flex flex-col justify-between bg-[#0e1e99] rounded-lg p-4 sm:p-6 shadow-xl">
+    <div className="space-y-6">
+      <img
+        src={paymentDetails.productDetails?.brand_image}
+        alt={paymentDetails.productDetails?.product_title}
+        className="h-[200px] sm:h-[250px] w-full object-cover rounded-lg shadow-lg"
+      />
+      <div className="space-y-3">
+        <h3 className="text-2xl sm:text-3xl font-semibold text-white">{paymentDetails.productDetails?.product_title}</h3>
+        <p className="text-gray-300">{paymentDetails.productDetails?.product_description}</p>
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <h1 className="text-lg sm:text-xl text-white">Taxes and discounts applied</h1>
+          <h4 className="text-xl sm:text-2xl font-bold text-white">${paymentDetails.amount}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{/* Snackbar for Error */}
+<Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={() => setOpenSnackbar(false)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+>
+  <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: '100%' }}>
+    {snackbarMessage}
+  </Alert>
+</Snackbar>
+
+</div>
+
+
+
+
+
+
+
+
+
+
     );
 }
