@@ -127,27 +127,30 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-      <Button
-        onClick={handleDownloadPDF}
-        color="primary"
-        startIcon={<SaveAlt />}
-        sx={{
-          backgroundColor: '#4CAF50',
-          color: '#fff',
-          fontWeight: 600,
-          padding: '12px 24px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-          transition: 'background-color 0.3s ease',
-          '&:hover': {
-            backgroundColor: '#45A049',
-          },
-        }}
-      >
-        Download Invoice
-      </Button>
-    </Box>
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', padding: 1 }}>
+    <Button
+      onClick={handleDownloadPDF}
+      color="primary"
+      startIcon={<SaveAlt />}
+      sx={{
+        fontWeight: 600,
+        padding: '10px 20px', // Adjusted padding for better balance
+        borderRadius: '8px',
+        marginRight: '20px', // Reduced marginRight for a slight shift towards the left
+
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Slightly lighter shadow for subtle effect
+        backgroundColor: '#007BFF', // Primary blue color for background
+        color: 'white', // Ensures text color contrasts well with the background
+        '&:hover': {
+          backgroundColor: '#0056b3', // Darker blue on hover
+          boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)', // Darker shadow on hover
+        },
+      }}
+    >
+      Download PDF
+    </Button>
+  </Box>
+  
   );
 };
 

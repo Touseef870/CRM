@@ -678,7 +678,7 @@ export default function clientDetails() {
           />
            <TextField
             label="discountPrice"
-            name="discountPrice"
+            name="Discount"
             value={orderData.discountPrice}
             onChange={handleOrderChange}
             fullWidth
