@@ -3,15 +3,36 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Snackbar, CircularProgress } from '@mui/material';
+import '../../../styles/global.css';
+import { AiOutlineCheckCircle } from 'react-icons/ai'; // Importing success icon from React Icons
+
 
 export default function PaymentPage() {
     const [paymentDetails, setPaymentDetails] = useState<any>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [paymentSuccessful, setPaymentSuccessful] = useState(false);
+    const [snackbarDuration, setSnackbarDuration] = useState(500); // Duration for snackbar to show
+    const [isSnackbarClosed, setIsSnackbarClosed] = useState(false); // To control the transition after snackbar
+
     const { sessionId } = useParams<any>();
     const stripe = useStripe();
     const elements = useElements();
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        setIsHydrated(true); 
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         const fetchPaymentDetails = async () => {
@@ -66,12 +87,18 @@ export default function PaymentPage() {
             } else if (paymentIntent && paymentIntent.status === 'succeeded') {
                 setSnackbarMessage(`Payment for ${paymentDetails.productDetails.product_title} completed successfully!`);
                 setOpenSnackbar(true);
+                setPaymentSuccessful(true);
 
                 try {
                     await axios.post(`https://api-vehware-crm.vercel.app/api/payment/create-payment/${sessionId}`);
                 } catch (error) {
                     console.log('Order status update failed', error);
                 }
+
+                // Wait for snackbar duration, then show the successful payment page
+                setTimeout(() => {
+                    setIsSnackbarClosed(true);
+                }, snackbarDuration);
             }
         } catch (err) {
             setSnackbarMessage('An unexpected error occurred during payment.');
@@ -79,17 +106,82 @@ export default function PaymentPage() {
         }
     };
 
+    if (!isHydrated || loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <CircularProgress size={60} />
+                    <p className="text-lg font-semibold text-blue-700 mt-4">Loading, please wait...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (paymentSuccessful && isSnackbarClosed) {
+      return (
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-400 to-green-600 p-8 rounded-lg shadow-lg">
+              <div className="text-center text-white">
+                  <AiOutlineCheckCircle className="mx-auto text-8xl mb-6" />
+                  <h1 className="text-4xl font-semibold mb-4">Payment Successful!</h1>
+                  <p className="text-xl mb-6">Thank you for your purchase. Your order is being processed.</p>
+              </div>
+          </div>
+      );
+  }
+
+
+
     return (
 
     
 <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-white p-4 justify-center items-center">
 
 <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl w-full max-w-screen-xl p-4 sm:p-6 space-y-8 md:space-y-0 md:space-x-8 lg:w-11/12 xl:w-11/12">
+  
+ {/* Order Details Section */}
+<div className="flex-1 bg-[#0e1e99] rounded-lg p-4 sm:p-4 shadow-xl w-full sm:w-[80%] lg:w-[70%] mx-auto order-1 sm:order-1 md:order-1">
+  <div className="space-y-13 p-0 sm:p-6 rounded-lg shadow-xl mt-2">
+    {/* Image Section */}
+    <img
+      src={paymentDetails.productDetails?.brand_image}
+      alt={paymentDetails.productDetails?.product_title}
+      className="h-[200px] sm:h-[300px] w-full object-cover rounded-lg shadow-lg bg-[#2132b6]"
+    />
 
-  {/* Left Side: Payment Form */}
-  <div className="flex-1 bg-gray-50 rounded-lg p-4 sm:p-6 space-y-6 shadow-xl">
+    <div className="space-y-4 pt-10"> {/* Add margin top here */}
+      {/* Order Title Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
+        <h1 className="text-lg sm:text-xl text-white">Order Title</h1>
+        <h3 className="text-xl sm:text-2xl  text-white sm:mt-0 mt-2 text-right">
+          {paymentDetails.productDetails?.product_title}
+        </h3>
+      </div>
+
+      {/* Order Description Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
+        <h1 className="text-lg sm:text-xl text-white">Order Description</h1>
+        <p className="text-gray-300 sm:mt-0 mt-2 text-right">
+          {paymentDetails.productDetails?.product_description}
+        </p>
+      </div>
+
+      {/* Total Amount Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
+        <h1 className="text-lg sm:text-xl text-white">Total Amount</h1>
+        <h4 className="text-xl sm:text-2xl font-bold text-white sm:mt-0 mt-2 text-right">
+          ${paymentDetails.amount}
+        </h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+  {/* Payment Section */}
+  <div className="flex-1 bg-gray-50 rounded-lg p-4 sm:p-6 space-y-6 shadow-xl order-2 sm:order-2 md:order-2">
     <h4 className="text-xl sm:text-2xl font-semibold text-gray-800">Complete Your Payment</h4>
-    <p className="text-gray-600 text-sm sm:text-base">Enter your card details to proceed with the payment for the product.</p>
+    <p className="text-gray-600 text-sm sm:text-base">
+      Enter your card details to proceed with the payment for the product.
+    </p>
 
     <form onSubmit={handlePayment} className="space-y-4">
       <div>
@@ -141,42 +233,20 @@ export default function PaymentPage() {
     </div>
   </div>
 
-  {/* Right Side: Product Information & Details */}
-  <div className="flex-1 space-y-6 flex flex-col justify-between bg-[#0e1e99] rounded-lg p-4 sm:p-6 shadow-xl">
-    <div className="space-y-6">
-      <img
-        src={paymentDetails.productDetails?.brand_image}
-        alt={paymentDetails.productDetails?.product_title}
-        className="h-[200px] sm:h-[250px] w-full object-cover rounded-lg shadow-lg"
-      />
-      <div className="space-y-3">
-        <h3 className="text-2xl sm:text-3xl font-semibold text-white">{paymentDetails.productDetails?.product_title}</h3>
-        <p className="text-gray-300">{paymentDetails.productDetails?.product_description}</p>
-      </div>
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <h1 className="text-lg sm:text-xl text-white">Taxes and discounts applied</h1>
-          <h4 className="text-xl sm:text-2xl font-bold text-white">${paymentDetails.amount}</h4>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-{/* Snackbar for Error */}
-<Snackbar
-  open={openSnackbar}
-  autoHideDuration={6000}
-  onClose={() => setOpenSnackbar(false)}
-  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
->
-  <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: '100%' }}>
-    {snackbarMessage}
-  </Alert>
-</Snackbar>
-
+ {/* Snackbar for displaying success message */}
+ <Snackbar 
+                open={openSnackbar}
+                autoHideDuration={snackbarDuration}
+                onClose={() => setOpenSnackbar(false)}
+            >
+                <Alert severity="success" sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
 </div>
+
 
 
 
