@@ -50,14 +50,14 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
         }
     }, [rowsToRender]);
 
-    if (!orders || orders.length === 0) {
+    if (!orders) {
         return (
             <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
                 <Table>
                     <TableBody>
                         <TableRow>
                             <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D' }}>
-                                {notFound ? <CircularProgress size={60} /> : <div> <h1>Invoice Not Found..</h1> <img src='/not-found.png' height={400} width={400} /> </div>}
+                                <CircularProgress size={60} />
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -65,8 +65,26 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
             </TableContainer>
         );
     }
+    
+    if (orders.length === 0) {
+        return (
+            <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                        <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div>
+        <img src='/not-found.png' height={400} width={400} />
+    </div>
+</TableCell>
 
-
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    }
+    
     return (
         <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
             <Table>
@@ -75,7 +93,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Brand</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Title</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Description</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Discount </TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Discount</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Price</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Status</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#2C3E50' }}>Action</TableCell>
@@ -97,13 +115,14 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                         </Typography>
                                     </Stack>
                                 </TableCell>
-
                                 <TableCell sx={{ fontWeight: 500, color: '#34495E' }}>{order.title}</TableCell>
                                 <TableCell sx={{ fontSize: 14, color: '#7F8C8D' }}>
                                     {order.description.split(' ').slice(0, 5).join(' ') +
                                         (order.description.split(' ').length > 5 ? '...' : '')}
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: 500, color: order.discountPrice === 0 ? 'red' : 'green', textAlign: 'center' }}>{order.discountPrice === 0 ? '--' : order.discountPrice}</TableCell>
+                                <TableCell sx={{ fontWeight: 500, color: order.discountPrice === 0 ? 'red' : 'green', textAlign: 'center' }}>
+                                    {order.discountPrice === 0 ? '--' : order.discountPrice}
+                                </TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>{order.price}</TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: '#3498DB' }}>{order.status}</TableCell>
                                 <TableCell>
@@ -129,37 +148,33 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                                             }}
                                         >
                                             <Delete sx={{ fontSize: 24, color: '#8B0000' }} />
-
                                         </IconButton>
                                     </Stack>
                                 </TableCell>
                             </TableRow>
-
-
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D' }}>
-                                {notFound ? <CircularProgress size={60} /> : <div> <h1>Invoice Not Found..</h1> <img src='/not-found.png' height={400} width={400} /> </div>}
+                            <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <img src='/not-found.png' height={400} width={400} />
+
                             </TableCell>
                         </TableRow>
                     )}
-
-
                 </TableBody>
             </Table>
             <TablePagination
                 component="div"
-                count={totalOrders}  
+                count={totalOrders}
                 page={page}
-                onPageChange={handleChangePage}  
+                onPageChange={handleChangePage}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageChange}
-                rowsPerPageOptions={[5, 10, 25]} 
+                rowsPerPageOptions={[5, 10, 25]}
             />
-
         </TableContainer>
     );
+    
 };
 
 export default InvoiceTable;

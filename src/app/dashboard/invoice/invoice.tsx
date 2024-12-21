@@ -119,10 +119,10 @@ const MainPage: React.FC = () => {
     setPage(0);
   };
 
+  // Filter orders based on search query (searching by title)
   const filteredOrders = orders.filter(
     (order) =>
-      order.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.description.toLowerCase().includes(searchQuery.toLowerCase())
+      order.title.toLowerCase().includes(searchQuery.toLowerCase()) 
   );
 
   return (
@@ -134,7 +134,7 @@ const MainPage: React.FC = () => {
       <SearchBar onSearch={handleSearch} />
 
       <InvoiceTable
-        orders={searchQuery ? searchInvoice : orders}
+        orders={filteredOrders}
         onOpenModal={handleOpenModal}
         onDeleteOrder={handleDeleteOrder}
         page={page}
