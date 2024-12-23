@@ -24,17 +24,18 @@ interface Order {
 }
 
 const MainPage: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);  // Default to an empty array
+  const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [searchInvoice, setSearchInvoice] = useState<Order[]>([]);  // Renamed for consistency
-  const [searchQuery, setSearchQuery] = useState<string>('');  // Specify type as string
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const { storedValue } = useContext(AppContext)!;
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Add loading state
 
   useEffect(() => {
     const fetchOrders = async (search: string = '') => {
+      setIsLoading(true); // Start loading
       try {
         const response = await axios.get('https://api-vehware-crm.vercel.app/api/order/get-orders', {
           headers: {
@@ -46,18 +47,16 @@ const MainPage: React.FC = () => {
         if (Array.isArray(response.data.data.orders)) {
           setOrders(response.data.data.orders);
           setTotalOrders(response.data.data.total);
-        } else if (Array.isArray(response.data.data)) {
-          setSearchInvoice(response.data.data);
-        } else {
-          console.error('Fetched data is not an array:', response.data);
         }
       } catch (error) {
         console.error('Error fetching orders:', error);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     };
 
-    fetchOrders(searchQuery);
-  }, [page, rowsPerPage, storedValue.token, searchQuery]);
+    fetchOrders();
+  }, [storedValue.token]);
 
   const handleOpenModal = (order: Order) => {
     setSelectedOrder(order);
@@ -92,7 +91,6 @@ const MainPage: React.FC = () => {
 
           if (response.status === 200) {
             setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
-            setSearchInvoice((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
             Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
           } else {
             Swal.fire('Error!', 'There was an issue deleting the order.', 'error');
@@ -107,6 +105,7 @@ const MainPage: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    setPage(0);  // Reset to the first page when the search query changes
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -116,14 +115,16 @@ const MainPage: React.FC = () => {
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0);
+    setPage(0); // Reset to the first page when rows per page changes
   };
 
-  // Filter orders based on search query (searching by title)
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.title.toLowerCase().includes(searchQuery.toLowerCase()) 
+  // Filter orders based on the search query (searching by title)
+  const filteredOrders = orders.filter((order) =>
+    order.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Paginate the filtered orders
+  const paginatedOrders = filteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
@@ -134,14 +135,15 @@ const MainPage: React.FC = () => {
       <SearchBar onSearch={handleSearch} />
 
       <InvoiceTable
-        orders={filteredOrders}
+        orders={paginatedOrders}
         onOpenModal={handleOpenModal}
         onDeleteOrder={handleDeleteOrder}
         page={page}
         rowsPerPage={rowsPerPage}
-        totalOrders={totalOrders}
+        totalOrders={filteredOrders.length}  // Update to reflect filtered results
         handleChangePage={handleChangePage}
         handleRowsPerPageChange={handleRowsPerPageChange}
+        isLoading={isLoading} // Pass isLoading prop to InvoiceTable
       />
 
       {selectedOrder && (
