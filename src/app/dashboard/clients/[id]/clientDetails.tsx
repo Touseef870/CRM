@@ -677,8 +677,8 @@ export default function clientDetails() {
             helperText={formErrors.price}
           />
            <TextField
-            label="discountPrice"
-            name="Discount"
+            label="Discount"
+            name="discountPrice"
             value={orderData.discountPrice}
             onChange={handleOrderChange}
             fullWidth
