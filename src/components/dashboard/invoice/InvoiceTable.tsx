@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Stack, Typography, CircularProgress, TablePagination } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Stack, Typography, TablePagination, CircularProgress } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
 
 interface Order {
@@ -28,63 +28,23 @@ interface InvoiceTableProps {
     totalOrders: number;
     handleChangePage: (event: unknown, newPage: number) => void;
     handleRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    isLoading: boolean; // New prop to indicate loading state
 }
 
+const InvoiceTable: React.FC<InvoiceTableProps> = ({
+    orders,
+    onOpenModal,
+    onDeleteOrder,
+    page,
+    rowsPerPage,
+    totalOrders,
+    handleChangePage,
+    handleRowsPerPageChange,
+    isLoading
+}) => {
+    // Show a message when no orders are available after filtering search
+    const hasOrders = orders.length > 0;
 
-const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDeleteOrder, page, rowsPerPage, totalOrders, handleChangePage, handleRowsPerPageChange }) => {
-    const [notFound, setNotFound] = useState<any>(true)
-
-
-
-    const rowsToRender = Array.isArray(orders) ? orders : [];
-    useEffect(() => {
-        if (rowsToRender.length === 0) {
-            setNotFound(true);
-            setTimeout(() => {
-                setNotFound(false);
-            }, 2500);
-        } else {
-            setTimeout(() => {
-                setNotFound(false);
-            }, 3000);
-        }
-    }, [rowsToRender]);
-
-    if (!orders) {
-        return (
-            <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
-                <Table>
-                    <TableBody>
-                        <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D' }}>
-                                <CircularProgress size={60} />
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        );
-    }
-    
-    if (orders.length === 0) {
-        return (
-            <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
-                <Table>
-                    <TableBody>
-                        <TableRow>
-                        <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    <div>
-        <img src='/not-found.png' height={400} width={400} />
-    </div>
-</TableCell>
-
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        );
-    }
-    
     return (
         <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: '1rem' }}>
             <Table>
@@ -100,8 +60,15 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rowsToRender.length > 0 ? (
-                        rowsToRender.map((order) => (
+                    {isLoading ? (
+                        // Show a loader while data is loading
+                        <TableRow>
+                            <TableCell colSpan={7} align="center" sx={{ padding: '16px' }}>
+                                <CircularProgress size={40} />
+                            </TableCell>
+                        </TableRow>
+                    ) : hasOrders ? (
+                        orders.map((order) => (
                             <TableRow key={order._id} sx={{ '&:hover': { backgroundColor: '#f0f8ff' } }}>
                                 <TableCell>
                                     <Stack direction="row" spacing={2} alignItems="center">
@@ -155,14 +122,14 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <img src='/not-found.png' height={400} width={400} />
-
+                            <TableCell colSpan={7} align="center" sx={{ padding: '16px', fontWeight: 500, color: '#7F8C8D' }}>
+                                No results found
                             </TableCell>
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
+
             <TablePagination
                 component="div"
                 count={totalOrders}
@@ -174,7 +141,6 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orders, onOpenModal, onDele
             />
         </TableContainer>
     );
-    
 };
 
 export default InvoiceTable;
