@@ -106,6 +106,8 @@ export default function PaymentPage() {
         }
     };
 
+    console.log(paymentDetails, "paymentDetails")
+
     if (!isHydrated || loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -167,9 +169,23 @@ export default function PaymentPage() {
 
       {/* Total Amount Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
+        <h1 className="text-lg sm:text-xl text-white">Product Amount</h1>
+        <h4 className="text-xl sm:text-2xl font-bold text-white sm:mt-0 mt-2 text-right">
+          ${paymentDetails.productAmount}
+        </h4>
+      </div>
+      {/* Total Amount Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
+        <h1 className="text-lg sm:text-xl text-white">Discount</h1>
+        <h4 className="text-xl sm:text-2xl font-bold text-white sm:mt-0 mt-2 text-right">
+          ${paymentDetails.discountPrice}
+        </h4>
+      </div>
+      {/* Total Amount Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#2132b6] rounded-lg shadow-md mt-4">
         <h1 className="text-lg sm:text-xl text-white">Total Amount</h1>
         <h4 className="text-xl sm:text-2xl font-bold text-white sm:mt-0 mt-2 text-right">
-          ${paymentDetails.amount}
+          ${paymentDetails.totalAmount}
         </h4>
       </div>
     </div>
