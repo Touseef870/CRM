@@ -205,16 +205,16 @@ const BrandingDetails = (): React.JSX.Element | null => {
   }
 
   return (
-    <Box sx={{ padding: 3, display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Box sx={{ padding: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
       {/* Branding Info Card */}
-      <Card sx={{ width: { xs: '100%', sm: 600, md: 700 }, boxShadow: 3, borderRadius: 2, overflow: "hidden", marginBottom: 3 }}>
+      <Card sx={{ width: { xs: '100%', sm: 600, md: 1000 }, boxShadow: 3, borderRadius: 2, overflow: "hidden", marginBottom: 6 }}>
         <CardMedia
           component="img"
           width="100%"
-          height="300"
+          
           image={branding?.image || "https://via.placeholder.com/300"}
           alt={branding?.title || "Brand Image"}
-          sx={{ objectFit: "cover", backgroundColor: "black" }}
+          sx={{ objectFit: "cover", backgroundColor: "black",  height: '300px',   }}
         />
         <CardContent>
           <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", textAlign: "center" }}>
@@ -225,7 +225,7 @@ const BrandingDetails = (): React.JSX.Element | null => {
           </Typography>
 
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
             <IconButton
               onClick={confirmDelete}
               disabled={deleting}

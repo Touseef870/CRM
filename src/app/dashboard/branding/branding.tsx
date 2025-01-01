@@ -109,10 +109,10 @@ export default function BrandingPage(): React.JSX.Element {
   return (
 
 
-    <Stack spacing={3}>
+    <Stack spacing={4}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Branding</Typography>
+          <Typography variant="h4"> Our Brands</Typography>
         </Stack>
         <div>
           <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal}>
@@ -178,11 +178,11 @@ export default function BrandingPage(): React.JSX.Element {
                       }}
                     >
                       <CardMedia
-                        component="img"
-                        height="200"
+                        component="img"     
                         image={branding.logo || "https://via.placeholder.com/300"}
                         alt={branding.title || "Brand Image"}
                         sx={{
+                          height: '200px',  
                           objectFit: "cover",
                           backgroundColor: "black"
                         }}
@@ -226,7 +226,7 @@ export default function BrandingPage(): React.JSX.Element {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: '100vh',  // Full viewport height
+                  height: '60vh',  // Full viewport height
                   width: '100%',    // Full width of the screen
                 }}
               >
