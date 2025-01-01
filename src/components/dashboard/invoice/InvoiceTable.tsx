@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Stack, Typography, TablePagination, CircularProgress } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
 
@@ -25,10 +25,10 @@ interface InvoiceTableProps {
     onDeleteOrder: (orderId: string) => void;
     page: number;
     rowsPerPage: number;
-    totalOrders: number;
+    totalOrders: number;  // total orders to pass for pagination
     handleChangePage: (event: unknown, newPage: number) => void;
     handleRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    isLoading: boolean; // New prop to indicate loading state
+    isLoading: boolean; 
 }
 
 const InvoiceTable: React.FC<InvoiceTableProps> = ({
@@ -42,7 +42,6 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
     handleRowsPerPageChange,
     isLoading
 }) => {
-    // Show a message when no orders are available after filtering search
     const hasOrders = orders.length > 0;
 
     return (
@@ -61,7 +60,6 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                 </TableHead>
                 <TableBody>
                     {isLoading ? (
-                        // Show a loader while data is loading
                         <TableRow>
                             <TableCell colSpan={7} align="center" sx={{ padding: '16px' }}>
                                 <CircularProgress size={40} />
@@ -129,10 +127,9 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                     )}
                 </TableBody>
             </Table>
-
             <TablePagination
                 component="div"
-                count={totalOrders}
+                count={totalOrders}  // Pass total orders for pagination
                 page={page}
                 onPageChange={handleChangePage}
                 rowsPerPage={rowsPerPage}
