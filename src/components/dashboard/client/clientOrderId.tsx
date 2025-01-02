@@ -158,12 +158,12 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                 <TableCell>{order._id}</TableCell>
                 <TableCell>{order.title}</TableCell>
                 <TableCell>{truncateDescription(order.description)}</TableCell>
-                <TableCell>{order.price}</TableCell>
+                <TableCell>${order.price}</TableCell>
                 <TableCell sx={{
                   color: order.discountPrice === 0 ? 'red' : 'green'
                 }}
                 >
-                  {order.discountPrice == 0 ? '--' : order.discountPrice}</TableCell>
+                  ${order.discountPrice == 0 ? '--' : order.discountPrice}</TableCell>
                 <TableCell>{order.brand ? order.brand.title : 'N/A'}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(order)} color="primary">
@@ -254,7 +254,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                   Price:
                 </Typography>
                 <Typography variant="body1" sx={{ width: '55%', textAlign: 'right', color: '#222' }}>
-                  {selectedOrder.price}
+                  ${selectedOrder.price}
                 </Typography>
               </Box>
 
@@ -267,7 +267,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                   Discount Price:
                 </Typography>
                 <Typography variant="body1" sx={{ width: '55%', textAlign: 'right', color: selectedOrder.discountPrice === 0 ? 'red' : 'green' }}>
-                  {selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice}
+                  ${selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice}
                 </Typography>
               </Box>
 

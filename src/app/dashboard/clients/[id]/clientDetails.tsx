@@ -23,7 +23,8 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
-  SelectChangeEvent
+  SelectChangeEvent,
+  InputAdornment
 } from "@mui/material";
 import Swal from "sweetalert2";
 import BackIcon from "@/components/BackIcon";
@@ -82,7 +83,7 @@ export default function clientDetails() {
     description: '',
     price: '',
     discountPrice: '',
-    
+
   }); // State to hold order form data
 
   const [formErrors, setFormErrors] = useState({
@@ -91,7 +92,7 @@ export default function clientDetails() {
     discountPrice: '',
     description: '',
     brandId: '',
-    
+
   });
 
   const handleModalClose = () => {
@@ -130,7 +131,7 @@ export default function clientDetails() {
     if (!orderData.price) {
       errors.price = 'Price is required';
     }
-    
+
 
     if (!orderData.description) {
       errors.description = 'Description is required';
@@ -675,8 +676,12 @@ export default function clientDetails() {
             sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }}
             error={!!formErrors.price}
             helperText={formErrors.price}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
           />
-           <TextField
+
+          <TextField
             label="Discount"
             name="discountPrice"
             value={orderData.discountPrice}
@@ -687,8 +692,11 @@ export default function clientDetails() {
             type="number"
             variant="outlined"
             sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }}
-            error={!!formErrors.price}
-            helperText={formErrors.price}
+            error={!!formErrors.discountPrice}
+            helperText={formErrors.discountPrice}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
           />
           <TextField
             label="Description"
@@ -752,7 +760,7 @@ export default function clientDetails() {
 
 
 
-      <ClientOrders clientId={Array.isArray(id) ? id[0] : id ?? ''}  />
+      <ClientOrders clientId={Array.isArray(id) ? id[0] : id ?? ''} />
 
     </Box>
 

@@ -86,9 +86,9 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                                         (order.description.split(' ').length > 5 ? '...' : '')}
                                 </TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: order.discountPrice === 0 ? 'red' : 'green', textAlign: 'center' }}>
-                                    {order.discountPrice === 0 ? '--' : order.discountPrice}
+                                    ${order.discountPrice === 0 ? '--' : order.discountPrice}
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>{order.price}</TableCell>
+                                <TableCell sx={{ fontWeight: 500, color: '#27AE60' }}>${order.price}</TableCell>
                                 <TableCell sx={{ fontWeight: 500, color: '#3498DB' }}>{order.status}</TableCell>
                                 <TableCell>
                                     <Stack direction="row" spacing={2}>

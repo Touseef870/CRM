@@ -192,7 +192,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
                   color: selectedOrder.discountPrice === 0 ? '#E74C3C' : '#27AE60',
                 }}
               >
-                {selectedOrder.discountPrice !== 0 ? selectedOrder.discountPrice : '--'}
+                ${selectedOrder.discountPrice !== 0 ? selectedOrder.discountPrice : '--'}
               </Typography>
 
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
@@ -201,7 +201,7 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
                 Price:
               </Typography>
               <Typography variant="body1" sx={{ fontSize: 16, color: '#27AE60' }}>
-                {selectedOrder.price !== 0 ? selectedOrder.price : '-'}
+                ${selectedOrder.price !== 0 ? selectedOrder.price : '-'}
               </Typography>
 
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />

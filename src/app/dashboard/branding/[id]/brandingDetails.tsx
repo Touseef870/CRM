@@ -296,10 +296,10 @@ const BrandingDetails = (): React.JSX.Element | null => {
                     {order?.status || "No status available"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
-                    {order?.price || 0}
+                    ${order?.price || 0}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", fontWeight: "900", padding: "16px",color: order.discountPrice === 0 ? 'red' : 'green' }}>
-                    {order.discountPrice === 0 ? '--' : order.discountPrice.toFixed(2)}
+                    ${order.discountPrice === 0 ? '--' : order.discountPrice.toFixed(2)}
                   </TableCell>
 
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
@@ -405,7 +405,7 @@ const BrandingDetails = (): React.JSX.Element | null => {
                   <strong>Price:</strong>
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  {selectedOrder.price?.toFixed(2)}
+                  ${selectedOrder.price?.toFixed(2)}
                 </Typography>
               </Box>
 
@@ -415,7 +415,7 @@ const BrandingDetails = (): React.JSX.Element | null => {
                   <strong>Discounted Price:</strong>
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: "900", textAlign: "center",  color: selectedOrder.discountPrice === 0 ? 'red' : 'green' }}>
-                  {selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice.toFixed(2)}
+                  ${selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice.toFixed(2)}
                 </Typography>
 
               </Box>
