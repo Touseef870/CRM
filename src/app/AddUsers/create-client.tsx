@@ -100,7 +100,7 @@ const ClientForm: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 4 } }}>
+        <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 0 } }}>
             <Typography
                 variant="h4"
                 sx={{

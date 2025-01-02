@@ -77,19 +77,21 @@ export default function AddUser() {
       <Box
         sx={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: 'url(https://img.freepik.com/free-vector/beautiful-grey-papercut-background_1035-14108.jpg?t=st=1732728284~exp=1732731884~hmac=fc3f54f6777af35af1a03cde2f21b2d8ca462ad124b168b672e62205a3d93643&w=740)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          top: -50,
+          left: -22,
+          right: -24,
+          bottom: -30,
+          backgroundImage: 'url(https://img.freepik.com/free-vector/abstract-background-wallpaper-grey-geometric-circle-pattern-vector_53876-140223.jpg)',
+          backgroundSize: 'cover', // Ensures full coverage
+          backgroundPosition: 'center', // Ensures the image is aligned with the top-center of the screen
+          backgroundRepeat: 'repeat', // Prevents image repetition
           filter: 'blur(0px)',
           zIndex: 1,
           opacity: 0.5,
+          height: '800px', // Ensures the background fills the screen
         }}
       />
-
+  
       <Box
         sx={{
           position: 'relative',
@@ -102,11 +104,13 @@ export default function AddUser() {
           padding: '10px',
         }}
       >
-       
         <Suspense fallback={<Typography>Loading...</Typography>}>
           <FormContent />
         </Suspense>
       </Box>
     </Box>
   );
+  
+  
+  
 }

@@ -80,7 +80,7 @@ const UserForm: React.FC = () => {
 
 
     return (
-        <Container maxWidth="sm" sx={{ mt: { xs: 4, sm: 8 } }}>
+        <Container maxWidth="sm" sx={{ mt: { xs: 70, sm: 0 } }}>
             <Typography
                 variant="h4"
                 sx={{
