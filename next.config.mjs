@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
@@ -12,8 +11,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true, // Ignores ESLint errors during builds
   },
- 
-  
+
   webpack: (config, { isServer }) => {
     config.module.rules.push({
       test: /\.css$/,
@@ -30,6 +28,15 @@ const nextConfig = {
       fs: false, // Avoids "fs" module errors in server-side code
     };
 
+    // Add alias to avoid using localStorage on the server-side
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        localStorage: path.resolve(__dirname, 'src/utils/noLocalStorage.js'), // Point to a dummy file
+      };
+    }
+
+    // Optimization for client-side only code
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -43,16 +50,16 @@ const nextConfig = {
   env: {
     customKey: 'yourValue',
   },
-  // output: 'export',
+
   output: 'standalone',
 
   reactStrictMode: true,
+
   images: {
     unoptimized: true, // Disable image optimization for cPanel hosting
   },
-  distDir: 'build', // Optional: Change the build directory if needed
 
-
+  distDir: '.next', // Optional: Change the build directory if needed
 };
 
 export default nextConfig;
