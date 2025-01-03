@@ -59,7 +59,7 @@ const nextConfig = {
     unoptimized: true, // Disable image optimization for cPanel hosting
   },
 
-  distDir: 'build', // Optional: Change the build directory if needed
+  distDir: '.next', // Optional: Change the build directory if needed
 };
 
 export default nextConfig;
