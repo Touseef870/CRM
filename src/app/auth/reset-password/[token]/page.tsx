@@ -14,11 +14,17 @@ import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { GuestGuard } from '@/components/auth/guest-guard';
 import { Layout } from '@/components/auth/layout';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function ResetPasswordPage(): React.JSX.Element {
     const [isPending, setIsPending] = React.useState<boolean>(false);
+    const [showPassword, setShowPassword] = React.useState<boolean>(false);  // Password visibility state
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);  // Confirm password visibility state
     const { token } = useParams<{ token: string }>() as { token: string };
     console.log(token);
+
     const {
         handleSubmit,
         control,
@@ -44,7 +50,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
 
         try {
             const response = await axios.post(
-                `https://api-vehware-crm.vercel.app/api/auth/reset/${token}`, 
+                `https://api-vehware-crm.vercel.app/api/auth/reset/${token}`,
                 {
                     newPassword: data.password,
                 },
@@ -61,7 +67,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
                     text: "Your password has been reset successfully.",
                     icon: "success",
                 }).then(() => {
-                    window.location.href = '/auth/sign-in'; 
+                    window.location.href = '/auth/sign-in';
                 });
             }
         } catch (error: any) {
@@ -95,7 +101,19 @@ export default function ResetPasswordPage(): React.JSX.Element {
                                 render={({ field }) => (
                                     <FormControl error={Boolean(errors.password)} fullWidth>
                                         <InputLabel>Password</InputLabel>
-                                        <OutlinedInput {...field} label="Password" type="password" />
+                                        <OutlinedInput
+                                            {...field}
+                                            label="Password"
+                                            type={showPassword ? 'text' : 'password'}  // Toggle password visibility
+                                            endAdornment={
+                                                <IconButton
+                                                    onClick={() => setShowPassword((prev) => !prev)}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            }
+                                        />
                                         {errors.password && (
                                             <FormHelperText>{String(errors.password.message)}</FormHelperText>
                                         )}
@@ -115,7 +133,19 @@ export default function ResetPasswordPage(): React.JSX.Element {
                                 render={({ field }) => (
                                     <FormControl error={Boolean(errors.confirmPassword)} fullWidth>
                                         <InputLabel>Confirm Password</InputLabel>
-                                        <OutlinedInput {...field} label="Confirm Password" type="password" />
+                                        <OutlinedInput
+                                            {...field}
+                                            label="Confirm Password"
+                                            type={showConfirmPassword ? 'text' : 'password'}  // Toggle confirm password visibility
+                                            endAdornment={
+                                                <IconButton
+                                                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                                    edge="end"
+                                                >
+                                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            }
+                                        />
                                         {errors.confirmPassword && (
                                             <FormHelperText>{String(errors.confirmPassword.message)}</FormHelperText>
                                         )}
