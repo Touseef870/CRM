@@ -15,7 +15,7 @@ export default function Employee(): React.JSX.Element {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [employ, setEmploy] = useState<Customer[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { storedValue } = useContext(AppContext)!;
   const [searchQuery, setSearchQuery] = useState<string>('');
