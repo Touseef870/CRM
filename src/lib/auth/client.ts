@@ -112,10 +112,7 @@ class AuthClient {
 
     const parsedData = JSON.parse(storedData);
     const currentTime = new Date().getTime();
-    
-    console.log('currentTime', currentTime);
-    console.log('currentTime', parsedData);
-    console.log('currentTime', currentTime > parsedData.expirationTime);
+
 
     if (currentTime > parsedData.expirationTime) {
       console.log('Token has expired');
