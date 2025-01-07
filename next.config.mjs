@@ -29,12 +29,12 @@ const nextConfig = {
     };
 
     // Add alias to avoid using localStorage on the server-side
-    if (isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        localStorage: path.resolve(__dirname, 'src/utils/noLocalStorage.js'), // Point to a dummy file
-      };
-    }
+    // if (isServer) {
+    //   config.resolve.alias = {
+    //     ...config.resolve.alias,
+    //     localStorage: path.resolve(__dirname, 'src/utils/noLocalStorage.js'), // Point to a dummy file
+    //   };
+    // }
 
     // Optimization for client-side only code
     if (!isServer) {
@@ -45,10 +45,6 @@ const nextConfig = {
     }
 
     return config;
-  },
-
-  env: {
-    customKey: 'yourValue',
   },
 
   output: 'standalone',
