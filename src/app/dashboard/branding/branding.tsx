@@ -11,7 +11,7 @@ import { Plus as PlusIcon } from '@phosphor-icons/react';
 import axios from 'axios';
 import { type Integration } from '@/components/dashboard/branding/branding-card';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
-import { Card, CardContent, CardMedia, CircularProgress, Grid } from '@mui/material';
+import { Card, CardContent, CardMedia, CircularProgress, Grid, Skeleton } from '@mui/material';
 import AddBrand from '@/components/dashboard/branding/add-brand';
 import Link from 'next/link';
 
@@ -107,20 +107,19 @@ export default function BrandingPage(): React.JSX.Element {
 
 
   return (
-
-
     <Stack spacing={4}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4"> Our Brands</Typography>
+          <Typography variant="h4">Our Brands</Typography>
         </Stack>
         <div>
-          <Button color='primary' startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal}>
+          <Button color="primary" startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpenAddBrandModal}>
             Add
           </Button>
         </div>
       </Stack>
-
+  
+      {/* Search Input (No Skeleton Loader) */}
       <div style={{ position: 'relative', display: 'inline-block', width: '30%' }}>
         <input
           type="text"
@@ -147,111 +146,109 @@ export default function BrandingPage(): React.JSX.Element {
           }}
         />
       </div>
-
-      {
-        loading ? (
-          <Box
+  
+      {/* Skeleton for Cards */}
+      {loading ? (
+        <Grid container spacing={4}>
+          {[...Array(6)].map((_, index) => (
+            <Grid item key={index} lg={4} md={6} xs={12}>
+              <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: 2 }} />
+              <Skeleton variant="text" width="60%" height={30} sx={{ mt: 2, borderRadius: 1 }} />
+              <Skeleton variant="text" width="80%" height={20} sx={{ mt: 1, borderRadius: 1 }} />
+            </Grid>
+          ))}
+        </Grid>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : (
+        <Grid container spacing={4}>
+          {filteredBranding.length > 0 ? (
+            filteredBranding.map((branding) => (
+              <Grid item key={branding.id} lg={4} md={6} xs={12}>
+                <Link href={`/dashboard/branding/${branding.id}`}>
+                  <Card
+                    sx={{
+                      maxWidth: '100%',
+                      boxShadow: 3,
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      image={branding.logo || 'https://via.placeholder.com/300'}
+                      alt={branding.title || 'Brand Image'}
+                      sx={{
+                        height: '200px',
+                        objectFit: 'cover',
+                        backgroundColor: 'black',
+                      }}
+                    />
+                    <CardContent sx={{ padding: 3 }}>
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        sx={{
+                          fontWeight: 'bold',
+                          fontSize: '1.2rem',
+                          color: '#333',
+                        }}
+                      >
+                        {branding.title || 'Brand Title'}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          fontSize: '1rem',
+                          color: '#555',
+                          lineHeight: 1.6,
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {branding.description || 'Brand description goes here.'}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </Grid>
+            ))
+          ) : (
+            <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '80vh',
+              height: '100vh', // Set to 100vh to cover the full viewport height
+              width: '100%',   // Full width of the screen
             }}
           >
-            <CircularProgress size={50} color="primary" />
+            <Typography variant="h5" color="error">
+              There is no data available
+            </Typography>
           </Box>
-        ) : error ? (
-          <Typography color="error">{error}</Typography>
-        ) : (
-          <Grid container spacing={4}>
-            {
-              !!filteredBranding.length && filteredBranding.map((branding) => (
-                <Grid item key={branding.id} lg={4} md={6} xs={12}>
-                  <Link href={`/dashboard/branding/${branding.id}`}>
-                    <Card
-                      sx={{
-                        maxWidth: "100%",
-                        boxShadow: 3,
-                        borderRadius: 2,
-                        overflow: "hidden",
-                        transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"     
-                        image={branding.logo || "https://via.placeholder.com/300"}
-                        alt={branding.title || "Brand Image"}
-                        sx={{
-                          height: '200px',  
-                          objectFit: "cover",
-                          backgroundColor: "black"
-                        }}
-                      />
-                      <CardContent sx={{ padding: 3 }}>
-                        <Typography
-                          gutterBottom
-                          variant="h5"
-                          component="div"
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "1.2rem",
-                            color: "#333",
-                          }}
-                        >
-                          {branding.title || "Brand Title"}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            fontSize: "1rem",
-                            color: "#555",
-                            lineHeight: 1.6,
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {branding.description || "Brand description goes here."}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </Grid>
-              ))
-            }
-            {
-              !filteredBranding.length && <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '60vh',  // Full viewport height
-                  width: '100%',    // Full width of the screen
-                }}
-              >
-                <Typography variant="h5" color="error">
-                  There is no data available
-                </Typography>
-              </Box>
-
-
-            }
-          </Grid>
-        )}
-      {
-        filteredBranding?.length > 0 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Pagination
-              count={(totalItems / itemsPerPage)}
-              page={currentPage}
-              onChange={handlePageChange}
-              size="small"
-            />
-          </Box>
-        )
-      }
-
+          
+          )}
+        </Grid>
+      )}
+  
+      {/* Pagination */}
+      {filteredBranding?.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Pagination
+            count={Math.ceil(totalItems / itemsPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            size="small"
+          />
+        </Box>
+      )}
+  
+      {/* Add Brand Modal */}
       {openAddBrandModal && (
         <AddBrand open={openAddBrandModal} handleClose={handleCloseAddBrandModal} />
       )}

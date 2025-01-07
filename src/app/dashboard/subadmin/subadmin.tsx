@@ -17,7 +17,8 @@ import {
     useMediaQuery,
     useTheme,
     InputAdornment,
-    TextField
+    TextField,
+    Skeleton
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -38,12 +39,12 @@ interface SubAdmin {
 }
 
 function SubAdminPage() {
-    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]); 
-    const [loading, setLoading] = useState<boolean>(true); 
+    const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(0); 
-    const [rowsPerPage, setRowsPerPage] = useState(5); 
-    const [searchTerm, setSearchTerm] = useState<string>(''); 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchTerm, setSearchTerm] = useState<string>('');
     const [totalSubAdmins, setTotalSubAdmins] = useState<number>(0);
 
     const theme = useTheme();
@@ -56,7 +57,7 @@ function SubAdminPage() {
                 if (adminLoginData) {
                     const token = JSON.parse(adminLoginData).token;
                     const skip = page * rowsPerPage;
-                    const limit = rowsPerPage; 
+                    const limit = rowsPerPage;
 
                     const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/admins', {
                         params: { skip, limit },
@@ -68,7 +69,7 @@ function SubAdminPage() {
 
                     if (response.status === 200) {
                         setSubAdmins(response.data.data.admins);
-                        setTotalSubAdmins(response.data.data.total); 
+                        setTotalSubAdmins(response.data.data.total);
                     }
                 } else {
                     setError('Admin login data is missing.');
@@ -76,12 +77,12 @@ function SubAdminPage() {
             } catch (err) {
                 setError('Failed to fetch data.');
             } finally {
-                setLoading(false); 
+                setLoading(false);
             }
         };
 
         fetchSubAdmins();
-    }, [page, rowsPerPage]); 
+    }, [page, rowsPerPage]);
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -129,7 +130,7 @@ function SubAdminPage() {
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
+        setPage(0);
     };
 
     const formatDate = (dateString: string) => {
@@ -146,9 +147,111 @@ function SubAdminPage() {
 
     if (loading) {
         return (
-            <Grid container justifyContent="center" alignItems="center" sx={{ height: '96vh' }}>
-                <CircularProgress />
+            <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                sx={{
+                    height: '80vh',
+                    marginTop: '-3vh', // Slight upward shift
+                }}
+            >
+                <Grid item xs={12}>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        sx={{
+                            mb: 4, // Reduced margin-bottom
+                            p: 2,
+                            backgroundColor: 'background.paper',
+                            borderRadius: '8px',
+                        }}
+                    >
+
+                        <TextField
+                            label="Search here"
+                            variant="outlined"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            sx={{
+                                width: '100%',
+                                maxWidth: '300px',
+                                borderRadius: '8px',
+                                boxShadow: 1,
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: 'text.secondary' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Stack>
+
+                    <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 10 }}>
+                        <Table>
+                            <TableHead sx={{ backgroundColor: 'primary.main' }}>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>Email</TableCell>
+                                    {!isSmallScreen && (
+                                        <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>Contact</TableCell>
+                                    )}
+                                    {!isSmallScreen && (
+                                        <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>Date of Birth</TableCell>
+                                    )}
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>CNIC</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>Salary</TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white', height: 56 }}>
+                                        Actions
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {[...Array(5)].map((_, index) => (
+                                    <TableRow key={index} sx={{ height: 56 }}>
+                                        <TableCell sx={{ height: 56 }}>
+                                            <Skeleton variant="text" width="80%" height={20} />
+                                        </TableCell>
+                                        <TableCell sx={{ height: 56 }}>
+                                            <Skeleton variant="text" width="80%" height={20} />
+                                        </TableCell>
+                                        {!isSmallScreen && (
+                                            <TableCell sx={{ height: 56 }}>
+                                                <Skeleton variant="text" width="80%" height={20} />
+                                            </TableCell>
+                                        )}
+                                        {!isSmallScreen && (
+                                            <TableCell sx={{ height: 56 }}>
+                                                <Skeleton variant="text" width="80%" height={20} />
+                                            </TableCell>
+                                        )}
+                                        <TableCell sx={{ height: 56 }}>
+                                            <Skeleton variant="text" width="80%" height={20} />
+                                        </TableCell>
+                                        <TableCell sx={{ height: 56 }}>
+                                            <Skeleton variant="text" width="80%" height={20} />
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ height: 56 }}>
+                                            <Skeleton
+                                                variant="circular"
+                                                width={40}
+                                                height={40}
+                                                sx={{
+                                                    display: 'inline-block',
+                                                    margin: '0 auto',
+                                                }}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
             </Grid>
+
         );
     }
 
@@ -162,184 +265,184 @@ function SubAdminPage() {
 
     return (
         <Grid item xs={12}>
-        <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{
-                mb: 3,
-                p: 2,
-                backgroundColor: 'background.paper',
-                borderRadius: '8px',
-            }}
-        >
-            <TextField
-                label="Search here"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+            <Stack
+                direction="row"
+                justifyContent="space-between"
                 sx={{
-                    width: '100%',
-                    maxWidth: '300px',
+                    mb: 3,
+                    p: 2,
+                    backgroundColor: 'background.paper',
                     borderRadius: '8px',
-                    boxShadow: 1,
                 }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon sx={{ color: 'text.secondary' }} />
-                        </InputAdornment>
-                    ),
+            >
+                <TextField
+                    label="Search here"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    sx={{
+                        width: '100%',
+                        maxWidth: '300px',
+                        borderRadius: '8px',
+                        boxShadow: 1,
+                    }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon sx={{ color: 'text.secondary' }} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+            </Stack>
+
+            <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 10 }}>
+                <Table>
+                    <TableHead sx={{ backgroundColor: 'primary.main' }}>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Name</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Email</TableCell>
+                            {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Contact</TableCell>}
+                            {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Date of Birth</TableCell>}
+                            <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>CNIC</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Salary</TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 'bold', color: 'white' }}>
+                                Actions
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredSubAdmins.map((subAdmin) => (
+                            <TableRow
+                                key={subAdmin._id}
+                                sx={{
+                                    '&:hover': { backgroundColor: '#f0f0f0' },
+                                    '&:nth-of-type(even)': { backgroundColor: '#fafafa' },
+                                }}
+                            >
+                                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.name}
+                                    </Link>
+                                </TableCell>
+                                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.email}
+                                    </Link>
+                                </TableCell>
+                                {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.phone}
+                                    </Link>
+                                </TableCell>}
+                                {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {formatDate(subAdmin.dob)}
+                                    </Link>
+                                </TableCell>}
+                                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.cnic}
+                                    </Link>
+                                </TableCell>
+                                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Link
+                                        href={`/dashboard/subadmin/${subAdmin._id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {subAdmin.salary}
+                                    </Link>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <IconButton
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(subAdmin._id);
+                                        }}
+                                        color="error"
+                                        sx={{
+                                            padding: isSmallScreen ? '6px' : '12px',
+                                            color: red[800],
+                                            '&:hover': {
+                                                backgroundColor: 'white',
+                                                color: red[500],
+                                            },
+                                        }}
+                                    >
+                                        <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={totalSubAdmins}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                sx={{
+                    mt: 2,
+                    '& .MuiTablePagination-selectLabel': {
+                        fontWeight: 'bold',
+                    },
+                    '& .MuiTablePagination-select': {
+                        borderRadius: '8px',
+                        backgroundColor: 'background.paper',
+                        boxShadow: 1,
+                    },
+                    '& .MuiTablePagination-actions': {
+                        color: 'text.primary',
+                    },
                 }}
             />
-        </Stack>
-    
-        <TableContainer sx={{ overflowX: 'auto', borderRadius: '8px', boxShadow: 10 }}>
-            <Table>
-                <TableHead sx={{ backgroundColor: 'primary.main' }}>
-                    <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Name</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Email</TableCell>
-                        {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Contact</TableCell>}
-                        {!isSmallScreen && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Date of Birth</TableCell>}
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>CNIC</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Salary</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', color: 'white' }}>
-                            Actions
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {filteredSubAdmins.map((subAdmin) => (
-                   <TableRow
-                   key={subAdmin._id}
-                   sx={{
-                       '&:hover': { backgroundColor: '#f0f0f0' },
-                       '&:nth-of-type(even)': { backgroundColor: '#fafafa' },
-                   }}
-               >
-                   <TableCell sx={{  maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {subAdmin.name}
-                       </Link>
-                   </TableCell>
-                   <TableCell sx={{  maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {subAdmin.email}
-                       </Link>
-                   </TableCell>
-                   {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {subAdmin.phone}
-                       </Link>
-                   </TableCell>}
-                   {!isSmallScreen && <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {formatDate(subAdmin.dob)}
-                       </Link>
-                   </TableCell>}
-                   <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {subAdmin.cnic}
-                       </Link>
-                   </TableCell>
-                   <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                       <Link
-                           href={`/dashboard/subadmin/${subAdmin._id}`}
-                           style={{
-                               textDecoration: 'none',
-                               color: 'inherit',
-                               display: 'block',
-                           }}
-                       >
-                           {subAdmin.salary}
-                       </Link>
-                   </TableCell>
-                   <TableCell align="right">
-                       <IconButton
-                           onClick={(e) => {
-                               e.stopPropagation();
-                               handleDelete(subAdmin._id);
-                           }}
-                           color="error"
-                           sx={{
-                               padding: isSmallScreen ? '6px' : '12px',
-                               color: red[800],
-                               '&:hover': {
-                                   backgroundColor: 'white',
-                                   color: red[500],
-                               },
-                           }}
-                       >
-                           <DeleteIcon fontSize={isSmallScreen ? 'small' : 'medium'} />
-                       </IconButton>
-                   </TableCell>
-               </TableRow>
-               
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    
-        <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalSubAdmins} 
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{
-                mt: 2,
-                '& .MuiTablePagination-selectLabel': {
-                    fontWeight: 'bold',
-                },
-                '& .MuiTablePagination-select': {
-                    borderRadius: '8px',
-                    backgroundColor: 'background.paper',
-                    boxShadow: 1,
-                },
-                '& .MuiTablePagination-actions': {
-                    color: 'text.primary',
-                },
-            }}
-        />
-    </Grid>
-    
+        </Grid>
+
     );
 }
 

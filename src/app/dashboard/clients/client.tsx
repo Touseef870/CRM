@@ -66,22 +66,7 @@ export default function Employee(): React.JSX.Element {
 
   const paginatedEmployees = employ ? employ.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : [];
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          textAlign: 'center',
-        }}
-      >
-        <CircularProgress size={60} />
-      </Box>
-    );
-  }
+
 
   if (error) {
     return <Typography variant="h6" color="error">{error}</Typography>;

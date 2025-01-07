@@ -12,13 +12,11 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
-
+import { Skeleton } from '@mui/material';
 import { useSelection } from '@/hooks/use-selection';
 import Link from 'next/link';
 
-function noop(): void {
-}
+function noop(): void {}
 
 export interface Customer {
   _id: string;
@@ -28,7 +26,7 @@ export interface Customer {
   phone: string;
   location: string;
   salary: string;
-  serviceType : string;
+  serviceType: string;
 }
 
 interface CustomersTableProps {
@@ -44,6 +42,15 @@ export function CustomersTable({
   page = 0,
   rowsPerPage = 0,
 }: CustomersTableProps): React.JSX.Element {
+  const [loading, setLoading] = React.useState(true); // Define the loading state
+
+  // Simulate loading for demonstration purposes
+  React.useEffect(() => {
+    setTimeout(() => {
+      setLoading(false); // After 3 seconds, set loading to false (simulating data fetch)
+    }, 3000);
+  }, []);
+
   const rowIds = React.useMemo(() => {
     return rows.map((customer) => customer._id);
   }, [rows]);
@@ -59,7 +66,6 @@ export function CustomersTable({
         <Table sx={{ minWidth: '800px' }}>
           <TableHead>
             <TableRow>
-              
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Location</TableCell>
@@ -67,36 +73,58 @@ export function CustomersTable({
               <TableCell>Service</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {rows.map((row) => {
-              const isSelected = selected?.has(row._id);
+            {/* Check if loading is true, if yes, show Skeleton loader */}
+            {loading ? (
+              [...Array(5)].map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Stack direction="row" spacing={2}>
+                      <Skeleton variant="circular" width={40} height={40} />
+                      <Skeleton variant="text" width="100px" />
+                    </Stack>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width="150px" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width="100px" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width="120px" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width="120px" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              rows.map((row) => {
+                const isSelected = selected?.has(row._id);
 
-              return (
-                <Link href={`/dashboard/clients/${row._id}`} key={row._id} passHref legacyBehavior>
-                  <TableRow hover key={row._id} selected={isSelected} sx={{ cursor: 'pointer' }}>
-                    
-                    <TableCell>
-                      <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                        <Avatar src={row.avatar} />
-                        <Typography variant="subtitle2">{row.name}</Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>
-                      Pakistan
-                    </TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>{row.serviceType}</TableCell>
-                  </TableRow>
-                </Link>
-              );
-
-            })}
+                return (
+                  <Link href={`/dashboard/clients/${row._id}`} key={row._id} passHref legacyBehavior>
+                    <TableRow hover key={row._id} selected={isSelected} sx={{ cursor: 'pointer' }}>
+                      <TableCell>
+                        <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
+                          <Avatar src={row.avatar} />
+                          <Typography variant="subtitle2">{row.name}</Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>Pakistan</TableCell>
+                      <TableCell>{row.phone}</TableCell>
+                      <TableCell>{row.serviceType}</TableCell>
+                    </TableRow>
+                  </Link>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </Box>
       <Divider />
-
     </Card>
   );
 }
