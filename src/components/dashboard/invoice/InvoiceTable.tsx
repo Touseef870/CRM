@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Stack, Typography, TablePagination, CircularProgress } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Stack, Typography, TablePagination, Skeleton } from '@mui/material';
 import { Visibility, Delete } from '@mui/icons-material';
 
 interface Order {
@@ -61,10 +61,22 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                 <TableBody>
                     {isLoading ? (
                         <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ padding: '16px' }}>
-                                <CircularProgress size={40} />
-                            </TableCell>
-                        </TableRow>
+                        <TableCell colSpan={7} align="center" sx={{ padding: '14px' }}>
+                            <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="center">
+                                {/* Circular Skeleton */}
+                                <Skeleton variant="circular" width={40} height={40} />
+                                
+                                {/* Rectangular Skeletons */}
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                                <Skeleton variant="rectangular" width="12%" height={30} sx={{ borderRadius: '20px' }} />
+                            </Stack>
+                        </TableCell>
+                    </TableRow>
+                    
                     ) : hasOrders ? (
                         orders.map((order) => (
                             <TableRow key={order._id} sx={{ '&:hover': { backgroundColor: '#f0f8ff' } }}>

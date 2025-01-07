@@ -479,7 +479,7 @@ export default function EmployeeDetails() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body1" sx={{ color: grey[700] }}>
-                                        <strong>Salary:</strong> {`$${employee?.salary.toLocaleString()}`}
+                                        <strong>Salary:</strong> {`${employee?.salary.toLocaleString()}`}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
