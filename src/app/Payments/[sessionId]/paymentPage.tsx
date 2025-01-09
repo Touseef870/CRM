@@ -108,6 +108,52 @@ export default function PaymentPage() {
 
   console.log(paymentDetails, "paymentDetails")
 
+if (paymentDetails.isPaid){
+
+return (
+ 
+    <div className="flex items-center justify-center h-screen bg-gray-100 p-4">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full text-center p-6">
+        {/* Success Icon */}
+        <div className="flex justify-center mb-4">
+          <svg
+            className="w-16 h-16 text-green-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12l2 2 4-4M7 12l5 5 7-7"
+            />
+          </svg>
+        </div>
+
+        {/* Success Message */}
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          Payment Successful!
+        </h1>
+        <p className="text-gray-600">
+          Thank you! Your payment has been processed successfully.
+        </p>
+
+        {/* CTA Button (optional) */}
+        <div className="mt-6">
+         
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
   if (!isHydrated || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">

@@ -53,7 +53,7 @@ export default function BrandingPage(): React.JSX.Element {
           },
         });
 
-        const resp = response.data.data
+        const resp = response.data.data.brands
         let fetchedData: any = []
         if (Array.isArray(resp) && resp.length) {
           fetchedData = resp.map((item: any) => ({

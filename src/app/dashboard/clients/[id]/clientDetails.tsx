@@ -57,6 +57,8 @@ interface OrderData {
   description: string;
   price: string;
   discountPrice: string;
+  totalAmount: string;
+  
 }
 
 
@@ -83,6 +85,7 @@ export default function clientDetails() {
     description: '',
     price: '',
     discountPrice: '',
+    totalAmount: '',
 
   }); // State to hold order form data
 
@@ -92,6 +95,7 @@ export default function clientDetails() {
     discountPrice: '',
     description: '',
     brandId: '',
+    totalAmount: '',
 
   });
 
@@ -122,6 +126,7 @@ export default function clientDetails() {
       discountPrice: '',
       description: '',
       brandId: '',
+      totalAmount: '',
     };
 
     if (!orderData.title) {
@@ -211,7 +216,7 @@ export default function clientDetails() {
           }
         );
 
-        setBrands(response.data.data);
+        setBrands(response.data.data.brands);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unexpected error occurred"
@@ -354,164 +359,182 @@ export default function clientDetails() {
 
   return (
     <Box
+    sx={{
+      p: { xs: 3, sm: 5 },
+      backgroundColor: grey[100],
+      minHeight: "100vh",
+      position: "relative",
+      borderRadius: "16px",
+      overflow: "hidden",
+    }}
+  >
+    <Grid
+      item
+      xs={6}
       sx={{
-        p: { xs: 4, sm: 6 },
-        backgroundColor: grey[100],
-        minHeight: "100vh",
-        position: "relative",
-        borderRadius: '20px',
+        position: "absolute",
+        top: { xs: -40, sm: -50 },
+        left: { xs: 2, sm: 16 },
+        zIndex: 30,
       }}
     >
-      <Grid
-        item
-        xs={6}
+      <BackIcon />
+    </Grid>
+  
+    <Grid
+      item
+      xs={12}
+      sx={{
+        position: "absolute",
+        top: { xs: 0, sm: 16 },
+        right: { xs: 12, sm: 16 },
+      }}
+    >
+      <IconButton
+        onClick={confirmDelete}
         sx={{
-          position: "absolute",
-          top: -50,
-          left: 2,
-          zIndex: 30,
+          color: red[700],
+          borderRadius: "8px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          p: 2,
+          "&:hover": { color: red[900] },
+          transition: "all 0.3s ease",
         }}
       >
-        <BackIcon />
-      </Grid>
-
-      <Grid item xs={12} sx={{ position: "absolute", top: 16, right: 16 }}>
-        <IconButton
-          onClick={confirmDelete}
+        <DeleteIcon sx={{ fontSize: { xs: 24, sm: 30 } }} />
+      </IconButton>
+    </Grid>
+  
+    <Grid
+      container
+      spacing={3}
+      maxWidth="lg"
+      sx={{
+        margin: "0 auto",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Grid item xs={12} sx={{ textAlign: "center", mb: { xs: 2, sm: 4 } }}>
+        <Typography
+          variant="h4"
+          gutterBottom
           sx={{
-            color: red[700],
-            borderRadius: "8px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "16px",
-            "&:hover": {
-              color: "red",
-            },
-            transition: "all 0.3s ease",
-            marginBottom: 2,
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 700,
+            color: blue[800],
+            textTransform: "uppercase",
+            letterSpacing: "1.5px",
+            fontSize: { xs: "1.5rem", sm: "2rem" },
           }}
         >
-          <DeleteIcon sx={{ fontSize: 30 }} />
-        </IconButton>
+          Client Details
+        </Typography>
       </Grid>
-
-      <Grid
-        container
-        spacing={4}
-        maxWidth="lg"
-        sx={{
-          margin: "0 auto",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Grid item xs={12} sx={{ textAlign: "center", mb: 4 }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 700,
-              color: blue[800],
-              textTransform: "uppercase",
-              letterSpacing: "2px",
-              fontSize: { xs: "1.5rem", sm: "2rem" },
-            }}
-          >
-            Client Details
-          </Typography>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} sm={4}>
-              <Card
+  
+      <Grid item xs={12}>
+        <Grid container spacing={3} justifyContent="center">
+          {/* Left Card */}
+          <Grid item xs={12} sm={5} md={4}>
+            <Card
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                p: { xs: 2, sm: 3 },
+                textAlign: "center",
+                height: "100%",
+                boxShadow: 8,
+                borderRadius: 4,
+                background: `linear-gradient(to bottom, ${blue[50]}, #fff)`,
+                border: `1px solid ${grey[300]}`,
+                "&:hover": {
+                  boxShadow: 12,
+                  transform: "scale(1.02)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              <Avatar
+                src={employee.avatar || ""}
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  p: 3,
-                  textAlign: "center",
-                  height: "100%",
-                  boxShadow: 6,
-                  borderRadius: 4,
-                  background: `linear-gradient(to bottom, ${blue[50]}, #fff)`,
-                  border: `1px solid ${grey[300]}`,
-                  "&:hover": {
-                    boxShadow: 10,
-                  },
+                  width: { xs: 80, sm: 120 },
+                  height: { xs: 80, sm: 120 },
+                  mb: 2,
+                  bgcolor: blue[800],
+                  color: "common.white",
+                  fontSize: { xs: "1.5rem", sm: "2rem" },
+                  fontWeight: "bold",
+                  border: 3,
+                  boxShadow: 3,
                 }}
               >
-                <Avatar
-                  src={employee.avatar || ""}
-                  sx={{
-                    width: { xs: 100, sm: 140 },
-                    height: { xs: 100, sm: 140 },
-                    mb: 2,
-                    bgcolor: blue[800],
-                    color: "common.white",
-                    fontSize: { xs: "2rem", sm: "2.5rem" },
-                    fontWeight: "bold",
-                    border: 4,
-                    boxShadow: 3,
-                  }}
-                >
-                  {employee.name.charAt(0).toUpperCase()}
-                </Avatar>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 700,
-                    color: blue[800],
-                    textTransform: "capitalize",
-                    fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                  }}
-                >
-                  {employee.name}
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  variant="body2"
-                  sx={{
-                    fontStyle: "italic",
-                    fontSize: { xs: "0.875rem", sm: "1rem" },
-                  }}
-                >
-                  {employee.type.toUpperCase()}
-                </Typography>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={8}>
-              <Card
+                {employee.name.charAt(0).toUpperCase()}
+              </Avatar>
+              <Typography
+                variant="h6"
                 sx={{
-                  boxShadow: 6,
-                  borderRadius: 4,
-                  backgroundColor: "#ffffff",
-                  p: 3,
-                  width: "100%",
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 700,
+                  color: blue[800],
+                  textTransform: "capitalize",
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
                 }}
               >
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 700,
-                    color: blue[800],
-                    mb: 2,
-                    fontSize: { xs: "1rem", sm: "1.25rem" },
-                  }}
-                >
-                  Personal Information
-                </Typography>
-                <Divider sx={{ mb: 2, backgroundColor: grey[300] }} />
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                {employee.name}
+              </Typography>
+              <Typography
+                color="textSecondary"
+                variant="body2"
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: { xs: "0.875rem", sm: "1rem" },
+                }}
+              >
+                {employee.type.toUpperCase()}
+              </Typography>
+            </Card>
+          </Grid>
+  
+          {/* Right Card */}
+          <Grid item xs={12} sm={7} md={8}>
+            <Card
+              sx={{
+                boxShadow: 8,
+                borderRadius: 4,
+                backgroundColor: "#ffffff",
+                p: { xs: 2, sm: 3 },
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 700,
+                  color: blue[800],
+                  mb: 2,
+                  fontSize: { xs: "1rem", sm: "1.25rem" },
+                }}
+              >
+                Personal Information
+              </Typography>
+              <Divider sx={{ mb: 2, backgroundColor: grey[300] }} />
+              <Grid container spacing={2}>
+                {[
+                  { label: "Service", value: employee.serviceType },
+                  { label: "Date of Birth", value: new Date(employee.dob).toLocaleDateString() },
+                  { label: "Email", value: employee.email },
+                  { label: "Phone", value: employee.phone },
+                  { label: "Country", value: employee.country },
+                ].map((info, index) => (
+                  <Grid item xs={12} sm={6} key={index}>
                     <Typography
                       variant="body1"
                       sx={{
@@ -520,95 +543,47 @@ export default function clientDetails() {
                         fontSize: { xs: "0.875rem", sm: "1rem" },
                       }}
                     >
-                      <strong>Service:</strong> {employee.serviceType}
+                      <strong>{info.label}:</strong> {info.value}
                     </Typography>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
-                      <strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
-                      <strong>Email:</strong> {employee.email}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
-                      <strong>Phone:</strong> {employee.phone}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color: grey[700],
-                        mb: 1,
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                      }}
-                    >
-                      <strong>Country:</strong> {employee.country}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Card>
-            </Grid>
+                ))}
+              </Grid>
+            </Card>
           </Grid>
         </Grid>
       </Grid>
+    </Grid>
 
+  
 
+    <IconButton
+  onClick={handleModalOpen}
+  sx={{
+    position: "absolute",
+    top: { xs: 0 , sm: 22 }, // Move higher on mobile (xs) screens
+    left: 16,
+    bgcolor: "primary.main",
+    color: "white",
+    padding: "12px 10px",
+    borderRadius: "8px",
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "0.9rem",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    transition: "all 0.3s ease",
+    "&:hover": {
+      bgcolor: "primary.dark",
+      transform: "scale(1.05)",
+    },
+  }}
+>
+  <AddIcon sx={{ fontSize: "1.5rem" }} />
+  Add Order
+</IconButton>
 
-
-      {/* // Add Order Model */}
-      <IconButton
-        onClick={handleModalOpen}
-        sx={{
-          position: "absolute",
-          top: 16,
-          left: 16,
-          bgcolor: "primary.main",
-          color: "white",
-          padding: "12px 10px",
-          borderRadius: "8px",
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-          fontSize: "0.9rem",
-          fontWeight: "bold",
-          textTransform: "capitalize",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-          transition: "all 0.3s ease",
-          "&:hover": {
-            bgcolor: "primary.dark",
-            transform: "scale(1.05)",
-          },
-        }}
-      >
-        <AddIcon sx={{ fontSize: "1.5rem" }} />
-        Add Order
-      </IconButton>
 
       {/* Error Message */}
       {deleteError && (
@@ -721,7 +696,7 @@ export default function clientDetails() {
               label="Brand"
               error={!!formErrors.brandId}
             >
-              {brands.map((brand: any) => (
+              {(Array.isArray(brands) ? brands : []).map((brand: any) => (
                 <MenuItem key={brand._id} value={brand._id}>
                   {brand.title}
                 </MenuItem>
@@ -729,6 +704,7 @@ export default function clientDetails() {
             </Select>
             <FormHelperText>{formErrors.brandId}</FormHelperText>
           </FormControl>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose} color="primary">
