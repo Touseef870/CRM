@@ -58,28 +58,29 @@ export function MobileNav({ open, onClose }: any): React.JSX.Element {
     >
       <Stack spacing={2} sx={{ p: 3 }}>
         <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-flex' }}>
-        
+
           <img
-            src="/assets/vehwarelogo.png" 
+            src="/assets/vehwarelogo.png"
             alt="Vehware Logo"
-            style={{ height: '52px', width: 'auto', maxWidth: '500px', objectFit: 'contain' }} 
+            style={{ height: '52px', width: 'auto', maxWidth: '500px', objectFit: 'contain' }}
           />
         </Box>
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems })}
+        {renderNavItems({ pathname, items: navItems, onClose })}
       </Box>
+
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
     </Drawer>
   );
 }
 
-function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: any }): React.JSX.Element {
+function renderNavItems({ items = [], pathname, onClose }: { items?: NavItemConfig[]; pathname: any; onClose: () => void }): React.JSX.Element {
   const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
     const { key, ...item } = curr;
 
-    acc.push(<NavItem key={key} pathname={pathname} {...item} />);
+    acc.push(<NavItem key={key} pathname={pathname} onClose={onClose} {...item} />);
 
     return acc;
   }, []);
@@ -92,21 +93,29 @@ function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pat
 }
 
 
-function NavItem({ disabled, external, href, icon, matcher, pathname, title }: any): React.JSX.Element {
+
+function NavItem({ disabled, external, href, icon, matcher, pathname, title, onClose }: any): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
+
+  const handleClick = () => {
+    if (onClose) {
+      onClose(); // Close the drawer
+    }
+  };
 
   return (
     <li>
       <Box
         {...(href
           ? {
-              component: external ? 'a' : RouterLink,
-              href,
-              target: external ? '_blank' : undefined,
-              rel: external ? 'noreferrer' : undefined,
-            }
-          : { role: 'button' })}
+            component: external ? 'a' : RouterLink,
+            href,
+            target: external ? '_blank' : undefined,
+            rel: external ? 'noreferrer' : undefined,
+            onClick: handleClick, // Add onClick handler
+          }
+          : { role: 'button', onClick: handleClick })} // Handle button-like clicks
         sx={{
           alignItems: 'center',
           borderRadius: 1,
