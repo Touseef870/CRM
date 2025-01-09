@@ -109,86 +109,125 @@ export default function AddBrand({ open, handleClose }: AddBrandProps) {
 
     return (
         <Dialog
-            open={open}
-            onClose={handleClose}
-            style={{ zIndex: 1301 }}
-            maxWidth="sm"
+        open={open}
+        onClose={handleClose}
+        style={{ zIndex: 1301 }}
+        maxWidth="xs" // Adjust width to be smaller
+        fullWidth
+        PaperProps={{
+          style: {
+            padding: '16px', // Add padding inside the dialog
+            borderRadius: '12px', // Add rounded corners for a modern look
+          },
+        }}
+      >
+        <DialogTitle style={{ textAlign: 'center', fontWeight: 'bold' }}>
+          Add Brand
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            name="title"
+            label="Title"
+            variant="outlined"
             fullWidth
-        >
-            <DialogTitle>Add Brand</DialogTitle>
-            <DialogContent>
-                <TextField
-                    name="title"
-                    label="Title"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    error={!!errors.title}
-                    helperText={errors.title}
+            margin="normal"
+            value={formData.title}
+            onChange={handleFormChange}
+            error={!!errors.title}
+            helperText={errors.title}
+          />
+      
+          <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              id="image-upload"
+              style={{ display: 'none' }}
+            />
+            <label htmlFor="image-upload">
+              <Button
+                component="span"
+                startIcon={<CloudUploadIcon />}
+                variant="outlined"
+                fullWidth
+                style={{
+                  border: '1px dashed #ccc',
+                  padding: '8px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {file ? 'Image Selected' : 'Select Image'}
+              </Button>
+            </label>
+            {imagePreview && (
+              <div
+                style={{
+                  position: 'relative',
+                  maxWidth: '100%',
+                  height: '180px', // Reduced height
+                  backgroundColor: 'black', // Subtle gray background
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: '16px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                  }}
                 />
-
-                <div style={{ marginBottom: '16px' }}>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        id="image-upload"
-                        style={{ display: 'none' }}
-                    />
-                    <label htmlFor="image-upload">
-                        <Button
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                            variant="outlined"
-                            fullWidth
-                        >
-                            {file ? 'Image Selected' : 'Select Image'}
-                        </Button>
-                    </label>
-                    {imagePreview && (
-                        <img
-                            src={imagePreview}
-                            alt="Preview"
-                            style={{
-                                maxWidth: '100%',
-                                height: 'auto',
-                                objectFit: 'cover',
-                                marginTop: '16px',
-                                borderRadius: '20px',
-                            }}
-                        />
-                    )}
-                    {errors.image && (
-                        <div style={{ color: 'red', marginTop: '8px' }}>{errors.image}</div>
-                    )}
-                </div>
-
-                <TextField
-                    name="description"
-                    label="Description"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    multiline
-                    rows={4}
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    error={!!errors.description}
-                    helperText={errors.description}
-                />
-            </DialogContent>
-
-            <DialogActions>
-                <Button onClick={handleClose} color="secondary">
-                    Cancel
-                </Button>
-                <Button onClick={handleFormSubmit} variant="contained" color="primary">
-                    Submit
-                </Button>
-            </DialogActions>
-        </Dialog>
+              </div>
+            )}
+            {errors.image && (
+              <div style={{ color: 'red', marginTop: '8px', fontSize: '0.875rem' }}>
+                {errors.image}
+              </div>
+            )}
+          </div>
+      
+          <TextField
+            name="description"
+            label="Description"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            multiline
+            rows={4}
+            value={formData.description}
+            onChange={handleFormChange}
+            error={!!errors.description}
+            helperText={errors.description}
+          />
+        </DialogContent>
+      
+        <DialogActions style={{ justifyContent: 'space-between' }}>
+          <Button
+            onClick={handleClose}
+            variant="outlined"
+            color="secondary"
+            style={{ textTransform: 'none', fontWeight: 'bold' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleFormSubmit}
+            variant="contained"
+            color="primary"
+            style={{ textTransform: 'none', fontWeight: 'bold' }}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
     );
 }
 

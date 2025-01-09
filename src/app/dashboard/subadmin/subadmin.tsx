@@ -36,113 +36,117 @@ interface SubAdmin {
     dob: string;
     cnic: string;
     salary: string;
-}
-
-function SubAdminPage() {
+  }
+  
+  function SubAdminPage() {
     const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Default 5 rows per page
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [totalSubAdmins, setTotalSubAdmins] = useState<number>(0);
-
+  
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+  
     useEffect(() => {
-        const fetchSubAdmins = async () => {
-            try {
-                const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-                if (adminLoginData) {
-                    const token = JSON.parse(adminLoginData).token;
-                    const skip = page * rowsPerPage;
-                    const limit = rowsPerPage;
-
-                    const response = await axios.get('https://api-vehware-crm.vercel.app/api/credentials/admins', {
-                        params: { skip, limit },
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-
-                    if (response.status === 200) {
-                        setSubAdmins(response.data.data.admins);
-                        setTotalSubAdmins(response.data.data.total);
-                    }
-                } else {
-                    setError('Admin login data is missing.');
-                }
-            } catch (err) {
-                setError('Failed to fetch data.');
-            } finally {
-                setLoading(false);
+      const fetchSubAdmins = async () => {
+        setLoading(true);
+        try {
+          const adminLoginData: string | null = localStorage.getItem('AdminloginData');
+          if (adminLoginData) {
+            const token = JSON.parse(adminLoginData).token;
+            const skip = page * rowsPerPage;  // Correct skip calculation based on current page
+            const response = await axios.get(
+              'https://api-vehware-crm.vercel.app/api/credentials/admins',
+              {
+                params: { skip, limit: rowsPerPage },  // Use rowsPerPage for limit
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+  
+            if (response.status === 200) {
+              setSubAdmins(response.data.data.admins);
+              setTotalSubAdmins(response.data.data.total); // Make sure the total count is correct
             }
-        };
-
-        fetchSubAdmins();
+          } else {
+            setError('Admin login data is missing.');
+          }
+        } catch (err) {
+          setError('Failed to fetch data.');
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchSubAdmins();
     }, [page, rowsPerPage]);
-
+  
     const handleDelete = async (id: string) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                setLoading(true);
-                try {
-                    const adminLoginData: string | null = localStorage.getItem('AdminloginData');
-                    if (adminLoginData) {
-                        const token = JSON.parse(adminLoginData).token;
-                        const response = await axios.delete(
-                            `https://api-vehware-crm.vercel.app/api/auth/delete/${id}`,
-                            {
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    Authorization: `Bearer ${token}`,
-                                },
-                            }
-                        );
-
-                        if (response.status === 200) {
-                            setSubAdmins((prev) => prev.filter((subAdmin) => subAdmin._id !== id));
-                            Swal.fire('Deleted!', 'The sub-admin has been deleted.', 'success');
-                        }
-                    }
-                } catch (err) {
-                    setError('Failed to delete the sub-admin.');
-                    Swal.fire('Error!', 'There was an issue deleting the sub-admin.', 'error');
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          setLoading(true);
+          try {
+            const adminLoginData: string | null = localStorage.getItem('AdminloginData');
+            if (adminLoginData) {
+              const token = JSON.parse(adminLoginData).token;
+              const response = await axios.delete(
+                `https://api-vehware-crm.vercel.app/api/auth/delete/${id}`,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
                 }
-                setLoading(false);
+              );
+  
+              if (response.status === 200) {
+                setSubAdmins((prev) => prev.filter((subAdmin) => subAdmin._id !== id));
+                setTotalSubAdmins((prev) => prev - 1);  // Correct total count
+                Swal.fire('Deleted!', 'The sub-admin has been deleted.', 'success');
+              }
             }
-        });
+          } catch (err) {
+            setError('Failed to delete the sub-admin.');
+            Swal.fire('Error!', 'There was an issue deleting the sub-admin.', 'error');
+          } finally {
+            setLoading(false);
+          }
+        }
+      });
     };
-
+  
     const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
+      setPage(newPage); // Update page when changed
     };
-
+  
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);  // Reset to first page when rows per page is changed
     };
-
+  
     const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
     };
-
+  
     const filteredSubAdmins = subAdmins.filter((subAdmin) =>
-        subAdmin.name.toLowerCase().includes(searchTerm.toLowerCase())
+      subAdmin.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) {
@@ -153,7 +157,7 @@ function SubAdminPage() {
                 alignItems="center"
                 sx={{
                     height: '80vh',
-                    marginTop: '-3vh', // Slight upward shift
+                    marginTop: '-3vh',
                 }}
             >
                 <Grid item xs={12}>
@@ -161,7 +165,7 @@ function SubAdminPage() {
                         direction="row"
                         justifyContent="space-between"
                         sx={{
-                            mb: 4, // Reduced margin-bottom
+                            mb: 4,
                             p: 2,
                             backgroundColor: 'background.paper',
                             borderRadius: '8px',
@@ -419,28 +423,28 @@ function SubAdminPage() {
             </TableContainer>
 
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={totalSubAdmins}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                sx={{
-                    mt: 2,
-                    '& .MuiTablePagination-selectLabel': {
-                        fontWeight: 'bold',
-                    },
-                    '& .MuiTablePagination-select': {
-                        borderRadius: '8px',
-                        backgroundColor: 'background.paper',
-                        boxShadow: 1,
-                    },
-                    '& .MuiTablePagination-actions': {
-                        color: 'text.primary',
-                    },
-                }}
-            />
+        rowsPerPageOptions={[ 10, 25]}  // Ensure options include 5, 10, and 25
+        component="div"
+        count={totalSubAdmins}  // Correct total count based on data
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          mt: 2,
+          '& .MuiTablePagination-selectLabel': {
+            fontWeight: 'bold',
+          },
+          '& .MuiTablePagination-select': {
+            borderRadius: '8px',
+            backgroundColor: 'background.paper',
+            boxShadow: 1,
+          },
+          '& .MuiTablePagination-actions': {
+            color: 'text.primary',
+          },
+        }}
+      />
         </Grid>
 
     );
