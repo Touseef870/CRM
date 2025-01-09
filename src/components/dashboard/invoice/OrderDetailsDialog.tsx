@@ -13,6 +13,7 @@ interface Order {
   description: string;
   discountPrice: number;
   price: number;
+  totalAmount: number;
   status: string;
   brand: {
     _id: string;
@@ -72,44 +73,61 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
-      fullWidth
+      maxWidth="sm" // Default width for larger screens
+      fullWidth // Ensures the dialog uses the full width of the screen
       sx={{
-        borderRadius: '20px',
-        boxShadow: '0 15px 30px rgba(0, 0, 0, 0.1)',
-        padding: 3,
-      }}
-    ><DialogTitle
-    sx={{
-      display: 'flex',
-      justifyContent: 'space-between', // Align title and icon to opposite sides
-      alignItems: 'center', // Vertically center the items
-      fontWeight: 'bold',
-      fontSize: 32,
-      color: '#2C3E50',
-      textAlign: 'center',
-      paddingTop: 3,
-      marginBottom: 4,
-      position: 'relative', // Ensure positioning context
-    }}
-  >
-    <span style={{ flexGrow: 1, textAlign: 'center' }}>Order Details</span> {/* Title in center */}
-    <IconButton
-      onClick={onClose}
-      sx={{
-        color: 'black', // Default color of the icon (can adjust based on your design)
-        fontSize: '24px', // Adjust icon size
-        padding: '8px', // Padding around the icon
-        '&:hover': {
-          backgroundColor: 'transparent', // Remove the background on hover
-          color: '#3498DB', // Change icon color on hover
+        '& .MuiPaper-root': {
+          borderRadius: '5px', // Rounded corners
+          boxShadow: '0 15px 30px rgba(0, 0, 0, 0.1)', // Subtle shadow
+          padding: 2, // General padding
+          '@media (max-width: 768px)': {
+            maxWidth: '90%', // Wider dialog for tablets
+            padding: 2, // Adjust padding for smaller screens
+          },
+          '@media (max-width: 480px)': {
+            maxWidth: '95%', // Nearly full-width dialog for mobile
+            padding: 0, // Compact padding for mobile
+            margin: '0 10px', // Add a small margin on mobile
+          },
         },
       }}
     >
-      <CloseIcon />
-    </IconButton>
-  </DialogTitle>
-  
+
+
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between', // Align title and icon to opposite sides
+          alignItems: 'center', // Vertically center the items
+          fontWeight: 'bold',
+          fontSize: 32,
+          color: '#2C3E50',
+          textAlign: 'center',
+          paddingTop: 3,
+          marginBottom: 4,
+          position: 'relative', // Ensure positioning context
+          '@media (max-width:600px)': {
+            fontSize: 24, // Reduce title size on mobile
+            textAlign: 'center', // Center text on mobile
+          },
+        }}
+      >
+        <span style={{ flexGrow: 1, textAlign: 'center' }}>Order Details</span> {/* Title in center */}
+        <IconButton
+          onClick={onClose}
+          sx={{
+            color: 'black', // Default color of the icon (can adjust based on your design)
+            fontSize: '24px', // Adjust icon size
+            padding: '8px', // Padding around the icon
+            '&:hover': {
+              backgroundColor: 'transparent', // Remove the background on hover
+              color: '#3498DB', // Change icon color on hover
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
 
       <DialogContent sx={{ paddingTop: 2 }}>
         {selectedOrder && (
@@ -183,6 +201,15 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
 
               <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>
+                Price:
+              </Typography>
+              <Typography variant="body1" sx={{ fontSize: 16, color: '#27AE60' }}>
+                ${selectedOrder.price !== 0 ? selectedOrder.price : '-'}
+              </Typography>
+
+              <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
+
+              <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>
                 Discount Price:
               </Typography>
               <Typography
@@ -198,10 +225,10 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
 
               <Typography variant="h6" sx={{ fontWeight: 500, color: '#2C3E50' }}>
-                Price:
+                Total Amount:
               </Typography>
               <Typography variant="body1" sx={{ fontSize: 16, color: '#27AE60' }}>
-                ${selectedOrder.price !== 0 ? selectedOrder.price : '-'}
+                ${selectedOrder.totalAmount !== 0 ? selectedOrder.totalAmount : '-'}
               </Typography>
 
               <Divider sx={{ my: 2, borderColor: '#BDC3C7' }} />
@@ -212,45 +239,46 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
               <Typography variant="body1" sx={{ fontSize: 14, color: '#3498DB' }}>
                 {selectedOrder.status}
               </Typography>
-
-
             </Grid>
           </Grid>
         )}
       </DialogContent>
 
       <DialogActions sx={{ paddingBottom: 3, paddingTop: 2 }}>
-        {/* Copy Payment Link - styled as text */}
-        <Typography
-          sx={{
-            fontSize: 14,
-            color: 'black',
-            textDecoration: 'none',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            mt: 0,
-            ml: 0,
-            marginRight: '10px', // Reduced marginRight for a slight shift towards the left
-            marginLeft: '40px', // Added marginLeft to shift it slightly towards the right
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            '&:hover': {
+  {/* Copy Payment Link - styled as text */}
+  <Typography
+    sx={{
+      fontSize: 14, // Default font size
+      color: 'black',
+      textDecoration: 'none',
+      cursor: 'pointer',
+      borderRadius: '5px',
+      mt: 0,
+      ml: 0,
+      marginRight: '10px', // Default margin-right
+      marginLeft: '40px', // Default margin-left
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '&:hover': {
+        color: 'grey',
+        transition: 'all 0.3s ease',
+      },
+      '@media (max-width: 480px)': {
+        fontSize: 12, // Slightly smaller font size on mobile
+        marginRight: '-10px', // Adjust margin-right on mobile
+       
+      },
+    }}
+    onClick={payment}
+  >
+    <AiOutlineLink style={{ marginRight: '6px', fontSize: '20px' }} /> {/* Link Icon with spacing */}
+    Copy Payment Link
+  </Typography>
 
-              color: 'grey',
-              transition: 'all 0.3s ease',
-            },
-          }}
-          onClick={payment}
-        >
+  {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
+</DialogActions>
 
-          <AiOutlineLink style={{ marginRight: '6px', fontSize: '20' }} /> {/* Link Icon with spacing */}
-          Copy Payment Link
-        </Typography>
-
-        
-        {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
-      </DialogActions>
 
       {/* Snackbar for alerts */}
       <Snackbar
@@ -272,9 +300,9 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
         >
           {snackbarMessage}
         </Alert>
-
       </Snackbar>
     </Dialog>
+
 
 
   );

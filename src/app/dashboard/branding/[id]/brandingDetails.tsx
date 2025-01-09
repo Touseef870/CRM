@@ -211,10 +211,10 @@ const BrandingDetails = (): React.JSX.Element | null => {
         <CardMedia
           component="img"
           width="100%"
-          
+
           image={branding?.image || "https://via.placeholder.com/300"}
           alt={branding?.title || "Brand Image"}
-          sx={{ objectFit: "cover", backgroundColor: "black",  height: '300px',   }}
+          sx={{ objectFit: "cover", backgroundColor: "black", height: '300px', }}
         />
         <CardContent>
           <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", textAlign: "center" }}>
@@ -250,12 +250,13 @@ const BrandingDetails = (): React.JSX.Element | null => {
             {/* Table Header */}
             <TableHead sx={{ backgroundColor: "primary.main", color: "white" }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Order #</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Title</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Description</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Status</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Price</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Discounted Price</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Total Amount</TableCell>
+
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Client ID</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center", color: "white" }}>Created At</TableCell>
               </TableRow>
@@ -274,7 +275,6 @@ const BrandingDetails = (): React.JSX.Element | null => {
                     borderBottom: "1px solid #e0e0e0", // Adding bottom border for better visual separation
                   }}
                 >
-                  <TableCell sx={{ textAlign: "center", padding: "16px" }}>{index + 1}</TableCell>
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {order?.title || "No title available"}
                   </TableCell>
@@ -298,13 +298,23 @@ const BrandingDetails = (): React.JSX.Element | null => {
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     ${order?.price || 0}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontWeight: "900", padding: "16px",color: order.discountPrice === 0 ? 'red' : 'green' }}>
+                  <TableCell sx={{ textAlign: "center", fontWeight: "900", padding: "16px", color: order.discountPrice === 0 ? 'red' : 'green' }}>
                     ${order.discountPrice === 0 ? '--' : order.discountPrice.toFixed(2)}
                   </TableCell>
-
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
-                    {order?.clientId || "N/A"}
+                    ${order?.totalAmount || 0}
                   </TableCell>
+
+                  <TableCell
+                    sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}
+                  >
+                    {order?.clientId
+                      ? order.clientId.length > 10
+                        ? `${order.clientId.substring(0, 10)}...`
+                        : order.clientId
+                      : "N/A"}
+                  </TableCell>
+
                   <TableCell sx={{ textAlign: "center", fontWeight: "500", padding: "16px" }}>
                     {new Date(order?.createdAt).toLocaleString() || "N/A"}
                   </TableCell>
@@ -322,151 +332,164 @@ const BrandingDetails = (): React.JSX.Element | null => {
         <Typography variant="body2" color="text.secondary">No orders found</Typography>
       )}
 
-      {/* Modal for Viewing Order Details */}
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          '& .MuiPaper-root': { borderRadius: '16px' },
-          '& .MuiDialogContent-root': { padding: '24px 32px' },
-          '& .MuiDialogActions-root': { padding: '16px 24px' },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontSize: "1.5rem",
-            fontWeight: "600",
-            color: "primary.main",
-            paddingBottom: "16px",
-            borderBottom: "2px solid #eee",
-            textAlign: 'left', // Left-aligned title
-            marginBottom: '16px', // Proper spacing from the content
-          }}
-        >
-          Order Details
-        </DialogTitle>
+     {/* Modal for Viewing Order Details */}
+<Dialog
+  open={openModal}
+  onClose={handleCloseModal}
+  fullWidth
+  maxWidth="sm"
+  sx={{
+    '& .MuiPaper-root': {
+      borderRadius: '16px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    },
+    '& .MuiDialogContent-root': { padding: '24px 32px' },
+    '& .MuiDialogActions-root': { padding: '16px 24px' },
+  }}
+>
+  <DialogTitle
+    sx={{
+      fontSize: '1.5rem',
+      fontWeight: 600,
+      color: 'primary.main',
+      paddingBottom: '16px',
+      borderBottom: '2px solid #eee',
+      textAlign: 'left',
+      marginBottom: '16px',
+    }}
+  >
+    Order Details
+  </DialogTitle>
 
-        <DialogContent sx={{ paddingTop: "16px", paddingBottom: "24px" }}>
-          {selectedOrder ? (
-            <>
-              {/* Order # */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Order #:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  {selectedOrderIndex >= 0 ? selectedOrderIndex + 1 : "N/A"}
-                </Typography>
-              </Box>
+  <DialogContent sx={{ paddingTop: '16px', paddingBottom: '24px' }}>
+    {selectedOrder ? (
+      <>
+        {/* Order # */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center' }}>
+          {/* Add Order # content here if needed */}
+        </Box>
 
-              {/* Title */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Title:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  {selectedOrder.title}
-                </Typography>
-              </Box>
+        {/* Title */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Title:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary', flex: 1 }}>
+            {selectedOrder.title}
+          </Typography>
+        </Box>
 
-              {/* Description */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Description:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary", flex: 1 }}>
-                  {selectedOrder.description}
-                </Typography>
-              </Box>
+        {/* Description */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Description:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary', flex: 1 }}>
+            {selectedOrder.description}
+          </Typography>
+        </Box>
 
-              {/* Status */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Status:</strong>
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontWeight: "400",
-                    color: selectedOrder.status === "PENDING" ? "orange" :
-                      selectedOrder.status === "SUCCESS" ? "green" :
-                        selectedOrder.status === "FAILED" ? "red" : "gray"
-                  }}
-                >
-                  {selectedOrder.status}
-                </Typography>
-              </Box>
-
-              {/* Price */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Price:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  ${selectedOrder.price?.toFixed(2)}
-                </Typography>
-              </Box>
-
-              {/* Discounted Price */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Discounted Price:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "900", textAlign: "center",  color: selectedOrder.discountPrice === 0 ? 'red' : 'green' }}>
-                  ${selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice.toFixed(2)}
-                </Typography>
-
-              </Box>
-
-              {/* Client ID */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Client ID:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  {selectedOrder.clientId || "N/A"}
-                </Typography>
-              </Box>
-
-              {/* Created At */}
-              <Box sx={{ display: 'flex', marginBottom: "16px", alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ fontWeight: "600", width: "150px" }}>
-                  <strong>Created At:</strong>
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "400", color: "text.secondary" }}>
-                  {new Date(selectedOrder.createdAt).toLocaleString()}
-                </Typography>
-              </Box>
-            </>
-          ) : (
-            <CircularProgress sx={{ display: 'block', margin: '0 auto' }} />
-          )}
-        </DialogContent>
-
-        <DialogActions sx={{ justifyContent: "center" }}>
-          <Button
-            onClick={handleCloseModal}
-            color="primary"
-            variant="contained"
+        {/* Status */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Status:</strong>
+          </Typography>
+          <Typography
+            variant="body1"
             sx={{
-              fontWeight: 600,
-              textTransform: "none",
-              borderRadius: "10px",
-              padding: "8px 20px",
-
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              '&:hover': {
-                backgroundColor: "primary.dark",
-                boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)"
-              }
+              fontWeight: 400,
+              color: selectedOrder.status === 'PENDING' ? 'orange' :
+                    selectedOrder.status === 'SUCCESS' ? 'green' :
+                    selectedOrder.status === 'FAILED' ? 'red' : 'gray',
             }}
           >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {selectedOrder.status}
+          </Typography>
+        </Box>
+
+        {/* Price */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Price:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary' }}>
+            ${selectedOrder.price?.toFixed(2)}
+          </Typography>
+        </Box>
+
+        {/* Discounted Price */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Discounted Price:</strong>
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 900,
+              textAlign: 'center',
+              color: selectedOrder.discountPrice === 0 ? 'red' : 'green',
+            }}
+          >
+            ${selectedOrder.discountPrice === 0 ? '--' : selectedOrder.discountPrice.toFixed(2)}
+          </Typography>
+        </Box>
+
+        {/* Total Amount */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Total Amount:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary' }}>
+            ${selectedOrder.totalAmount?.toFixed(2)}
+          </Typography>
+        </Box>
+
+        {/* Client ID */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Client ID:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary' }}>
+            {selectedOrder.clientId || 'N/A'}
+          </Typography>
+        </Box>
+
+        {/* Created At */}
+        <Box sx={{ display: 'flex', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, width: '150px', marginBottom: '8px' }}>
+            <strong>Created At:</strong>
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 400, color: 'text.secondary' }}>
+            {new Date(selectedOrder.createdAt).toLocaleString()}
+          </Typography>
+        </Box>
+      </>
+    ) : (
+      <CircularProgress sx={{ display: 'block', margin: '0 auto' }} />
+    )}
+  </DialogContent>
+
+  <DialogActions sx={{ justifyContent: 'center' }}>
+    <Button
+      onClick={handleCloseModal}
+      color="primary"
+      variant="contained"
+      sx={{
+        fontWeight: 600,
+        textTransform: 'none',
+        borderRadius: '10px',
+        padding: '8px 20px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          backgroundColor: 'primary.dark',
+          boxShadow: '0 6px 8px rgba(0, 0, 0, 0.15)',
+        },
+      }}
+    >
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
 
     </Box>
   );

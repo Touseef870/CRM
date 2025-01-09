@@ -145,6 +145,11 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
           backgroundColor: '#0056b3', // Darker blue on hover
           boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)', // Darker shadow on hover
         },
+        '@media (max-width: 480px)': {
+          padding: '2px 20px', // Adjusted padding for better balance on smaller screens
+          marginRight: '10px', // Reduced marginRight for better balance on smaller screens
+          margin: '6 auto', // Centers the button on smaller screens
+        },
       }}
     >
       Download PDF
