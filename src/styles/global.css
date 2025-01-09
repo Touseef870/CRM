@@ -48,3 +48,26 @@ a {
   /* Adjust this number if necessary */
 }
 
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #dddada; /* Background of the track */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #635bff; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #463dfd; /* Color when hovered */
+}
+
+/* For horizontal scrollbars */
+::-webkit-scrollbar-horizontal {
+  height: 10px;
+}
