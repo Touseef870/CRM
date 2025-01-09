@@ -34,7 +34,7 @@ export default function BrandingPage(): React.JSX.Element {
 
   const parsedData = JSON.parse(adminLoginData);
 
-  const itemsPerPage = 10; // Set to 10 items per page
+  const itemsPerPage = 20; // Set to 10 items per page
 
   useEffect(() => {
     const fetchBrandingData = async () => {
