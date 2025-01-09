@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import BackIcon from "@/components/BackIcon";
-import { grey, teal, red, blue } from "@mui/material/colors";
+import { grey, red, blue } from "@mui/material/colors";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClientOrders from '@/components/dashboard/client/clientOrderId'
@@ -186,6 +186,7 @@ export default function clientDetails() {
 
 
 
+  let totalDocs = 20;
 
   useEffect(() => {
     if (!id) {
@@ -201,7 +202,7 @@ export default function clientDetails() {
         }
 
         const response = await axios.get(
-          `https://api-vehware-crm.vercel.app/api/brand/get`,
+          `https://api-vehware-crm.vercel.app/api/brand/get?limit=${totalDocs}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -221,10 +222,9 @@ export default function clientDetails() {
     };
 
     fetchEmployee();
-  }, [id]);
+  }, [id, totalDocs]);
 
 
-  //Get Single CLient Data APi
   useEffect(() => {
     if (!id) {
       setError("Employee ID is missing.");

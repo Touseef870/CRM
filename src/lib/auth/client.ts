@@ -117,7 +117,7 @@ class AuthClient {
     if (currentTime > parsedData.expirationTime) {
       console.log('Token has expired');
       localStorage.removeItem('AdminloginData');
-      return { data: null, error: 'Token has expired' };
+      return { error: 'Token has expired' };
     }
 
     return { data: user };
