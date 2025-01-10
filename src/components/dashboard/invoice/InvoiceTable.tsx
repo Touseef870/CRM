@@ -21,9 +21,9 @@ interface Order {
 }
 
 interface InvoiceTableProps {
-    orders: Order[];
-    onOpenModal: (order: Order) => void;
-    onDeleteOrder: (orderId: string) => void;
+    orders: any;
+    onOpenModal: (order: any) => void;
+    onDeleteOrder: (orderId: any) => void;
     page: number;
     rowsPerPage: number;
     totalOrders: number;  // total orders to pass for pagination
@@ -86,7 +86,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                         </TableRow>
                     ))
                 ) : hasOrders ? (
-                    orders.map((order) => (
+                    orders.map((order : any) => (
                         <TableRow key={order._id} sx={{ '&:hover': { backgroundColor: '#f0f8ff' } }}>
                             <TableCell>
                                 <Stack direction="row" spacing={2} alignItems="center">
