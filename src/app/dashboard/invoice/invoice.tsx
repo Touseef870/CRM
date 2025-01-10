@@ -51,7 +51,10 @@ const MainPage: React.FC = () => {
 
         if (Array.isArray(response.data.data.orders)) {
           setOrders(response.data.data.orders);
+          console.log('Orders:', response.data.data.orders);
+
           setTotalOrders(response.data.data.total);
+          console.log('Total Orders:', response.data.data.total);
         }
       } catch (error) {
         console.error('Error fetching orders:', error);

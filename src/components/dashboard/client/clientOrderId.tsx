@@ -20,7 +20,8 @@ import {
   Typography,
   Button,
   Divider,
-  Avatar
+  Avatar,
+  Skeleton
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
@@ -105,18 +106,61 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
   };
 
   if (loading) {
-    return <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "50vh",
-      }}
-    >
-      <CircularProgress />
-    </Box>
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+        }}
+      >
+        <TableContainer
+          component={Paper}
+          sx={{
+            marginTop: 3,
+            boxShadow: 3,
+            borderRadius: 2,
+            overflowX: 'auto',
+          }}
+        >
+          <Table sx={{ minWidth: 1000 }}>
+            <TableHead>
+              <TableRow
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                }}
+              >
+                <TableCell sx={{ fontWeight: 'bold' }}>Order ID</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Title</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Price</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Discount</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Total Amount</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Brand</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton width="100px" /></TableCell>
+                  <TableCell><Skeleton width="150px" /></TableCell>
+                  <TableCell><Skeleton width="200px" /></TableCell>
+                  <TableCell><Skeleton width="80px" /></TableCell>
+                  <TableCell><Skeleton width="80px" /></TableCell>
+                  <TableCell><Skeleton width="80px" /></TableCell>
+                  <TableCell><Skeleton width="80px" /></TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}><Skeleton width="50px" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    );
   }
-
+  
   if (error) {
     return (
       <Box
@@ -141,7 +185,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
       </Box>
     );
   }
-
+  
   return (
     <Box sx={{ padding: 3 }}>
       <TableContainer
@@ -150,10 +194,10 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
           marginTop: 3,
           boxShadow: 3,
           borderRadius: 2,
-          overflowX: 'auto', // Enable horizontal scroll
+          overflowX: 'auto',
         }}
       >
-        <Table sx={{ minWidth: 1000 }}> {/* Set a minimum width for the table */}
+        <Table sx={{ minWidth: 1000 }}>
           <TableHead>
             <TableRow
               sx={{
@@ -215,12 +259,8 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
           </TableBody>
         </Table>
       </TableContainer>
-
-
-
-
-           {/* modal  */}
-
+  
+      {/* Modal code remains the same */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -230,7 +270,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
           borderRadius: 2,
           boxShadow: 24,
           padding: { xs: 2, sm: 3 },
-          overflow: 'hidden', // Prevents overflow on small screens
+          overflow: 'hidden',
         }}
       >
         {/* Dialog Title */}
@@ -238,7 +278,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
           sx={{
             fontWeight: 600,
             textAlign: 'center',
-            fontSize: { xs: '1.5rem', sm: '1.75rem' }, // Adjusted font size for mobile responsiveness
+            fontSize: { xs: '1.5rem', sm: '1.75rem' },
             color: '#2c3e50',
             padding: { xs: 2, sm: 3 },
             borderBottom: '1px solid #ecf0f1',
@@ -247,7 +287,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
         >
           Order Details
         </DialogTitle>
-
+  
         <DialogContent sx={{ padding: { xs: 2, sm: 3 } }}>
           {selectedOrder && (
             <Box
@@ -304,7 +344,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                     </Typography>
                   )}
                 </Box>
-
+  
                 {/* Brand Title */}
                 <Typography
                   variant="body1"
@@ -319,7 +359,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                   {selectedOrder.brand?.title || 'N/A'}
                 </Typography>
               </Box>
-
+  
               {/* Right Side: Order Details */}
               <Box
                 sx={{
@@ -330,16 +370,17 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                   width: { xs: '100%', sm: '85%' },
                 }}
               >
-                {[{ label: 'Order ID:', value: selectedOrder._id },
-                { label: 'Title:', value: selectedOrder.title },
-                { label: 'Description:', value: selectedOrder.description },
-                { label: 'Price:', value: `$${selectedOrder.price}` },
-                {
-                  label: 'Discount Price:',
-                  value: selectedOrder.discountPrice === 0 ? '--' : `$${selectedOrder.discountPrice}`,
-                  color: selectedOrder.discountPrice === 0 ? '#e74c3c' : '#2ecc71',
-                },
-                { label: 'Total Amount:', value: `$${selectedOrder.totalAmount}` },
+                {[
+                  { label: 'Order ID:', value: selectedOrder._id },
+                  { label: 'Title:', value: selectedOrder.title },
+                  { label: 'Description:', value: selectedOrder.description },
+                  { label: 'Price:', value: `$${selectedOrder.price}` },
+                  {
+                    label: 'Discount Price:',
+                    value: selectedOrder.discountPrice === 0 ? '--' : `$${selectedOrder.discountPrice}`,
+                    color: selectedOrder.discountPrice === 0 ? '#e74c3c' : '#2ecc71',
+                  },
+                  { label: 'Total Amount:', value: `$${selectedOrder.totalAmount}` },
                 ].map(({ label, value, color }, index) => (
                   <Box
                     key={index}
@@ -359,7 +400,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
                       fontWeight="500"
                       sx={{
                         color: '#7f8c8d',
-                        fontSize: { xs: '0.9rem', sm: '1rem' }, // Responsive font sizing
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
                         flex: 1,
                         textAlign: 'left',
                       }}
@@ -384,7 +425,7 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
             </Box>
           )}
         </DialogContent>
-
+  
         {/* Dialog Actions */}
         <DialogActions sx={{ justifyContent: 'center', padding: { xs: 2, sm: 3 } }}>
           <Button
@@ -396,9 +437,9 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
               padding: '8px 20px',
               textTransform: 'none',
               borderRadius: 1,
-              backgroundColor: '#3498db', // Soft blue
+              backgroundColor: '#3498db',
               '&:hover': {
-                backgroundColor: '#2980b9', // Slightly darker blue on hover
+                backgroundColor: '#2980b9',
               },
             }}
           >
@@ -406,20 +447,9 @@ const ClientOrders: React.FC<ClientOrdersProps> = ({ clientId }) => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
-
-
-
-
-
-
-
-
-
     </Box>
   );
+  
 };
 
 export default ClientOrders;
