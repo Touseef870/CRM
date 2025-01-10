@@ -14,6 +14,7 @@ interface Order {
   description: string;
   discountPrice: number;
   price: number;
+  totalAmunt: number;
   status: string;
   brand: {
     _id: string;
