@@ -245,39 +245,39 @@ const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({ open, onClose, 
       </DialogContent>
 
       <DialogActions sx={{ paddingBottom: 3, paddingTop: 2 }}>
-  {/* Copy Payment Link - styled as text */}
-  <Typography
-    sx={{
-      fontSize: 14, // Default font size
-      color: 'black',
-      textDecoration: 'none',
-      cursor: 'pointer',
-      borderRadius: '5px',
-      mt: 0,
-      ml: 0,
-      marginRight: '10px', // Default margin-right
-      marginLeft: '40px', // Default margin-left
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      '&:hover': {
-        color: 'grey',
-        transition: 'all 0.3s ease',
-      },
-      '@media (max-width: 480px)': {
-        fontSize: 12, // Slightly smaller font size on mobile
-        marginRight: '-10px', // Adjust margin-right on mobile
-       
-      },
-    }}
-    onClick={payment}
-  >
-    <AiOutlineLink style={{ marginRight: '6px', fontSize: '20px' }} /> {/* Link Icon with spacing */}
-    Copy Payment Link
-  </Typography>
+        {/* Copy Payment Link - styled as text */}
+        <Typography
+          sx={{
+            fontSize: 14, // Default font size
+            color: 'black',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            borderRadius: '5px',
+            mt: 0,
+            ml: 0,
+            marginRight: '10px', // Default margin-right
+            marginLeft: '40px', // Default margin-left
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            '&:hover': {
+              color: 'grey',
+              transition: 'all 0.3s ease',
+            },
+            '@media (max-width: 480px)': {
+              fontSize: 12, // Slightly smaller font size on mobile
+              marginRight: '-10px', // Adjust margin-right on mobile
 
-  {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
-</DialogActions>
+            },
+          }}
+          onClick={payment}
+        >
+          <AiOutlineLink style={{ marginRight: '6px', fontSize: '20px' }} /> {/* Link Icon with spacing */}
+          Copy Payment Link
+        </Typography>
+
+        {selectedOrder && <PDFDownloadUI selectedOrder={selectedOrder} />}
+      </DialogActions>
 
 
       {/* Snackbar for alerts */}

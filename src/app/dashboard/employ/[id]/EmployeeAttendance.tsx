@@ -19,6 +19,7 @@ import {
   DialogActions,
   TextField,
   Input,
+  Skeleton,
 } from "@mui/material";
 import { useParams } from "next/navigation";
 import axios from "axios";
@@ -195,19 +196,66 @@ const AttendanceTable: React.FC = () => {
 
 
   return (
-
-    <Box sx={{ margin: "30px", overflowX: "auto" }}> {/* Ensure horizontal scrolling */}
+    <Box sx={{ margin: "30px", overflowX: "auto" }}>
       {loading ? (
-        <Box sx={{ textAlign: "center", padding: "40px" }}>
-          <CircularProgress />
-        </Box>
+        <TableContainer
+          component={Paper}
+          sx={{
+            boxShadow: 3,
+            padding: "16px",
+            minWidth: "600px",
+          }}
+        >
+          <Table sx={{ minWidth: "600px" }}>
+            <TableHead sx={{ bgcolor: "primary.main", color: "white" }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", fontSize: { xs: 12, sm: 14, md: 16 }, textAlign: "center" }}>
+                  Date
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: { xs: 12, sm: 14, md: 16 }, textAlign: "center" }}>
+                  Check-In
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: { xs: 12, sm: 14, md: 16 }, textAlign: "center" }}>
+                  Check-Out
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: { xs: 12, sm: 14, md: 16 }, textAlign: "center" }}>
+                  Status
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: { xs: 12, sm: 14, md: 16 }, textAlign: "center" }}>
+                  Actions
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...Array(5)].map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Skeleton width="100px" />
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Skeleton width="100px" />
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Skeleton width="100px" />
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Skeleton width="100px" />
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Skeleton width="100px" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       ) : (
         <TableContainer
           component={Paper}
           sx={{
             boxShadow: 3,
             padding: "16px",
-            minWidth: "600px", // Minimum width to avoid shrinking the table too much
+            minWidth: "600px",
           }}
         >
           <Table sx={{ minWidth: "600px" }}> {/* Set a minimum width to prevent collapsing */}
@@ -243,9 +291,7 @@ const AttendanceTable: React.FC = () => {
                         bgcolor: "background.default", // Darker background for even rows
                       },
                       "&:hover": {
-                        bgcolor: "gray", // Subtle hover effect
                         cursor: "pointer",
-                        transition: "background-color 0.3s ease",
                       }
                     }}
                   >
@@ -265,22 +311,20 @@ const AttendanceTable: React.FC = () => {
                     </TableCell>
 
                     {/* Status Column with Conditional Styling */}
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        sx={{
-                          bgcolor:
-                            data.status === "Present"
-                              ? "success.main"
-                              : data.status === "Late"
-                                ? "warning.main"
-                                : "error.main",
-                        }}
-                      >
-                        {data.status}
-                      </Button>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                        
+                        color:
+                          data.status === "Present"
+                            ? "success.main"
+                            : data.status === "Late"
+                              ? "warning.main"
+                              : "error.main",
+                        fontWeight: "800"  // Adjust font weight here for a decent look
+                      }}
+                    >
+                      {data.status}
                     </TableCell>
 
 
