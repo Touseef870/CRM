@@ -17,17 +17,15 @@ export default function Page(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
 
   const [dashboardData, setDashboardData] = useState({
-    totalEmployees: 0,
-    totalInvoices: 0,
-    totalBrands: 0,
-    totalCustomers: 0,
-
+    totalEmployees: "00",
+    totalInvoices: "00",
+    totalBrands: "00",
+    totalCustomers: "00",
   });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-       
         const response = await axios.get(
           "https://api-vehware-crm.vercel.app/api/totalData", // Replace with your actual API endpoint
           {
@@ -38,24 +36,30 @@ export default function Page(): React.JSX.Element {
         );
 
         setDashboardData({
-          totalEmployees: response.data.data.totalEmployees,
-          totalInvoices: response.data.data.totalOrders,
-          totalBrands: response.data.data.totalBrands,
-          totalCustomers: response.data.data.totalClients,
+          totalEmployees: response.data.data.totalEmployees
+            .toString()
+            .padStart(2, "0"),
+          totalInvoices: response.data.data.totalOrders
+            .toString()
+            .padStart(2, "0"),
+          totalBrands: response.data.data.totalBrands
+            .toString()
+            .padStart(2, "0"),
+          totalCustomers: response.data.data.totalClients
+            .toString()
+            .padStart(2, "0"),
         });
         setLoading(false);
       } catch (error) {
         console.log("Error fetching dashboard data:", error);
         setLoading(false);
-
       }
     };
 
     if (typeof window !== "undefined") {
       fetchDashboardData();
     }
-  }, [storedValue.token]); 
-
+  }, [storedValue.token]);
 
   return (
     <Grid container spacing={3}>

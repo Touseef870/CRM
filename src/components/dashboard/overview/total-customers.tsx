@@ -7,14 +7,13 @@ import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ArrowDown as ArrowDownIcon } from '@phosphor-icons/react/dist/ssr/ArrowDown';
 import { ArrowUp as ArrowUpIcon } from '@phosphor-icons/react/dist/ssr/ArrowUp';
-import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
-import { LinearProgress } from '@mui/material';
+import { UserCirclePlus } from '@phosphor-icons/react';
 
 export interface TotalCustomersProps {
   diff?: number;
   trend: 'up' | 'down';
   sx?: SxProps;
-  value: number;
+  value: any;
   loading: boolean;
 }
 
@@ -71,7 +70,7 @@ export function TotalCustomers({ diff, trend, sx, value, loading }: TotalCustome
 
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-error-main)', height: '56px', width: '56px' }}>
-              <UsersIcon fontSize="var(--icon-fontSize-lg)" />
+              <UserCirclePlus fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
         
