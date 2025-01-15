@@ -73,7 +73,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
         } catch (error: any) {
             Swal.fire({
                 title: "Error",
-                text: error.response?.data?.message || 'Something went wrong, please try again.',
+                text: error.response?.data?.message || 'Something  are went wrong, please try again.',
                 icon: 'error',
             });
         } finally {

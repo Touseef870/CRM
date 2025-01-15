@@ -10,7 +10,7 @@ import { UsersThree } from '@phosphor-icons/react/dist/ssr/UsersThree';
 
 export interface TotalEmployeeProps {
   sx?: SxProps;
-  value: number;
+  value: any;
   loading: boolean;
 }
 

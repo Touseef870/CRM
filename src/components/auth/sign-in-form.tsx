@@ -28,7 +28,6 @@ export function SignInForm(): React.JSX.Element {
       ...prevData,
       [name]: value,
     }));
-    // Reset error for the field being modified
     setError((prevError) => ({
       ...prevError,
       [name]: '',

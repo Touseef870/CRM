@@ -8,13 +8,13 @@ import Typography from '@mui/material/Typography';
 import { ArrowDown as ArrowDownIcon } from '@phosphor-icons/react/dist/ssr/ArrowDown';
 import { ArrowUp as ArrowUpIcon } from '@phosphor-icons/react/dist/ssr/ArrowUp';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
-import { LinearProgress } from '@mui/material';
+import { Tag } from '@phosphor-icons/react';
 
 export interface TotalBrandsProps {
   diff?: number;
   trend: 'up' | 'down';
   sx?: SxProps;
-  value: number;
+  value: any;
   loading: boolean;
 }
 
@@ -67,17 +67,18 @@ export function TotalBrands({ diff, trend, sx, value, loading }: TotalBrandsProp
                   <div className="h-2 w-2 bg-black rounded-full animate-bounce" />
                 </div>
               ) : (
-<Typography variant="h4" sx={{ marginTop: 5 }}>
-  {animatedValue}
-</Typography>
+                <Typography variant="h4" sx={{ marginTop: 5 }}>
+                  {animatedValue}
+                </Typography>
               )}
 
             </Stack>
             <Avatar sx={{ backgroundColor: trendColor, height: '56px', width: '56px' }}>
-              <UsersIcon fontSize="var(--icon-fontSize-lg)" />
+              <Tag size={30} />
+
             </Avatar>
           </Stack>
-          
+
         </Stack>
       </CardContent>
     </Card>

@@ -56,7 +56,7 @@ export function ResetPasswordForm(): React.JSX.Element {
     } catch (error: any) {
       Swal.fire({
         title: "Error",
-        text: error.response?.data?.message || 'Something went wrong, please try again.',
+        text: error.response?.data?.message || 'Something is went wrong, please try again.',
         icon: 'error', 
       });
     } finally {
