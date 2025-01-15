@@ -14,7 +14,6 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import TablePagination from '@mui/material/TablePagination';
 import Link from 'next/link';
-import { CircularProgress } from '@mui/material';
 
 export interface Customer {
   _id: string;
@@ -27,12 +26,11 @@ export interface Customer {
   position: string;
   joiningDate: string;
   leavingDate: string;
-
 }
 
 interface CustomersTableProps {
   count: number;
-  rows: any;
+  rows: any[];
   page: number;
   rowsPerPage: number;
   loading: boolean;
@@ -61,7 +59,6 @@ export function CustomersTable({
               <TableCell>Phone</TableCell>
               <TableCell>Salary</TableCell>
               <TableCell>Position</TableCell>
-
             </TableRow>
           </TableHead>
           <TableBody>
@@ -107,38 +104,41 @@ export function CustomersTable({
                 ))}
               </>
             ) : (
-              rows.map((row: any) => (
-                <Link
-                  href={`/dashboard/employ/${row._id}`}
-                  key={row._id}
-                  passHref
-                  legacyBehavior
-                >
-                  <TableRow hover key={row._id} sx={{ cursor: "pointer" }}>
-                    <TableCell>
-                      <Stack sx={{ alignItems: "center" }} direction="row" spacing={2}>
-                        <Avatar src={row.avatar} />
-                        <Typography variant="subtitle2">{row.name}</Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.country || "Pakistan"}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>{row.salary}</TableCell>
-                    <TableCell>{row.position}</TableCell>
-                  </TableRow>
-                </Link>
-              ))
+              Array.isArray(rows) && rows.length > 0 ? (
+                rows.map((row: any) => (
+                  <Link
+                    href={`/dashboard/employ/${row._id}`}
+                    key={row._id}
+                    passHref
+                    legacyBehavior
+                  >
+                    <TableRow hover sx={{ cursor: "pointer" }}>
+                      <TableCell>
+                        <Stack sx={{ alignItems: "center" }} direction="row" spacing={2}>
+                          <Avatar src={row.avatar} />
+                          <Typography variant="subtitle2">{row.name}</Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.country || "Pakistan"}</TableCell>
+                      <TableCell>{row.phone}</TableCell>
+                      <TableCell>{row.salary}</TableCell>
+                      <TableCell>{row.position}</TableCell>
+                    </TableRow>
+                  </Link>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
+                    No data available
+                  </TableCell>
+                </TableRow>
+              )
             )}
-
-
           </TableBody>
-
-
         </Table>
       </Box>
       <Divider />
-
       <TablePagination
         component="div"
         count={count}

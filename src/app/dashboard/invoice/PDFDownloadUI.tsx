@@ -20,7 +20,6 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 20;
     const rowHeight = 8;
-    const tableMargin = 5;
     const tableWidth = pageWidth - margin * 2;
 
     // Title Section
@@ -41,8 +40,7 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     const companyInfoStartY = 85;
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.setFillColor(240, 240, 240); // Light grey fill color
-    doc.rect(margin, companyInfoStartY - 5, tableWidth, 60, 'F'); // Company info box with fill
+    doc.rect(margin, companyInfoStartY - 5, tableWidth, 60); // Company info box without fill
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Company Info', margin + 10, companyInfoStartY);
@@ -54,113 +52,109 @@ const PDFDownloadUI: React.FC<PDFDownloadUIProps> = ({ selectedOrder }) => {
     doc.text('Email: info@veh-ware.com', margin + 10, companyInfoStartY + 40);
     doc.text('Website: www.veh-ware.com', margin + 10, companyInfoStartY + 50);
 
-    // Brand Details Section with Box
+    // Brand Details Section with Box (Only Title)
     const brandDetailsStartY = companyInfoStartY + 70;
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.setFillColor(245, 245, 245); // Slightly lighter grey fill color for brand box
-    doc.rect(margin, brandDetailsStartY - 5, tableWidth, 60, 'F'); // Brand info box with fill
+    doc.rect(margin, brandDetailsStartY - 5, tableWidth, 30); // Box for brand title section
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Brand Details', margin + 10, brandDetailsStartY);
-    if (selectedOrder.brand.img) {
-      doc.addImage(selectedOrder.brand.img, 'JPEG', margin + 10, brandDetailsStartY + 10, 30, 30);
-    }
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text(`Brand: ${selectedOrder.brand.title}`, margin + 40, brandDetailsStartY + 10);
-    doc.text(`Description: ${selectedOrder.brand.description}`, margin + 40, brandDetailsStartY + 20, {
-      maxWidth: tableWidth - 40,
-    });
+    doc.text(`Brand Title: ${selectedOrder.brand.title}`, margin + 10, brandDetailsStartY + 15); // Right-aligned
 
     // Line Break for next section
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.line(margin, brandDetailsStartY + 70, pageWidth - margin, brandDetailsStartY + 70);
-
-    // Order Details Section with Box
-    const orderDetailsStartY = brandDetailsStartY + 75;
+ 
+    // Order Details Section (Only Order Title)
+    const orderDetailsStartY = brandDetailsStartY + 35;
+    const tableStartY = orderDetailsStartY + 20;
+    const tableHeaderY = tableStartY;
     doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.setFillColor(250, 250, 250); // Even lighter grey for order details box
-    doc.rect(margin, orderDetailsStartY - 5, tableWidth, 40, 'F'); // Order details box with fill
+    doc.rect(margin, orderDetailsStartY - 5, tableWidth, 30); // Box for order details section
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Order Details', margin + 10, orderDetailsStartY);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text(`Order Title: ${selectedOrder.title}`, margin + 10, orderDetailsStartY + 10);
-    doc.text(`Description: ${selectedOrder.description}`, margin + 10, orderDetailsStartY + 20, {
-      maxWidth: tableWidth - 20,
-    });
+    doc.text(`Order Title: ${selectedOrder.title}`, margin + 20, orderDetailsStartY + 15);
 
-    // Table Section with Box
-    const tableStartY = orderDetailsStartY + 50;
-    const tableRowHeight = 8;
-    const tableHeaderY = tableStartY;
+    // Table Section
 
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.setFillColor(220, 220, 220); // Light grey for table header
-    doc.rect(margin, tableHeaderY, tableWidth, rowHeight, 'F'); // Table header box with fill
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.text('Item', margin + 5, tableHeaderY + 5);
-    doc.text('Price', margin + tableWidth / 4, tableHeaderY + 5, { align: 'center' });
-    doc.text('Discount Price', margin + tableWidth / 2, tableHeaderY + 5, { align: 'center' });
-    doc.text('Total Amount', margin + (tableWidth * 3) / 4, tableHeaderY + 5, { align: 'center' });
-    doc.text('Quantity', margin + tableWidth - 10, tableHeaderY + 5, { align: 'right' });
+
+    // Table header
+
+    // Draw only the outer border for the table header (no internal lines)
+    // Single rectangle for the header (outer border only)
+
+    // Table header content (no internal lines)
+    doc.text('Item', margin + 5, tableHeaderY + rowHeight / 2 + 4); // Adjusted vertical alignment
+    doc.text('Price', margin + tableWidth / 4, tableHeaderY + rowHeight / 2 + 4, { align: 'center' });
+    doc.text('Discount Price', margin + tableWidth / 2, tableHeaderY + rowHeight / 2 + 4, { align: 'center' });
+    doc.text('Total Amount', margin + (tableWidth * 3) / 4, tableHeaderY + rowHeight / 2 + 4, { align: 'center' });
+    doc.text('Quantity', margin + tableWidth - 10, tableHeaderY + rowHeight / 2 + 4, { align: 'right' });
 
     // Table Row (Item Details)
-    const tableRowY = tableHeaderY + rowHeight;
+    const tableRowY = tableHeaderY + rowHeight + 5; // Adjust space below header
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text(selectedOrder.title, margin + 5, tableRowY + 5);
-    doc.text(`$${selectedOrder.price.toFixed(2)}`, margin + tableWidth / 4, tableRowY + 5, { align: 'center' });
-    doc.text(`$${selectedOrder.discountPrice.toFixed(2)}`, margin + tableWidth / 2, tableRowY + 5, { align: 'center' });
-    doc.text(`$${selectedOrder.totalAmount.toFixed(2)}`, margin + (tableWidth * 3) / 4, tableRowY + 5, { align: 'center' });
-    doc.text('1', margin + tableWidth - 10, tableRowY + 5, { align: 'right' });
 
-    // Payment Details Section with Box
-    const paymentDetailsStartY = tableRowY + 30;
+    // Handle text overflow for item name (wrap text if too long)
+    const itemText = selectedOrder.title;
+    const itemLines = doc.splitTextToSize(itemText, tableWidth / 4 - 10); // Adjusted to fit the item's column width
+    doc.text(itemLines, margin + 5, tableRowY + 5); // Draw text within the item's column
+
+    // Adjust dynamic Y position based on text wrapping
+    const adjustedY = tableRowY + (itemLines.length - 1) * 5; // Adjust based on number of lines
+
+    // Price, Discount Price, and Total Amount
+    doc.text(`$${selectedOrder.price.toFixed(2)}`, margin + tableWidth / 4, tableRowY + 10, { align: 'center' });
+    doc.text(`$${selectedOrder.discountPrice.toFixed(2)}`, margin + tableWidth / 2, tableRowY + 10, { align: 'center' });
+    doc.text(`$${selectedOrder.totalAmount.toFixed(2)}`, margin + (tableWidth * 3) / 4, tableRowY + 10, { align: 'center' });
+    doc.text('1', margin + tableWidth - 10, tableRowY + 10, { align: 'right' });
+
+    // Ensure no extra horizontal lines are drawn in the header
+
+
+
+
+    // Payment Details Section
+    const paymentDetailsStartY = tableRowY + 25; // Reduced the space before payment details
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.setFillColor(235, 235, 235); // Light fill color for payment details box
-    doc.rect(margin, paymentDetailsStartY - 5, tableWidth, 50, 'F'); // Payment details box with fill
+    doc.rect(margin, paymentDetailsStartY - 5, tableWidth, 50); // Box for payment details section (increased height for more room)
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Payment Details', margin + 10, paymentDetailsStartY);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text(`Total Amount: $${selectedOrder.price.toFixed(2)}`, margin + 10, paymentDetailsStartY + 10);
-    doc.text(`Discount Price: $${selectedOrder.discountPrice.toFixed(2)}`, margin + 10, paymentDetailsStartY + 20);
-    doc.text(`Total Amount Due: $${selectedOrder.totalAmount.toFixed(2)}`, margin + 10, paymentDetailsStartY + 30);
-    doc.text(`Payment Due: ${currentDate}`, margin + 10, paymentDetailsStartY + 40);
 
-    // Status Section
-    const statusStartY = paymentDetailsStartY + 60;
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Status: ${selectedOrder.status}`, margin + 10, statusStartY);
+    doc.text('Discount Price:', margin + 10, paymentDetailsStartY + 20);
+    doc.text(`$${selectedOrder.discountPrice.toFixed(2)}`, margin + 80, paymentDetailsStartY + 20);
+    doc.text('Total Amount:', margin + 10, paymentDetailsStartY + 10);
+    doc.text(`$${selectedOrder.price.toFixed(2)}`, margin + 80, paymentDetailsStartY + 10); // Right-aligned
+    // Right-aligned
+    doc.text('Status:', margin + 10, paymentDetailsStartY + 30);
+    doc.text(`$${selectedOrder.status}`, margin + 80, paymentDetailsStartY + 30); // Right-aligned
+
+    // Moved "Payment Due" inside the box
+    doc.text('Payment Due:', margin + 10, paymentDetailsStartY + 40);
+    doc.text(`${currentDate}`, margin + 80, paymentDetailsStartY + 40); // Right-aligned
+
+
 
     // Footer Section with Contact Info Box
     const footerStartY = pageHeight - 60;
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.setFillColor(240, 240, 240); // Footer box color
-    doc.rect(margin, footerStartY - 30, tableWidth, 30, 'F'); // Footer box with fill
+    doc.rect(margin, footerStartY - 30, tableWidth, 30); // Footer box without fill
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(10);
 
 
-    // Barcode Section
-    const barcodeCanvas = document.createElement('canvas');
-    JsBarcode(barcodeCanvas, selectedOrder.id, {
-      format: 'CODE128',
-      displayValue: false,
-    });
-    const barcodeImage = barcodeCanvas.toDataURL('image/png');
-    doc.addImage(barcodeImage, 'PNG', pageWidth - 60, footerStartY - 15, 50, 20);
 
     // Save the document as a PDF
     doc.save(`${selectedOrder.title}-Invoice.pdf`);
